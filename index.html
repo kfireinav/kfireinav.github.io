@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<!-- saved from url=(0047)file:///Users/kfireinav/Downloads/index_16.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Listing Proposal — Erez</title>
+
+<style>
+/* ── NOISE OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.032;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+/* ── AMBIENT GLOW BLOBS ── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 600px 400px at 80% 10%, rgba(232,115,42,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 350px at 10% 60%, rgba(232,115,42,0.05) 0%, transparent 65%),
+    radial-gradient(ellipse 400px 300px at 60% 90%, rgba(232,115,42,0.06) 0%, transparent 60%);
+}
+
+/* ensure content sits above glow */
+.hero, .content, .footer,
+div[style*="background:#111111"],
+div[style*="background:#E8732A"],
+div[style*="background:#FAFAFA"] {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── ORANGE SECTION GLOW ── */
+div[style*="background:#E8732A"] {
+  box-shadow: inset 0 0 120px rgba(0,0,0,0.15);
+}
+
+/* ── BLACK SECTION INNER GLOW ── */
+.hero {
+  box-shadow: inset 0 -40px 80px rgba(232,115,42,0.06);
+}
+
+  /* ── ENTRANCE ANIMATIONS ── */
+  @keyframes headlineDrop {
+    0%   { opacity:0; transform:translateY(-40px) skewY(-2deg); }
+    60%  { opacity:1; transform:translateY(6px) skewY(0.5deg); }
+    100% { opacity:1; transform:translateY(0) skewY(0deg); }
+  }
+  @keyframes headlineWord {
+    0%   { opacity:0; transform:translateY(30px); }
+    100% { opacity:1; transform:translateY(0); }
+  }
+  @keyframes badgePop {
+    0%   { opacity:0; transform:scale(0) rotate(-10deg); }
+    70%  { transform:scale(1.15) rotate(2deg); }
+    100% { opacity:1; transform:scale(1) rotate(0deg); }
+  }
+  @keyframes priceCount {
+    0%   { opacity:0; transform:translateY(20px); }
+    100% { opacity:1; transform:translateY(0); }
+  }
+
+  .anim-headline {
+    opacity:0;
+    animation: headlineDrop 0.8s cubic-bezier(0.22,1,0.36,1) 0.3s forwards;
+  }
+
+  .hero-tag {
+    opacity:0 !important;
+    animation: fadeUp 1.3s ease 0.25s forwards !important;
+  }
+
+  .hero-sub {
+    opacity:0 !important;
+    animation: fadeUp 0.5s ease 0.7s forwards !important;
+  }
+
+  /* price pop */
+  .card-price {
+    animation: priceCount 0.6s cubic-bezier(0.22,1,0.36,1) 0.6s both;
+  }
+  .card.featured .card-price {
+    animation: priceCount 0.6s cubic-bezier(0.22,1,0.36,1) 0.75s both;
+  }
+</style>
+
+<link href="./index_files/css2" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --orange: #E8732A;
+    --orange-light: #FFF3EA;
+    --black: #111111;
+    --gray-dark: #444;
+    --gray-mid: #888;
+    --gray-light: #F2F2F2;
+    --white: #FFFFFF;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #FAFAFA;
+    color: var(--black);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: var(--black);
+    padding: 60px 60px 50px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -80px;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    border: 60px solid var(--orange);
+    opacity: 0.12;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: 30%;
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    border: 40px solid var(--orange);
+    opacity: 0.07;
+  }
+
+  .hero-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .logo-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 44px;
+    opacity: 0;
+    animation: fadeUp 1.4s ease forwards;
+  }
+
+  .logo-img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+  }
+
+  .logo-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 3px;
+    color: var(--white);
+    opacity: 0.7;
+  }
+
+  .hero-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 18px;
+    opacity: 0;
+    animation: fadeUp 1.4s ease 0.2s forwards;
+  }
+
+  .hero-headline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 8vw, 82px);
+    line-height: 0.95;
+    color: var(--white);
+    letter-spacing: 1px;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 1.4s ease 0.4s forwards;
+  }
+
+  .hero-headline span {
+    color: var(--orange);
+  }
+
+  .hero-sub {
+    font-size: 15px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.3px;
+    opacity: 0;
+    animation: fadeUp 1.4s ease 0.65s forwards;
+  }
+
+  .hero-sub strong {
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+  }
+
+  /* ── MAIN CONTENT ── */
+  .content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 60px 80px;
+  }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 56px 0 24px;
+    opacity: 0;
+    animation: fadeUp 1.3s ease forwards;
+  }
+
+  .section-label .bar {
+    width: 32px;
+    height: 3px;
+    background: var(--orange);
+    flex-shrink: 0;
+  }
+
+  .section-label span {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gray-mid);
+  }
+
+  /* ── PRICING CARDS ── */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    opacity: 0;
+    animation: fadeUp 1.3s ease 0.25s forwards;
+  }
+
+  .card {
+    opacity: 1 !important;
+    animation: none !important;
+    background: #1a1a1a;
+    border: 1px solid rgba(232,115,42,0.2);
+    border-radius: 12px;
+    padding: 28px;
+    position: relative;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    box-shadow: 0 0 0 1px rgba(232,115,42,0.08), 0 8px 28px rgba(0,0,0,0.35), 0 20px 50px rgba(0,0,0,0.25);
+  }
+
+  .card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    background: radial-gradient(ellipse at 50% 0%, rgba(232,115,42,0.07) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(232,115,42,0.45);
+    box-shadow: 0 0 0 1px rgba(232,115,42,0.3), 0 12px 40px rgba(232,115,42,0.2), 0 28px 60px rgba(0,0,0,0.4);
+  }
+
+  .card.featured {
+    border-color: #E8732A;
+    border-width: 2px;
+    background: #111111;
+    box-shadow: 0 0 0 1px rgba(232,115,42,0.3), 0 8px 32px rgba(232,115,42,0.25), 0 24px 60px rgba(0,0,0,0.4);
+    position: relative;
+    overflow: visible;
+  }
+
+  .card.featured::before {
+    content: '23% OFF';
+    animation: badgePop 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.9s both;
+    position: absolute;
+    top: -12px; right: 20px;
+    background: var(--orange);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(232,115,42,0.5);
+  }
+
+  .card.featured::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    background: radial-gradient(ellipse at 50% 0%, rgba(232,115,42,0.12) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .card.featured .card-label { color: rgba(255,255,255,0.4); }
+  .card.featured .card-divider { background: rgba(255,255,255,0.08); }
+  .card.featured .card-includes { color: rgba(255,255,255,0.35); }
+  .card.featured .card-features li { color: rgba(255,255,255,0.7); }
+  .card.featured .card-features li::before { color: var(--orange); }
+  .card.featured .card-orig { color: rgba(255,255,255,0.3); }
+  .card.featured:hover {
+    box-shadow: 0 0 0 1px rgba(232,115,42,0.6), 0 12px 40px rgba(232,115,42,0.4), 0 30px 70px rgba(0,0,0,0.5);
+    transform: translateY(-5px);
+  }
+
+  .card-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 10px;
+  }
+
+  .card-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    line-height: 1;
+    color: var(--white);
+    margin-bottom: 4px;
+    letter-spacing: 1px;
+  }
+
+  .card-price sup {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    vertical-align: super;
+  }
+
+  .card.featured .card-price { color: var(--orange); text-shadow: 0 0 20px rgba(232,115,42,0.4); }
+
+  .card-orig {
+    font-size: 12px;
+    color: rgba(255,255,255,0.25);
+    margin-bottom: 20px;
+    text-decoration: line-through;
+  }
+
+  .card-save {
+    font-size: 12px;
+    color: var(--orange);
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  .card-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.07);
+    margin: 18px 0;
+  }
+
+  .card-includes {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.3);
+    margin-bottom: 12px;
+  }
+
+  .card-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .card-features li {
+    font-size: 13px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.65);
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    line-height: 1.4;
+  }
+
+  .card-features li::before {
+    content: '→';
+    color: var(--orange);
+    font-size: 12px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ── PROCESS ── */
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    background: #111111;
+    border: 1px solid rgba(232,115,42,0.2);
+    border-radius: 12px;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeUp 1.3s ease 0.25s forwards;
+    box-shadow:
+      0 0 0 1px rgba(232,115,42,0.08),
+      0 8px 32px rgba(0,0,0,0.4),
+      5px 5px 0px 0px rgba(0,0,0,0.6);
+    position: relative;
+  }
+
+
+
+  .step {
+    padding: 28px 22px;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    position: relative;
+    z-index: 1;
+    transition: background 0.3s ease;
+  }
+
+  .step:last-child { border-right: none; }
+  .step:hover { background: #FFF8F0; }
+  .step:hover .step-num { color: #E8732A; opacity:1; text-shadow: none; }
+  .step:hover .step-title { color: #111111; }
+  .step:hover .step-desc { color: #888888; }
+
+  .step.active { background: #FFF8F0; }
+  .step.active .step-num { color: #E8732A; opacity:1; }
+  .step.active .step-title { color: #111111; }
+  .step.active .step-desc { color: #888888; }
+
+  .step-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: #E8732A;
+    opacity: 1;
+    line-height: 1;
+    margin-bottom: 10px;
+    transition: color 0.3s ease, opacity 0.3s ease;
+  }
+
+  .step-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 7px;
+    line-height: 1.3;
+    transition: color 0.3s ease;
+  }
+
+  .step-desc {
+    font-size: 11.5px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.5;
+    font-weight: 300;
+    transition: color 0.3s ease;
+  }
+
+  /* ── BONUS ── */
+  .bonus-bar {
+    background: var(--black);
+    border-radius: 12px;
+    padding: 22px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    opacity: 0;
+    animation: fadeUp 1.3s ease 0.25s forwards;
+  }
+
+  .bonus-left { flex: 1; }
+
+  .bonus-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 6px;
+  }
+
+  .bonus-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 4px;
+  }
+
+  .bonus-desc {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    font-weight: 300;
+  }
+
+  .bonus-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--orange);
+    letter-spacing: 1px;
+    white-space: nowrap;
+  }
+
+  /* ── ADDON ── */
+  .addon-row {
+    background: linear-gradient(135deg, #0a1628 0%, #0d2147 40%, #0a3060 70%, #0d1f3c 100%);
+    border: 1px solid rgba(80,140,255,0.15);
+    border-radius: 12px;
+    padding: 26px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    opacity: 0;
+    animation: fadeUp 1.3s ease 0.25s forwards;
+    position: relative;
+    overflow: hidden;
+    box-shadow: none;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  }
+
+  .addon-row:hover {
+    transform: translateY(-2px);
+    border-color: rgba(80,140,255,0.2);
+    box-shadow: none;
+  }
+
+  .addon-row:hover .addon-price {
+    text-shadow: 0 0 30px rgba(0,255,220,0.95), 0 0 60px rgba(0,220,190,0.7);
+  }
+
+  .addon-row:hover::before {
+    background: radial-gradient(ellipse at 80% 50%, rgba(0,255,210,0.18) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 0%, rgba(0,240,200,0.14) 0%, transparent 50%);
+  }
+
+  .addon-row:hover::after {
+    background: linear-gradient(90deg, transparent, rgba(0,255,220,0.75), transparent);
+  }
+
+  .addon-row::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 80% 50%, rgba(0,240,210,0.12) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 0%, rgba(0,220,190,0.08) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .addon-row::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,255,220,0.5), transparent);
+  }
+
+  .addon-left { flex: 1; position: relative; z-index: 1; }
+
+  .addon-tag {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: rgba(0,255,220,0.6);
+    margin-bottom: 5px;
+  }
+
+  .addon-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 4px;
+  }
+
+  .addon-desc {
+    font-size: 12px;
+    color: rgba(120,255,235,0.45);
+    font-weight: 300;
+  }
+
+  .addon-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: #ffffff;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 0 20px rgba(0,255,220,0.6), 0 0 40px rgba(0,200,180,0.4);
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    border-top: 1px solid #E8E8E8;
+    padding: 24px 60px;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-note {
+    font-size: 11px;
+    color: var(--gray-mid);
+    font-weight: 300;
+  }
+
+  .footer-rate {
+    font-size: 11px;
+    color: var(--gray-mid);
+    font-weight: 300;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Hide everything until JS fires */
+  .logo-row,
+  .hero-tag,
+  .hero-headline,
+  .hero-sub,
+  .section-label,
+  .process-steps,
+  .bonus-bar,
+  .addon-row {
+    opacity: 0;
+  }
+
+  /* scroll-triggered */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 1.2s ease, transform 1.2s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 640px) {
+    .hero { padding: 40px 24px 36px; }
+    .content { padding: 0 24px 60px; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .process-steps { grid-template-columns: 1fr 1fr; }
+    .footer { flex-direction: column; gap: 6px; padding: 20px 24px; }
+  }
+</style>
+</head>
+<body class="page-ready">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">Proposal · Erez</div>
+    <h1 class="hero-headline anim-headline">Listings that<br><span>stop the scroll</span><br>and convert.</h1>
+    <p class="hero-sub">A full Amazon listing design package — built to perform.</p>
+    <div style="margin-top:20px; padding-top:20px; border-top:1px solid rgba(255,255,255,0.08); opacity:0; animation:fadeUp 1s ease 0.6s forwards;">
+      <span style="font-size:11px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,0.3);">Listing Design Proposal</span>
+      <span style="color:rgba(232,115,42,0.5); margin:0 10px;">·</span>
+      <span style="font-size:11px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:rgba(255,255,255,0.3);">2026</span>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- PRICING -->
+  <div class="section-label reveal visible">
+    <div class="bar"></div>
+    <span>Pricing</span>
+  </div>
+
+  <div class="pricing-grid">
+    <!-- Single -->
+    <div class="card">
+      <div class="card-label">Single Product</div>
+      <div class="card-price"><sup>$</sup>1,931</div>
+      <div class="card-orig">&nbsp;</div>
+      <div class="card-divider"></div>
+      <div class="card-includes">Includes</div>
+      <ul class="card-features">
+        <li>Main Image — 5+ variations</li>
+        <li>Listing Images — 6–7<br><span style="color:#aaa;font-size:11px;">branding, product + AI lifestyle</span></li>
+        <li>EBC / A+ Content — 6–7 banners</li>
+      </ul>
+    </div>
+
+    <!-- Bundle -->
+    <div class="card featured">
+      <div class="card-label">2 Products — Bundle</div>
+      <div class="card-price"><sup>$</sup>3,057</div>
+      <div class="card-orig">Full price $3,862</div>
+      <div class="card-save">↓ You save $805</div>
+      <div class="card-divider"></div>
+      <div class="card-includes">Includes × 2</div>
+      <ul class="card-features">
+        <li>Main Image — 5+ variations</li>
+        <li>Listing Images — 6–7<br><span style="color:#aaa;font-size:11px;">branding, product + AI lifestyle</span></li>
+        <li>EBC / A+ Content — 6–7 banners</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- BONUS -->
+  <div class="section-label reveal">
+    <div class="bar"></div>
+    <span>Included Free</span>
+  </div>
+
+  <div class="bonus-bar reveal">
+    <div class="bonus-left">
+      <div class="bonus-tag">Bonus — No Extra Charge</div>
+      <div class="bonus-title">Variation Main Image</div>
+      <div class="bonus-desc">Main image for your product variation (e.g. double-pack) — fully designed, same quality</div>
+    </div>
+    <div class="bonus-price">FREE</div>
+  </div>
+
+  <!-- PROCESS -->
+  <div class="section-label reveal">
+    <div class="bar"></div>
+    <span>How It Works</span>
+  </div>
+
+  <div class="process-steps reveal">
+    <div class="step active">
+      <div class="step-num">01</div>
+      <div class="step-title">Discovery &amp; Strategy</div>
+      <div class="step-desc">Understanding your brand, competitors &amp; target audience</div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-title">Design &amp; Creation</div>
+      <div class="step-desc">Main images, listing visuals, AI lifestyle &amp; EBC banners</div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-title">Review &amp; Revisions</div>
+      <div class="step-desc">You review, we refine — until you're happy</div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-title">Final Delivery</div>
+      <div class="step-desc">All files organized and ready to upload</div>
+    </div>
+  </div>
+
+  <!-- OPTIONAL ADDON -->
+  <div class="section-label reveal">
+    <div class="bar"></div>
+    <span>Optional Add-On</span>
+  </div>
+
+  <div class="addon-row reveal">
+    <div class="addon-left">
+      <div class="addon-tag">Optional</div>
+      <div class="addon-title">Brand Story</div>
+      <div class="addon-desc">A compelling brand narrative that connects with your audience</div>
+    </div>
+    <div class="addon-price">$483</div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  
+  <div class="footer-rate">Prices in USD &nbsp;·&nbsp; Rate: 1 ILS = $0.3218</div>
+</div>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => observer.observe(r));
+</script>
+
+
+<!-- PORTFOLIO PAGE -->
+<div id="portfolio-trigger"></div>
+
+<!-- Black headline section -->
+<div style="background:#111111; padding:70px 60px 60px; position:relative; overflow:hidden;">
+  <div style="position:absolute; top:-60px; right:-60px; width:280px; height:280px; border-radius:50%; border:50px solid #E8732A; opacity:0.08;"></div>
+  <div style="position:absolute; bottom:-30px; left:20%; width:160px; height:160px; border-radius:50%; border:35px solid #E8732A; opacity:0.05;"></div>
+  <div style="max-width:1100px; margin:0 auto; position:relative; z-index:1;">
+    <div style="display:flex; align-items:center; gap:14px; margin-bottom:20px;">
+      <div style="width:32px; height:3px; background:#E8732A;"></div>
+      <span style="font-size:11px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#888;">Selected Work</span>
+    </div>
+    <h2 id="portfolio-h2" style="font-family:&#39;Bebas Neue&#39;,sans-serif; font-size:clamp(48px,7vw,76px); line-height:0.92; color:#ffffff; letter-spacing:1px; margin-bottom:18px; opacity:0; transform:translateY(20px); transition: opacity 1.2s ease 0.15s, transform 1.2s ease 0.15s;">Listings I've<br><span style="color:#E8732A;">Built.</span></h2>
+    <p id="portfolio-sub" style="font-size:14px; font-weight:300; color:rgba(255,255,255,0.4); max-width:400px; line-height:1.6; opacity:0; transform:translateY(20px); transition: opacity 1.2s ease 0.3s, transform 1.2s ease 0.3s;">Click any card to view the live Amazon listing — each one designed from scratch.</p>
+  </div>
+</div>
+
+<!-- Orange cards section -->
+<div style="background:#E8732A; padding:50px 60px 70px;">
+<div style="max-width:1100px; margin:0 auto;">
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;">
+    <a href="https://www.amazon.com/dp/B0DKXY9L6D" target="_blank" style="text-decoration:none;" class="port-card">
+      <div class="pcard">
+        <div class="pnum">01</div>
+        <div class="pcat">Kids &amp; Education</div>
+        <div class="ptitle">Multiplication Game for Kids</div>
+        <div class="plink">View listing →</div>
+      </div>
+    </a>
+
+    <a href="https://www.amazon.com/Rolling-Knife-Sharpener-NBHR-sharpener/dp/B0FJ2LQ2ZQ/" target="_blank" style="text-decoration:none;" class="port-card">
+      <div class="pcard">
+        <div class="pnum">02</div>
+        <div class="pcat">Kitchen</div>
+        <div class="ptitle">Rolling Knife Sharpener</div>
+        <div class="plink">View listing →</div>
+      </div>
+    </a>
+
+    <a href="https://a.co/d/7nTo2Bs" target="_blank" style="text-decoration:none;" class="port-card">
+      <div class="pcard">
+        <div class="pnum">03</div>
+        <div class="pcat">Pets</div>
+        <div class="ptitle">Cat Wall Shelves — LAMOOSHIK</div>
+        <div class="plink">View listing →</div>
+      </div>
+    </a>
+
+    <a href="https://www.amazon.com/dp/B0D31WJGQS" target="_blank" style="text-decoration:none;" class="port-card">
+      <div class="pcard">
+        <div class="pnum">04</div>
+        <div class="pcat">Health &amp; Beauty</div>
+        <div class="ptitle">Teeth Whitening — Trueocity</div>
+        <div class="plink">View listing →</div>
+      </div>
+    </a>
+
+    <a href="https://www.amazon.com/dp/B0D28S4N9F" target="_blank" style="text-decoration:none;" class="port-card">
+      <div class="pcard">
+        <div class="pnum">05</div>
+        <div class="pcat">Baby</div>
+        <div class="ptitle">Baby Wipe Warmer &amp; Night Light</div>
+        <div class="plink">View listing →</div>
+      </div>
+    </a>
+
+    <a href="https://www.amazon.com/Baby-Bath-Kneeler-Elbow-Rest/dp/B0DHXBV5TL" target="_blank" style="text-decoration:none;" class="port-card">
+      <div class="pcard">
+        <div class="pnum">06</div>
+        <div class="pcat">Baby</div>
+        <div class="ptitle">Baby Bath Kneeler &amp; Elbow Rest</div>
+        <div class="plink">View listing →</div>
+      </div>
+    </a>
+</div>
+</div>
+</div>
+
+<!-- Footer -->
+<div style="background:#111111; padding:22px 60px; display:flex; justify-content:flex-end; align-items:center;">
+  <span style="font-size:11px; color:#444; font-family:&#39;DM Sans&#39;,sans-serif; letter-spacing:1px;">Prices in USD &nbsp;·&nbsp; Rate: 1 ILS = $0.3218</span>
+</div>
+
+<style>
+.pcard {
+  background:#FFF8F0;
+  border-radius:10px;
+  padding:28px 22px 22px;
+  height:100%;
+  transition:transform 0.2s ease, box-shadow 0.2s ease;
+  cursor:pointer;
+  position:relative;
+  box-shadow:
+    6px 6px 0px 0px rgba(0,0,0,0.75),
+    0 8px 30px rgba(255,200,120,0.25),
+    0 0 0 1px rgba(255,255,255,0.6);
+}
+.port-card:hover .pcard {
+  transform:translateY(-4px);
+  box-shadow:
+    8px 8px 0px 0px rgba(0,0,0,0.75),
+    0 12px 40px rgba(255,200,120,0.35),
+    0 0 0 1px rgba(255,255,255,0.7);
+}
+.port-card:hover .plink { letter-spacing:2px; }
+.pnum {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:46px;
+  line-height:1;
+  color:#E8732A;
+  margin-bottom:14px;
+}
+.pcat {
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:2.5px;
+  text-transform:uppercase;
+  color:#BBBBBB;
+  margin-bottom:7px;
+}
+.ptitle {
+  font-family:'DM Serif Display',serif;
+  font-size:15px;
+  color:#1a1008;
+  line-height:1.35;
+  margin-bottom:18px;
+  min-height:40px;
+}
+.plink {
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:1.5px;
+  color:#E8732A;
+  text-transform:uppercase;
+  transition:letter-spacing 0.2s ease;
+}
+@media(max-width:640px){
+  /* portfolio grid: 2 cols on mobile */
+  div[style*="grid-template-columns:1fr 1fr 1fr"] {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+  }
+  /* tighten padding on orange section */
+  div[style*="padding:50px 60px 70px"] { padding: 32px 20px 50px !important; }
+  div[style*="padding:70px 60px 60px"] { padding: 44px 20px 40px !important; }
+
+  .pnum { font-size: 34px !important; margin-bottom: 8px !important; }
+  .ptitle { font-size: 13px !important; min-height: 36px !important; margin-bottom: 12px !important; }
+  .pcat { font-size: 8px !important; }
+  .plink { font-size: 9px !important; }
+  .pcard { padding: 18px 14px 14px !important; }
+
+  /* quote page cards */
+  .pricing-grid { grid-template-columns: 1fr !important; }
+  .hero { padding: 40px 20px 36px !important; }
+  .content { padding: 0 20px 60px !important; }
+  .footer { flex-direction: column; gap: 6px; padding: 20px !important; text-align:center; }
+  .process-steps { grid-template-columns: 1fr 1fr !important; }
+  .bonus-bar { flex-direction: column; gap: 10px !important; }
+  .addon-row { flex-direction: column; gap: 8px !important; }
+  .bonus-price, .addon-price { font-size: 26px !important; }
+}
+
+@media(max-width:400px){
+  div[style*="grid-template-columns:1fr 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+</style>
+
+<!-- CTA SECTION -->
+<div id="cta-trigger"></div>
+<div style="background:#111111; padding:70px 60px; position:relative; overflow:hidden;">
+  <div style="position:absolute; top:-80px; right:-80px; width:300px; height:300px; border-radius:50%; border:50px solid #E8732A; opacity:0.05;"></div>
+  <div style="max-width:1100px; margin:0 auto; position:relative; z-index:1;">
+
+    <div style="display:flex; align-items:center; gap:14px; margin-bottom:20px;">
+      <div style="width:32px; height:3px; background:#E8732A;"></div>
+      <span style="font-size:11px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:#888;">Get in Touch</span>
+    </div>
+
+    <h2 id="cta-h2" style="font-family:&#39;Bebas Neue&#39;,sans-serif; font-size:clamp(42px,6vw,68px); line-height:0.95; color:#ffffff; margin-bottom:12px; opacity:0; transform:translateY(20px); transition: opacity 1.2s ease, transform 1.2s ease;">Ready to <span style="color:#E8732A;">get started?</span></h2>
+    <p id="cta-sub" style="font-size:14px; font-weight:300; color:rgba(255,255,255,0.35); margin-bottom:40px; opacity:0; transform:translateY(20px); transition: opacity 1.2s ease 0.15s, transform 1.2s ease 0.15s;">Reach out directly — no forms, no waiting.</p>
+
+    <div style="display:flex; gap:16px; flex-wrap:wrap;">
+
+      <!-- WhatsApp -->
+      <a href="https://wa.me/972547615678" target="_blank" style="text-decoration:none;">
+        <div class="cta-btn cta-wa">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"></path><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.532 5.862L.057 23.998l6.305-1.654A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.869 9.869 0 01-5.031-1.378l-.361-.214-3.741.981.998-3.648-.235-.374A9.86 9.86 0 012.118 12C2.118 6.545 6.545 2.118 12 2.118c5.454 0 9.882 4.427 9.882 9.882 0 5.454-4.428 9.882-9.882 9.882z"></path></svg>
+          <span>WhatsApp</span>
+        </div>
+      </a>
+
+      <!-- Call -->
+      <a href="tel:+972547615678" style="text-decoration:none;">
+        <div class="cta-btn cta-call">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"></path></svg>
+          <span>Call Me</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</div>
+
+<style>
+.cta-btn {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:16px 28px;
+  border-radius:8px;
+  font-family:'DM Sans',sans-serif;
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:0.5px;
+  cursor:pointer;
+  transition:transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 4px 4px 0px 0px rgba(0,0,0,0.6);
+}
+.cta-btn:hover {
+  transform:translateY(-3px);
+  box-shadow: 6px 6px 0px 0px rgba(0,0,0,0.6);
+}
+.cta-wa {
+  background:#25D366;
+  color:#ffffff;
+}
+.cta-call {
+  background:#E8732A;
+  color:#ffffff;
+}
+@media(max-width:640px){
+  div[style*="padding:70px 60px"] { padding:50px 24px !important; }
+  .cta-btn { padding:14px 22px !important; }
+}
+</style>
+
+
+<script>
+  // Fire animations only after page fully loads
+  window.addEventListener('load', function() {
+    document.body.classList.add('page-ready');
+  });
+</script>
+
+<script>
+  const steps = document.querySelectorAll('.step');
+  if (steps.length) {
+    steps[0].classList.add('active');
+    steps.forEach((step, i) => {
+      step.addEventListener('mouseenter', () => {
+        steps.forEach(s => s.classList.remove('active'));
+        if (i !== 0) steps[0].classList.remove('active');
+        step.classList.add('active');
+      });
+      step.addEventListener('mouseleave', () => {
+        step.classList.remove('active');
+        const anyHovered = [...steps].some(s => s.matches(':hover'));
+        if (!anyHovered) steps[0].classList.add('active');
+      });
+    });
+  }
+</script>
+
+<script>
+function revealOnScroll(id, delay) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        setTimeout(function() {
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        }, delay || 0);
+        obs.unobserve(el);
+      }
+    });
+  }, { threshold: 0.2 });
+  obs.observe(el);
+}
+revealOnScroll('portfolio-label', 0);
+revealOnScroll('portfolio-h2', 150);
+revealOnScroll('portfolio-sub', 300);
+revealOnScroll('cta-h2', 0);
+revealOnScroll('cta-sub', 150);
+</script>
+</body></html>
