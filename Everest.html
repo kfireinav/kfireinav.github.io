@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Everest Media Solutions — Professional Network Solutions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,300;0,400;0,600;0,700;0,800;0,900;1,700&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   BRAND TOKENS — Everest Media Solutions
+   Deep blue bg · White nav · Orange CTA
+═══════════════════════════════════════════ */
+:root {
+  --blue-deep:    #0A1628;
+  --blue-mid:     #0D1E35;
+  --blue-card:    #0F2340;
+  --blue-border:  #1A3357;
+  --orange:       #F07020;
+  --orange-dark:  #C75A10;
+  --white:        #FFFFFF;
+  --off-white:    #E2EBF5;
+  --muted:        #7B9CC4;
+  --font-d: 'Barlow Condensed', sans-serif;
+  --font-b: 'Barlow', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--blue-deep); color: var(--off-white); font-family: var(--font-b); overflow-x: hidden; }
+img { display: block; max-width: 100%; }
+a { text-decoration: none; color: inherit; }
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999; opacity: 0.022;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* Scroll reveal */
+.reveal { opacity: 0; transform: translateY(40px); transition: opacity .75s ease, transform .75s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+.rd1{transition-delay:.08s}.rd2{transition-delay:.16s}.rd3{transition-delay:.24s}
+.rd4{transition-delay:.32s}.rd5{transition-delay:.40s}.rd6{transition-delay:.48s}
+
+/* ══ NAV — white bar ══ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: 70px; background: #fff;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 5%;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.12);
+}
+.nav-logo {
+  display: flex; align-items: center; gap: .6rem;
+}
+.nav-logo-box {
+  width: 42px; height: 42px; background: var(--blue-deep);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.nav-logo-box svg { width: 22px; height: 22px; }
+.nav-brand {
+  font-family: var(--font-d); font-weight: 900; font-size: 1.15rem;
+  text-transform: uppercase; letter-spacing: .04em; color: var(--blue-deep); line-height: 1.1;
+}
+.nav-brand small { display: block; font-weight: 500; font-size: .58rem; letter-spacing: .22em; color: #7B9CC4; }
+.nav-links { display: flex; gap: 2.5rem; list-style: none; }
+.nav-links a {
+  font-family: var(--font-d); font-weight: 600; font-size: .84rem;
+  letter-spacing: .1em; text-transform: uppercase; color: var(--blue-deep); opacity: .65;
+  transition: opacity .2s, color .2s;
+}
+.nav-links a:hover { opacity: 1; color: var(--orange); }
+.nav-btn {
+  background: var(--orange); color: #fff;
+  font-family: var(--font-d); font-weight: 700; font-size: .82rem;
+  letter-spacing: .12em; text-transform: uppercase;
+  padding: .65rem 1.6rem; display: inline-block;
+  transition: background .2s, transform .15s;
+}
+.nav-btn:hover { background: var(--orange-dark); transform: translateY(-1px); }
+
+/* ══ HERO ══ */
+#hero {
+  min-height: 100vh; padding: 70px 0 0;
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(10,22,40,.75) 0%, rgba(10,22,40,.5) 40%, rgba(10,22,40,.92) 100%),
+    url('https://everestmediasolutions.com/cdn/shop/files/patch-panel_da8f8ea6-db99-413a-b6f9-b55d409853b3.jpg?v=1749384763&width=1920') center/cover no-repeat;
+}
+.hero-tint {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 65% at 50% 55%, rgba(14,45,90,.55) 0%, transparent 70%);
+}
+.hero-lines {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+.hero-badge {
+  position: absolute; top: 88px; left: 50%; transform: translateX(-50%);
+  background: rgba(10,22,40,.78); backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.14);
+  padding: .45rem 1.3rem; z-index: 2;
+  display: flex; align-items: center; gap: .6rem; white-space: nowrap;
+}
+.hero-badge .s { color: var(--orange); font-size: 1rem; }
+.hero-badge span { font-family: var(--font-d); font-weight: 700; font-size: .8rem; letter-spacing: .14em; color: #fff; }
+.hero-main {
+  position: relative; z-index: 2; flex: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+  text-align: center; padding: 0 5% 70px;
+}
+.hero-h1 {
+  font-family: var(--font-d); font-weight: 900;
+  font-size: clamp(3.4rem, 9vw, 8rem);
+  text-transform: uppercase; line-height: .93; letter-spacing: -.01em;
+  color: #fff; margin-bottom: 1.4rem;
+  text-shadow: 0 4px 40px rgba(0,0,0,.65);
+}
+.hero-h1 em { font-style: normal; color: var(--orange); display: block; }
+.hero-sub {
+  font-size: 1.1rem; font-weight: 300; color: rgba(255,255,255,.75);
+  max-width: 560px; margin: 0 auto 2.4rem; line-height: 1.75;
+}
+.hero-acts { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 3.5rem; }
+.btn-orange {
+  background: var(--orange); color: #fff;
+  font-family: var(--font-d); font-weight: 700; font-size: .95rem;
+  letter-spacing: .12em; text-transform: uppercase;
+  padding: 1.05rem 2.5rem; display: inline-block;
+  transition: background .2s, transform .15s, box-shadow .2s;
+  box-shadow: 0 8px 36px rgba(240,112,32,.45);
+}
+.btn-orange:hover { background: var(--orange-dark); transform: translateY(-3px); box-shadow: 0 14px 48px rgba(240,112,32,.55); }
+.btn-ghost {
+  background: transparent; color: #fff;
+  font-family: var(--font-d); font-weight: 700; font-size: .95rem;
+  letter-spacing: .12em; text-transform: uppercase;
+  padding: 1.05rem 2.5rem; display: inline-block;
+  border: 1.5px solid rgba(255,255,255,.4);
+  transition: border-color .2s, color .2s;
+}
+.btn-ghost:hover { border-color: var(--orange); color: var(--orange); }
+.hero-strip {
+  position: relative; z-index: 2;
+  background: rgba(240,112,32,.93); display: flex; align-items: stretch;
+}
+.h-stat {
+  flex: 1; padding: 1.4rem 1.5rem; text-align: center;
+  border-right: 1px solid rgba(255,255,255,.22);
+  display: flex; flex-direction: column; align-items: center; gap: .3rem;
+}
+.h-stat:last-child { border-right: none; }
+.h-stat-n { font-family: var(--font-d); font-weight: 900; font-size: 2rem; color: #fff; line-height: 1; }
+.h-stat-l { font-family: var(--font-d); font-weight: 600; font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.8); }
+
+/* ══ MARQUEE ══ */
+.marquee-bar { background: var(--blue-mid); border-top: 1px solid var(--blue-border); border-bottom: 1px solid var(--blue-border); overflow: hidden; }
+.m-track { display: flex; align-items: center; animation: mq 28s linear infinite; white-space: nowrap; }
+.m-track:hover { animation-play-state: paused; }
+.m-item {
+  flex-shrink: 0; font-family: var(--font-d); font-weight: 700;
+  font-size: .78rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--muted); padding: .95rem 2.5rem;
+  display: flex; align-items: center; gap: .75rem;
+}
+.m-dot { width: 5px; height: 5px; background: var(--orange); border-radius: 50%; flex-shrink: 0; }
+@keyframes mq { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+/* ══ SECTION COMMONS ══ */
+section { padding: 110px 5%; }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: .7rem;
+  font-family: var(--font-d); font-weight: 700; font-size: .73rem;
+  letter-spacing: .24em; text-transform: uppercase; color: var(--orange); margin-bottom: .9rem;
+}
+.eyebrow::before { content:''; display:block; width:26px; height:2px; background:var(--orange); }
+.sec-title {
+  font-family: var(--font-d); font-weight: 900;
+  font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+  text-transform: uppercase; color: #fff; line-height: 1.0; margin-bottom: .7rem;
+}
+.sec-sub { font-size: 1rem; font-weight: 300; color: var(--muted); line-height: 1.75; max-width: 520px; }
+.sec-hdr { display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; flex-wrap: wrap; margin-bottom: 3.5rem; }
+
+/* ══ PRODUCT GRID ══ */
+#catalogue { background: var(--blue-mid); }
+.pgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 2px; }
+.pc {
+  background: var(--blue-card); border: 1px solid var(--blue-border);
+  position: relative; overflow: hidden;
+  transition: border-color .35s, transform .35s;
+  box-shadow: 0 6px 32px rgba(0,0,0,.45);
+}
+.pc::before {
+  content:''; position:absolute; inset:0;
+  background: linear-gradient(135deg, rgba(240,112,32,.07) 0%, transparent 55%);
+  opacity:0; transition:opacity .35s; pointer-events:none; z-index:1;
+}
+.pc:hover { border-color: rgba(240,112,32,.5); transform: translateY(-6px); box-shadow: 0 20px 60px rgba(0,0,0,.65), 0 0 0 1px rgba(240,112,32,.18); }
+.pc:hover::before { opacity:1; }
+.pc-img { background: #071020; aspect-ratio: 1/1; overflow: hidden; position: relative; }
+.pc-img img { width:100%; height:100%; object-fit:contain; padding:1.5rem; transition:transform .55s ease; }
+.pc:hover .pc-img img { transform:scale(1.07); }
+.pc-badge {
+  position:absolute; top:14px; left:14px; z-index:2;
+  background: var(--orange); color:#fff;
+  font-family: var(--font-d); font-weight:700; font-size:.62rem;
+  letter-spacing:.14em; text-transform:uppercase; padding:.28rem .72rem;
+}
+.pc-body { padding:1.6rem; border-top:1px solid var(--blue-border); position:relative; z-index:2; }
+.pc-cat { font-family:var(--font-d); font-weight:700; font-size:.68rem; letter-spacing:.2em; text-transform:uppercase; color:var(--orange); margin-bottom:.45rem; }
+.pc-name { font-family:var(--font-d); font-weight:900; font-size:1.2rem; text-transform:uppercase; color:#fff; line-height:1.15; margin-bottom:.65rem; }
+.pc-desc { font-size:.82rem; color:var(--muted); line-height:1.65; margin-bottom:1.3rem; }
+.pc-foot { display:flex; align-items:center; justify-content:space-between; gap:.8rem; }
+.pc-price { font-family:var(--font-d); font-weight:900; font-size:1.45rem; color:#fff; }
+.pc-price small { font-size:.76rem; font-weight:400; color:var(--muted); }
+.pc-btn {
+  background:transparent; color:var(--orange);
+  font-family:var(--font-d); font-weight:700; font-size:.74rem;
+  letter-spacing:.14em; text-transform:uppercase;
+  padding:.65rem 1.3rem; border:1.5px solid var(--orange);
+  transition:background .2s, color .2s; white-space:nowrap; display:inline-block;
+}
+.pc-btn:hover { background:var(--orange); color:#fff; }
+
+/* ══ PROOF BAR ══ */
+.proof-bar {
+  background: var(--blue-deep); border-top:1px solid var(--blue-border); border-bottom:1px solid var(--blue-border);
+  display: flex; align-items: stretch;
+}
+.pb-item {
+  flex:1; padding:2rem 1.5rem; text-align:center;
+  border-right:1px solid var(--blue-border);
+  display:flex; flex-direction:column; align-items:center; gap:.4rem;
+}
+.pb-item:last-child { border-right:none; }
+.pb-n { font-family:var(--font-d); font-weight:900; font-size:2.6rem; color:#fff; line-height:1; }
+.pb-n span { color:var(--orange); }
+.pb-l { font-family:var(--font-d); font-weight:600; font-size:.72rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); }
+
+/* ══ CATEGORIES ══ */
+#categories { background: var(--blue-mid); padding: 80px 5%; }
+.cats { display:grid; grid-template-columns:repeat(5,1fr); gap:2px; margin-top:3rem; }
+.cat {
+  background:var(--blue-card); border:1px solid var(--blue-border);
+  padding:2rem 1.2rem; text-align:center;
+  display:flex; flex-direction:column; align-items:center; gap:1rem;
+  transition:border-color .3s, transform .3s; cursor:pointer;
+}
+.cat:hover { border-color:var(--orange); transform:translateY(-4px); }
+.cat-ico {
+  width:56px; height:56px;
+  background:rgba(240,112,32,.1); border:1px solid rgba(240,112,32,.25);
+  display:flex; align-items:center; justify-content:center;
+}
+.cat-ico svg { width:26px; height:26px; fill:none; stroke:var(--orange); stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+.cat-n { font-family:var(--font-d); font-weight:800; font-size:.9rem; text-transform:uppercase; letter-spacing:.1em; color:#fff; line-height:1.2; }
+.cat-d { font-size:.74rem; color:var(--muted); line-height:1.5; }
+
+/* ══ STORY — split ══ */
+#story { background:var(--blue-deep); padding:0; display:grid; grid-template-columns:1fr 1fr; min-height:640px; }
+.story-img { position:relative; overflow:hidden; }
+.story-img img { width:100%; height:100%; object-fit:cover; display:block; }
+.story-img::after { content:''; position:absolute; inset:0; background:linear-gradient(to right, transparent 55%, var(--blue-deep) 100%); }
+.story-img::before { content:''; position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--orange); z-index:2; }
+.story-copy { padding:90px 7% 90px 5%; display:flex; flex-direction:column; justify-content:center; }
+.story-p { font-size:1rem; font-weight:300; color:var(--muted); line-height:1.85; margin-bottom:1.1rem; }
+.story-p strong { color:var(--off-white); font-weight:500; }
+.story-fgrid { display:grid; grid-template-columns:1fr 1fr; gap:1px; margin-top:2.4rem; background:var(--blue-border); border:1px solid var(--blue-border); }
+.sfact { background:var(--blue-card); padding:1.4rem 1.2rem; }
+.sfact-n { font-family:var(--font-d); font-weight:900; font-size:2rem; color:var(--orange); line-height:1; margin-bottom:.25rem; }
+.sfact-l { font-family:var(--font-d); font-weight:700; font-size:.7rem; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); }
+
+/* ══ TESTIMONIALS ══ */
+#testimonials { background:var(--blue-deep); }
+.t-intro { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:3rem; gap:2rem; flex-wrap:wrap; }
+.t-score { display:flex; flex-direction:column; align-items:flex-end; gap:.3rem; }
+.t-score-n { font-family:var(--font-d); font-weight:900; font-size:4rem; color:var(--orange); line-height:1; }
+.t-score-s { color:var(--orange); font-size:1.3rem; letter-spacing:.08em; }
+.t-score-l { font-size:.74rem; color:var(--muted); letter-spacing:.08em; }
+.tgrid { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; }
+.tc {
+  background:var(--blue-card); border:1px solid var(--blue-border); padding:2rem;
+  transition:border-color .3s;
+}
+.tc:hover { border-color:rgba(240,112,32,.3); }
+.tc-s { color:var(--orange); font-size:.88rem; margin-bottom:.9rem; letter-spacing:.1em; }
+.tc-q {
+  font-size:.88rem; color:var(--off-white); line-height:1.75; font-style:italic;
+  margin-bottom:1.5rem; position:relative; padding-left:1.2rem;
+}
+.tc-q::before {
+  content:'\201C'; position:absolute; left:0; top:-.2rem;
+  font-size:2.5rem; color:var(--orange); opacity:.35; line-height:1;
+  font-family:Georgia,serif; font-style:normal;
+}
+.tc-auth { display:flex; align-items:center; gap:.8rem; }
+.tc-av { width:44px; height:44px; border-radius:50%; overflow:hidden; border:2px solid var(--blue-border); flex-shrink:0; }
+.tc-av img { width:100%; height:100%; object-fit:cover; }
+.tc-name { font-family:var(--font-d); font-weight:800; font-size:.94rem; color:#fff; text-transform:uppercase; }
+.tc-role { font-size:.71rem; color:var(--muted); letter-spacing:.06em; margin-top:.14rem; }
+
+/* ══ CTA ══ */
+#cta {
+  position:relative; overflow:hidden; padding:130px 5%; text-align:center;
+  background:
+    linear-gradient(rgba(10,22,40,.85), rgba(10,22,40,.92)),
+    url('https://everestmediasolutions.com/cdn/shop/files/keystones-2.png?v=1738438528&width=1920') center/cover no-repeat;
+}
+#cta::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 60% 50% at 50% 50%, rgba(240,112,32,.13) 0%, transparent 70%); }
+.cta-inner { position:relative; z-index:1; max-width:700px; margin:0 auto; }
+.cta-h {
+  font-family:var(--font-d); font-weight:900;
+  font-size:clamp(2.8rem, 6vw, 5.5rem);
+  text-transform:uppercase; line-height:.95; color:#fff; margin-bottom:1.3rem;
+  text-shadow:0 4px 32px rgba(0,0,0,.5);
+}
+.cta-h em { font-style:normal; color:var(--orange); }
+.cta-sub { font-size:1.05rem; font-weight:300; color:rgba(255,255,255,.7); margin-bottom:2.8rem; line-height:1.75; }
+.cta-acts { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; }
+.btn-wa {
+  display:inline-flex; align-items:center; gap:.75rem;
+  background:#25D366; color:#fff;
+  font-family:var(--font-d); font-weight:700; font-size:.92rem;
+  letter-spacing:.1em; text-transform:uppercase;
+  padding:1.05rem 2.2rem;
+  transition:background .2s, transform .15s;
+  box-shadow:0 8px 28px rgba(37,211,102,.3);
+}
+.btn-wa:hover { background:#1ebe5e; transform:translateY(-2px); }
+.btn-wa svg { width:20px; height:20px; fill:#fff; flex-shrink:0; }
+
+/* ══ FOOTER ══ */
+footer { background:#060E1A; border-top:1px solid var(--blue-border); padding:3.5rem 5% 2rem; }
+.ft { display:flex; align-items:flex-start; justify-content:space-between; gap:3rem; flex-wrap:wrap; padding-bottom:2.5rem; border-bottom:1px solid var(--blue-border); margin-bottom:2rem; }
+.ft-brand { max-width:300px; }
+.ft-logo { font-family:var(--font-d); font-weight:900; font-size:1.4rem; text-transform:uppercase; letter-spacing:.06em; color:#fff; margin-bottom:.75rem; }
+.ft-logo span { color:var(--orange); }
+.ft-tag { font-size:.84rem; color:var(--muted); line-height:1.65; }
+.ft-nav h4 { font-family:var(--font-d); font-weight:800; font-size:.73rem; letter-spacing:.2em; text-transform:uppercase; color:#fff; margin-bottom:.9rem; }
+.ft-nav ul { list-style:none; display:flex; flex-direction:column; gap:.55rem; }
+.ft-nav a { font-size:.81rem; color:var(--muted); transition:color .2s; }
+.ft-nav a:hover { color:var(--orange); }
+.fb { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; }
+.fc { font-size:.73rem; color:var(--muted); opacity:.6; }
+.fa { display:flex; align-items:center; gap:.5rem; font-family:var(--font-d); font-weight:600; font-size:.71rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+.ab { background:var(--orange); color:#fff; font-family:var(--font-d); font-weight:700; font-size:.62rem; padding:.2rem .55rem; letter-spacing:.1em; }
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:1024px){
+  .cats{grid-template-columns:repeat(3,1fr)}
+  #story{grid-template-columns:1fr}
+  .story-img{min-height:380px}
+  .story-img::after{background:linear-gradient(to top,var(--blue-deep) 0%,transparent 60%)}
+  .tgrid{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  nav .nav-links{display:none}
+  .hero-strip{flex-wrap:wrap}
+  .h-stat{flex:0 0 50%}
+  .h-stat:nth-child(2){border-right:none}
+  .pgrid{grid-template-columns:1fr 1fr}
+  .cats{grid-template-columns:repeat(2,1fr)}
+  .proof-bar{flex-wrap:wrap}
+  .pb-item{flex:0 0 50%;border-bottom:1px solid var(--blue-border)}
+  .sec-hdr{flex-direction:column;align-items:flex-start}
+  .t-intro{flex-direction:column}
+  .t-score{align-items:flex-start}
+  .ft{flex-direction:column}
+}
+@media(max-width:480px){
+  .pgrid{grid-template-columns:1fr}
+  .cats{grid-template-columns:1fr 1fr}
+  .story-fgrid{grid-template-columns:1fr 1fr}
+  .cta-acts{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="mainnav">
+  <div class="nav-logo">
+    <div class="nav-logo-box">
+      <!-- EMS-style stacked layers icon -->
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L3 7l9 5 9-5-9-5z" fill="#F07020"/>
+        <path d="M3 12l9 5 9-5" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M3 17l9 5 9-5" stroke="#fff" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
+      </svg>
+    </div>
+    <div class="nav-brand">Everest<br><small>Media Solutions</small></div>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#catalogue">Products</a></li>
+    <li><a href="#categories">Categories</a></li>
+    <li><a href="#story">About</a></li>
+    <li><a href="#testimonials">Reviews</a></li>
+  </ul>
+  <a href="https://everestmediasolutions.com/collections/all" target="_blank" class="nav-btn">Shop Now</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-tint"></div>
+  <div class="hero-lines"></div>
+  <div class="hero-badge reveal">
+    <span class="s">★</span>
+    <span>5.00 from 3,000+ Amazon Reviews</span>
+  </div>
+  <div class="hero-main">
+    <h1 class="hero-h1 reveal">
+      Check Out Our
+      <em>Ultra-Thin</em>
+      Patch Cables
+    </h1>
+    <p class="hero-sub reveal rd2">Fast, reliable, and built to last. Get seamless connectivity with cables designed for any setup — from home labs to enterprise data centers.</p>
+    <div class="hero-acts reveal rd3">
+      <a href="https://everestmediasolutions.com/collections/all" target="_blank" class="btn-orange">Shop Now</a>
+      <a href="#catalogue" class="btn-ghost">View Catalogue</a>
+    </div>
+  </div>
+  <div class="hero-strip">
+    <div class="h-stat reveal rd1"><div class="h-stat-n">10 Gbps</div><div class="h-stat-l">Cat6A Speed</div></div>
+    <div class="h-stat reveal rd2"><div class="h-stat-n">5.00 ★</div><div class="h-stat-l">Average Rating</div></div>
+    <div class="h-stat reveal rd3"><div class="h-stat-n">3,000+</div><div class="h-stat-l">Verified Reviews</div></div>
+    <div class="h-stat reveal rd4"><div class="h-stat-n">100%</div><div class="h-stat-l">Pure Bare Copper</div></div>
+    <div class="h-stat reveal rd5"><div class="h-stat-n">550 MHz</div><div class="h-stat-l">Bandwidth</div></div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-bar">
+  <div class="m-track">
+    <span class="m-item"><span class="m-dot"></span>Cat5e · Cat6 · Cat6A Certified</span>
+    <span class="m-item"><span class="m-dot"></span>Fast, Reliable Shipping by Amazon</span>
+    <span class="m-item"><span class="m-dot"></span>50µm Gold-Plated Contacts</span>
+    <span class="m-item"><span class="m-dot"></span>Professional-Grade Termination Tools</span>
+    <span class="m-item"><span class="m-dot"></span>Dealer Bulk Pricing Available</span>
+    <span class="m-item"><span class="m-dot"></span>30-Day Return Policy</span>
+    <span class="m-item"><span class="m-dot"></span>Trusted by IT Professionals Nationwide</span>
+    <span class="m-item"><span class="m-dot"></span>Ultra-Slim 3mm Patch Cable Design</span>
+    <span class="m-item"><span class="m-dot"></span>Cat5e · Cat6 · Cat6A Certified</span>
+    <span class="m-item"><span class="m-dot"></span>Fast, Reliable Shipping by Amazon</span>
+    <span class="m-item"><span class="m-dot"></span>50µm Gold-Plated Contacts</span>
+    <span class="m-item"><span class="m-dot"></span>Professional-Grade Termination Tools</span>
+    <span class="m-item"><span class="m-dot"></span>Dealer Bulk Pricing Available</span>
+    <span class="m-item"><span class="m-dot"></span>30-Day Return Policy</span>
+    <span class="m-item"><span class="m-dot"></span>Trusted by IT Professionals Nationwide</span>
+    <span class="m-item"><span class="m-dot"></span>Ultra-Slim 3mm Patch Cable Design</span>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<section id="catalogue">
+  <div class="sec-hdr reveal">
+    <div>
+      <div class="eyebrow">Product Catalogue</div>
+      <h2 class="sec-title">Top-Selling<br>Network Essentials</h2>
+    </div>
+    <p class="sec-sub">Trusted by IT pros, cabling contractors, and data center engineers. Every product is field-tested, Amazon-fulfilled, and backed by a 5-star reputation.</p>
+  </div>
+  <div class="pgrid">
+
+    <div class="pc reveal rd1">
+      <div class="pc-img"><img src="https://everestmediasolutions.com/cdn/shop/files/619AgIKVtRL.jpg?v=1738703112&width=600" alt="24 Port Keystone Patch Panel" loading="lazy"><span class="pc-badge">Best Seller</span></div>
+      <div class="pc-body">
+        <div class="pc-cat">Patch Panels</div>
+        <div class="pc-name">24 Port Keystone Patch Panel</div>
+        <p class="pc-desc">Modular design with removable 6-port inserts. Labeled ports, durable steel frame — built for clean cable management and fast swaps in professional racks.</p>
+        <div class="pc-foot"><div class="pc-price">$29.95 <small>– $99.95</small></div><a href="https://everestmediasolutions.com/products/everest-media-12-port-keystone-patch-panel-1-pack-removable-6-port-inserts-with-89d-wall-mount-bracket-removable-inserts-vertical-horizontal-installation-keystone-patch-panel-12-port-copy" target="_blank" class="pc-btn">View Product</a></div>
+      </div>
+    </div>
+
+    <div class="pc reveal rd2">
+      <div class="pc-img"><img src="https://everestmediasolutions.com/cdn/shop/files/71oUK2NlMaL.jpg?v=1738421202&width=600" alt="Ultra-Slim Cat6A Patch Cable" loading="lazy"><span class="pc-badge">10 Gbps</span></div>
+      <div class="pc-body">
+        <div class="pc-cat">Patch Cables</div>
+        <div class="pc-name">Ultra-Slim Cat6A Ethernet Patch Cable</div>
+        <p class="pc-desc">100% pure bare copper, 3mm ultra-slim, 550MHz bandwidth. Bendable strain relief for tight high-density setups. Available in 9 colors &amp; 10 lengths.</p>
+        <div class="pc-foot"><div class="pc-price">$15.65 <small>– $30.95</small></div><a href="https://everestmediasolutions.com/products/everest-ultra-slim-cat6a-ethernet-patch-cable-0-5ft-10-pack-black-0-5ft-cat6-patch-cables-100-pure-bare-copper-10gb-patch-cord-bendable-thin-flexible-cat-6a-ethernet-cable" target="_blank" class="pc-btn">View Product</a></div>
+      </div>
+    </div>
+
+    <div class="pc reveal rd3">
+      <div class="pc-img"><img src="https://everestmediasolutions.com/cdn/shop/files/61u7nuP4dDL.jpg?v=1751201666&width=600" alt="90° Cat6 Keystone Jacks" loading="lazy"><span class="pc-badge">Top Rated</span></div>
+      <div class="pc-body">
+        <div class="pc-cat">Keystone Jacks</div>
+        <div class="pc-name">90° Angled RJ45 Cat6 Keystone Jacks</div>
+        <p class="pc-desc">Snap-in keystone design for high-density racks. Color-coded T568A/B wiring, secure fit, and fast terminations that hold tight and label clean.</p>
+        <div class="pc-foot"><div class="pc-price">$16.95 <small>– $59.95</small></div><a href="https://everestmediasolutions.com/products/23-6-90-angled-rj45-cat5e-keystone-jacks-cat6-test" target="_blank" class="pc-btn">View Product</a></div>
+      </div>
+    </div>
+
+    <div class="pc reveal rd1">
+      <div class="pc-img"><img src="https://everestmediasolutions.com/cdn/shop/files/71Fz8vBVgBL.jpg?v=1751204988&width=600" alt="45° Cat6 Keystone Jacks" loading="lazy"></div>
+      <div class="pc-body">
+        <div class="pc-cat">Keystone Jacks</div>
+        <div class="pc-name">45° Angled RJ45 Cat6 Keystone Jacks</div>
+        <p class="pc-desc">The 45° angle simplifies wire positioning, reduces cable bending stress, and keeps tight rack spaces organized. Meets full Cat6 gigabit specs.</p>
+        <div class="pc-foot"><div class="pc-price">$16.95 <small>– $59.95</small></div><a href="https://everestmediasolutions.com/products/45-angled-rj45-cat5e-keystone-jacks-cat6" target="_blank" class="pc-btn">View Product</a></div>
+      </div>
+    </div>
+
+    <div class="pc reveal rd2">
+      <div class="pc-img"><img src="https://everestmediasolutions.com/cdn/shop/files/61PftU228BL.jpg?v=1738348859&width=600" alt="45Term Tool" loading="lazy"><span class="pc-badge">Pro Tool</span></div>
+      <div class="pc-body">
+        <div class="pc-cat">Termination Tools</div>
+        <div class="pc-name">45Term — 45° Speed Termination Tool</div>
+        <p class="pc-desc">Cuts installation time dramatically. All wires terminated in a single motion with Everest 45° angled jacks — clean, fast, repeatable results.</p>
+        <div class="pc-foot"><div class="pc-price">$41.99</div><a href="https://everestmediasolutions.com/products/everest-45term-45-angled-speed-termination-keystone-tool-time-saver-network-punch-down-tool-to-be-used-only-with-everest-45-angled-rj45-cat5e-cat6a-and-cat6-keystone-jacks-b0bchjpry4" target="_blank" class="pc-btn">View Product</a></div>
+      </div>
+    </div>
+
+    <div class="pc reveal rd3">
+      <div class="pc-img"><img src="https://everestmediasolutions.com/cdn/shop/files/61poLlPKfCL.jpg?v=1738348054&width=600" alt="easyJACK Tool" loading="lazy"><span class="pc-badge">Pro Tool</span></div>
+      <div class="pc-body">
+        <div class="pc-cat">Termination Tools</div>
+        <div class="pc-name">easyJACK — 90° Speed Termination Tool</div>
+        <p class="pc-desc">Terminate all 8 wires simultaneously. The fastest way to punch down Everest 90° jacks — delivering repeatable pro-grade results in seconds.</p>
+        <div class="pc-foot"><div class="pc-price">$44.95</div><a href="https://everestmediasolutions.com/products/everest-easyjack-90-angled-speed-termination-keystone-tool-time-saver-network-punch-down-tool-to-be-used-only-with-everest-90-angled-rj45-cat5e-cat6a-and-cat6-keystone-jacks-b087n7qqd2" target="_blank" class="pc-btn">View Product</a></div>
+      </div>
+    </div>
+
+    <div class="pc reveal rd1">
+      <div class="pc-img"><img src="https://everestmediasolutions.com/cdn/shop/files/61KHwKA9VLL.jpg?v=1738703112&width=600" alt="12-Port Patch Panel" loading="lazy"></div>
+      <div class="pc-body">
+        <div class="pc-cat">Patch Panels</div>
+        <div class="pc-name">12-Port Keystone Patch Panel</div>
+        <p class="pc-desc">Compact wall-mount design with removable 6-port inserts. Perfect for small to medium network closets demanding clean, labeled, organized cabling.</p>
+        <div class="pc-foot"><div class="pc-price">$16.95 <small>– $54.95</small></div><a href="https://everestmediasolutions.com/products/everest-media-12-port-keystone-patch-panel-1-pack-removable-6-port-inserts-with-89d-wall-mount-bracket-removable-inserts-vertical-horizontal-installation-keystone-patch-panel-12-port-copy-2" target="_blank" class="pc-btn">View Product</a></div>
+      </div>
+    </div>
+
+    <div class="pc reveal rd2">
+      <div class="pc-img"><img src="https://everestmediasolutions.com/cdn/shop/files/71YeNoFWG7L.jpg?v=1738703112&width=600" alt="48 Port Patch Panel" loading="lazy"><span class="pc-badge">High Density</span></div>
+      <div class="pc-body">
+        <div class="pc-cat">Patch Panels</div>
+        <div class="pc-name">48 Port Keystone Patch Panel</div>
+        <p class="pc-desc">Enterprise-density rack panel for data centers. Pre-labeled ports, durable steel frame, layout optimized for maximum cable density with zero compromise.</p>
+        <div class="pc-foot"><div class="pc-price">$42.95 <small>– $134.95</small></div><a href="https://everestmediasolutions.com/products/everest-media-12-port-keystone-patch-panel-1-pack-removable-6-port-inserts-with-89d-wall-mount-bracket-removable-inserts-vertical-horizontal-installation-keystone-patch-panel-12-port-copy-1" target="_blank" class="pc-btn">View Product</a></div>
+      </div>
+    </div>
+
+    <div class="pc reveal rd3">
+      <div class="pc-img"><img src="https://everestmediasolutions.com/cdn/shop/files/711thAN49LL.jpg?v=1738348945&width=600" alt="45° Cat6A Keystone Jacks" loading="lazy"><span class="pc-badge">Cat6A</span></div>
+      <div class="pc-body">
+        <div class="pc-cat">Keystone Jacks</div>
+        <div class="pc-name">45° Angled RJ45 Cat6A Keystone Jacks</div>
+        <p class="pc-desc">Premium Cat6A rated with 50µm gold-plated contacts. Verified for 10Gbps performance, minimal crosstalk, and long-term field reliability.</p>
+        <div class="pc-foot"><div class="pc-price">$20.00 <small>– $74.95</small></div><a href="https://everestmediasolutions.com/products/45-angled-rj45-cat5e-keystone-jacks-source-cat6a" target="_blank" class="pc-btn">View Product</a></div>
+      </div>
+    </div>
+
+  </div>
+  <div style="text-align:center;margin-top:3.5rem" class="reveal">
+    <a href="https://everestmediasolutions.com/collections/all" target="_blank" class="btn-orange">See Full Catalogue →</a>
+  </div>
+</section>
+
+<!-- PROOF BAR -->
+<div class="proof-bar">
+  <div class="pb-item reveal rd1"><div class="pb-n">3<span>,000+</span></div><div class="pb-l">Amazon Reviews</div></div>
+  <div class="pb-item reveal rd2"><div class="pb-n"><span>★</span> 5.00</div><div class="pb-l">Average Score</div></div>
+  <div class="pb-item reveal rd3"><div class="pb-n">10<span>Gbps</span></div><div class="pb-l">Cat6A Speed</div></div>
+  <div class="pb-item reveal rd4"><div class="pb-n">550<span>MHz</span></div><div class="pb-l">Bandwidth</div></div>
+  <div class="pb-item reveal rd5"><div class="pb-n">30<span>-Day</span></div><div class="pb-l">Return Policy</div></div>
+</div>
+
+<!-- CATEGORIES -->
+<section id="categories">
+  <div class="sec-hdr reveal">
+    <div>
+      <div class="eyebrow">Shop by Category</div>
+      <h2 class="sec-title">Everything You<br>Need, In One Place</h2>
+    </div>
+    <p class="sec-sub">From jacks to panels to cables — Everest covers every part of a professional structured cabling installation.</p>
+  </div>
+  <div class="cats">
+    <a href="https://everestmediasolutions.com/collections/keystone-jacks" target="_blank" class="cat reveal rd1">
+      <div class="cat-ico"><svg viewBox="0 0 24 24"><rect x="2" y="8" width="20" height="8" rx="1"/><line x1="6" y1="8" x2="6" y2="6"/><line x1="10" y1="8" x2="10" y2="6"/><line x1="14" y1="8" x2="14" y2="6"/><line x1="18" y1="8" x2="18" y2="6"/></svg></div>
+      <div class="cat-n">Keystone Jacks</div>
+      <div class="cat-d">45° &amp; 90° angled — Cat5e, Cat6, Cat6A</div>
+    </a>
+    <a href="https://everestmediasolutions.com/collections/patch-cables" target="_blank" class="cat reveal rd2">
+      <div class="cat-ico"><svg viewBox="0 0 24 24"><path d="M5 12h14"/><circle cx="5" cy="12" r="2"/><circle cx="19" cy="12" r="2"/><path d="M7 8l2 4m4 0l2-4"/></svg></div>
+      <div class="cat-n">Patch Cables</div>
+      <div class="cat-d">Ultra-slim Cat6A — 9 colors, 10 lengths</div>
+    </a>
+    <a href="https://everestmediasolutions.com/collections/patch-panels" target="_blank" class="cat reveal rd3">
+      <div class="cat-ico"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="1"/><line x1="6" y1="6" x2="6" y2="18"/><line x1="10" y1="6" x2="10" y2="18"/><line x1="14" y1="6" x2="14" y2="18"/><line x1="18" y1="6" x2="18" y2="18"/></svg></div>
+      <div class="cat-n">Patch Panels</div>
+      <div class="cat-d">12, 24 &amp; 48 port — modular inserts</div>
+    </a>
+    <a href="https://everestmediasolutions.com/collections/crimping-tools" target="_blank" class="cat reveal rd4">
+      <div class="cat-ico"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg></div>
+      <div class="cat-n">Crimping Tools</div>
+      <div class="cat-d">45Term &amp; easyJACK speed tools</div>
+    </a>
+    <a href="https://everestmediasolutions.com/collections/rj45-pass-through" target="_blank" class="cat reveal rd5">
+      <div class="cat-ico"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+      <div class="cat-n">RJ45 Connectors</div>
+      <div class="cat-d">Pass-through plugs &amp; accessories</div>
+    </a>
+  </div>
+</section>
+
+<!-- STORY -->
+<section id="story">
+  <div class="story-img">
+    <img src="https://everestmediasolutions.com/cdn/shop/files/keystone_3991535a-c228-46a9-bfc7-3677d017af91.jpg?v=1749386053&width=900" alt="Everest professional network installation">
+  </div>
+  <div class="story-copy">
+    <div class="eyebrow reveal">Our Story</div>
+    <h2 class="sec-title reveal rd1">Built For<br>The Field</h2>
+    <p class="story-p reveal rd2">Everest Media Solutions was built on a single conviction: <strong>professional networking hardware should just work.</strong> No re-punching. No loose connections. No callbacks from clients.</p>
+    <p class="story-p reveal rd3">Every product is designed by engineers who've felt the frustration of inferior gear — then tested by field professionals including structured cabling contractors, IT infrastructure specialists, and data center engineers.</p>
+    <p class="story-p reveal rd4">The result: a lineup trusted by <strong>thousands of professionals across the country</strong>, backed by over 3,000 five-star Amazon reviews, and built to deliver decades of reliable performance.</p>
+    <div class="story-fgrid reveal rd5">
+      <div class="sfact"><div class="sfact-n">3,000+</div><div class="sfact-l">★ Amazon Reviews</div></div>
+      <div class="sfact"><div class="sfact-n">5.0★</div><div class="sfact-l">Average Rating</div></div>
+      <div class="sfact"><div class="sfact-n">10Gbps</div><div class="sfact-l">Cat6A Rated</div></div>
+      <div class="sfact"><div class="sfact-n">100%</div><div class="sfact-l">Pure Copper</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="t-intro reveal">
+    <div>
+      <div class="eyebrow">What Customers Say</div>
+      <h2 class="sec-title">Trusted By<br>Professionals</h2>
+      <p class="sec-sub" style="margin-top:.8rem">Solid tools, clean installs, no surprises. Here's what field professionals say about Everest.</p>
+    </div>
+    <div class="t-score">
+      <div class="t-score-n">5.00</div>
+      <div class="t-score-s">★★★★★</div>
+      <div class="t-score-l">From 3,000+ reviews</div>
+    </div>
+  </div>
+  <div class="tgrid">
+    <div class="tc reveal rd1">
+      <div class="tc-s">★★★★★</div>
+      <p class="tc-q">Been using Everest keystone jacks for years, and they've never failed me. Solid connection every time, no re-punching needed. Definitely pro-grade.</p>
+      <div class="tc-auth">
+        <div class="tc-av"><img src="https://everestmediasolutions.com/cdn/shop/files/cryptique_A_casually_dressed_man_in_his_30s_wearing_a_simple_t-_79383b7e-e9f6-41fb-8693-794130a4e066.png?v=1738352900&width=100" alt="James R." loading="lazy"></div>
+        <div><div class="tc-name">James R.</div><div class="tc-role">Network Technician</div></div>
+      </div>
+    </div>
+    <div class="tc reveal rd2">
+      <div class="tc-s">★★★★★</div>
+      <p class="tc-q">Installed their patch panels in multiple offices — rock solid. Labels stay put, terminations hold tight, and I've had zero connectivity issues down the line.</p>
+      <div class="tc-auth">
+        <div class="tc-av"><img src="https://everestmediasolutions.com/cdn/shop/files/cryptique_A_mid-30s_network_technician_wearing_a_zip-up_hoodie__bebc7d56-f5a9-48a0-a685-068b208bbac9.png?v=1738352900&width=100" alt="Mark T." loading="lazy"></div>
+        <div><div class="tc-name">Mark T.</div><div class="tc-role">IT Infrastructure Specialist</div></div>
+      </div>
+    </div>
+    <div class="tc reveal rd3">
+      <div class="tc-s">★★★★★</div>
+      <p class="tc-q">I run a structured cabling business, and Everest products are now my go-to. Reliable, easy to work with, and no callbacks from clients. That says it all.</p>
+      <div class="tc-auth">
+        <div class="tc-av"><img src="https://everestmediasolutions.com/cdn/shop/files/cryptique_A_network_infrastructure_specialist_in_his_40s_wearin_fd767d6e-ad87-43a0-92b8-d3ada1b5034c.png?v=1738352900&width=100" alt="David S." loading="lazy"></div>
+        <div><div class="tc-name">David S.</div><div class="tc-role">Cabling Contractor</div></div>
+      </div>
+    </div>
+    <div class="tc reveal rd1">
+      <div class="tc-s">★★★★★</div>
+      <p class="tc-q">Tried plenty of brands, but Everest delivers the best value. Their Cat6A cables hold up in high-performance environments, even in long cable runs.</p>
+      <div class="tc-auth">
+        <div class="tc-av"><img src="https://everestmediasolutions.com/cdn/shop/files/cryptique_A_young_network_engineer_in_a_casual_flannel_shirt_sl_d2bc93d1-fbda-4f05-9891-875a8481d127.png?v=1738352900&width=100" alt="Paul G." loading="lazy"></div>
+        <div><div class="tc-name">Paul G.</div><div class="tc-role">Systems Administrator</div></div>
+      </div>
+    </div>
+    <div class="tc reveal rd2">
+      <div class="tc-s">★★★★★</div>
+      <p class="tc-q">Customer support is top-notch. Had a small issue with a bulk order, and they handled it immediately. Hard to find companies that stand behind their products like this.</p>
+      <div class="tc-auth">
+        <div class="tc-av"><img src="https://everestmediasolutions.com/cdn/shop/files/cryptique_A_relaxed_man_in_his_mid-30s_wearing_a_light_sweater__635859d6-abb2-4e22-8a26-4d752d780762.png?v=1738352900&width=100" alt="Ron B." loading="lazy"></div>
+        <div><div class="tc-name">Ron B.</div><div class="tc-role">IT Procurement Manager</div></div>
+      </div>
+    </div>
+    <div class="tc reveal rd3">
+      <div class="tc-s">★★★★★</div>
+      <p class="tc-q">Networking gear that actually holds up. No flimsy connectors, no weak crimps — just solid, professional-grade equipment. Been using them for over three years.</p>
+      <div class="tc-auth">
+        <div class="tc-av"><img src="https://everestmediasolutions.com/cdn/shop/files/cryptique_A_middle-aged_network_engineer_in_his_40s_short-cropp_c9d3ce35-46dd-44d1-87f3-a6909e0f269e.png?v=1738352900&width=100" alt="Michael K." loading="lazy"></div>
+        <div><div class="tc-name">Michael K.</div><div class="tc-role">Network Engineer</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="cta-inner">
+    <div class="eyebrow reveal" style="justify-content:center">Get In Touch</div>
+    <h2 class="cta-h reveal rd1">Ready To Build<br><em>Clean Networks?</em></h2>
+    <p class="cta-sub reveal rd2">Whether you're outfitting a single rack or scaling an enterprise data center — we have the gear, the pricing, and the support to get it done right.</p>
+    <div class="cta-acts reveal rd3">
+      <a href="https://wa.me/1234567890" target="_blank" class="btn-wa">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        WhatsApp Us
+      </a>
+      <a href="https://everestmediasolutions.com/collections/all" target="_blank" class="btn-orange">Shop Full Catalogue</a>
+      <a href="https://everestmediasolutions.com/pages/wholesale" target="_blank" class="btn-ghost">Dealer Pricing</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft">
+    <div class="ft-brand">
+      <div class="ft-logo">Everest<span>.</span></div>
+      <p class="ft-tag">Professional-grade network solutions trusted by IT pros, cabling contractors, and data center engineers across the country.</p>
+    </div>
+    <nav class="ft-nav">
+      <h4>Products</h4>
+      <ul>
+        <li><a href="https://everestmediasolutions.com/collections/keystone-jacks" target="_blank">Keystone Jacks</a></li>
+        <li><a href="https://everestmediasolutions.com/collections/patch-cables" target="_blank">Patch Cables</a></li>
+        <li><a href="https://everestmediasolutions.com/collections/patch-panels" target="_blank">Patch Panels</a></li>
+        <li><a href="https://everestmediasolutions.com/collections/crimping-tools" target="_blank">Crimping Tools</a></li>
+        <li><a href="https://everestmediasolutions.com/collections/rj45-pass-through" target="_blank">RJ45 Connectors</a></li>
+      </ul>
+    </nav>
+    <nav class="ft-nav">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="https://everestmediasolutions.com/" target="_blank">Home</a></li>
+        <li><a href="https://everestmediasolutions.com/pages/wholesale" target="_blank">Become a Dealer</a></li>
+        <li><a href="https://everestmediasolutions.com/pages/contact" target="_blank">Customer Support</a></li>
+        <li><a href="https://everestmediasolutions.com/policies/privacy-policy" target="_blank">Privacy Policy</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="fb">
+    <div class="fc">© 2025 Everest Media Solutions. All rights reserved.</div>
+    <div class="fa"><span class="ab">Amazon</span> Fast, Reliable Shipping Available</div>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){e.target.classList.add('visible'); } });
+  }, {threshold:.1}).observe ? (() => {
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); } });
+    }, {threshold:.1});
+    reveals.forEach(el => obs.observe(el));
+  })() : reveals.forEach(el => el.classList.add('visible'));
+
+  // Nav
+  const nav = document.getElementById('mainnav');
+  window.addEventListener('scroll', () => {
+    nav.style.boxShadow = window.scrollY > 60 ? '0 4px 30px rgba(0,0,0,.22)' : '0 2px 20px rgba(0,0,0,.12)';
+  });
+
+  // Card tilt
+  if(window.matchMedia('(hover:hover)').matches){
+    document.querySelectorAll('.pc').forEach(c => {
+      c.addEventListener('mousemove', e => {
+        const r = c.getBoundingClientRect();
+        const x = (e.clientX-r.left)/r.width-.5, y = (e.clientY-r.top)/r.height-.5;
+        c.style.transform = `translateY(-6px) rotateX(${-y*5}deg) rotateY(${x*5}deg)`;
+      });
+      c.addEventListener('mouseleave', () => { c.style.transform=''; });
+    });
+  }
+</script>
+</body>
+</html>
