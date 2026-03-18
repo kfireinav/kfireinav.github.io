@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0047)file:///Users/kfireinav/Downloads/easyride.html -->
+<!-- saved from url=(0049)file:///Users/kfireinav/Downloads/easyride_1.html -->
 <html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -444,13 +444,13 @@ footer{padding:36px 52px;border-top:1px solid var(--border);display:flex;
 <canvas id="bg-canvas" width="1728" height="969"></canvas>
 
 <!-- ── NAV ── -->
-<nav id="nav" class="scrolled">
+<nav id="nav" class="">
   <span class="logo" onclick="showPage(&#39;home&#39;)">EASY<em>RIDE</em></span>
   <ul class="nav-links">
-    <li><a onclick="showPage(&#39;home&#39;)" data-page="home">Home</a></li>
-    <li><a onclick="showPage(&#39;home&#39;);setTimeout(()=&gt;document.getElementById(&#39;catalogue&#39;)?.scrollIntoView({behavior:&#39;smooth&#39;}),100)" data-page="home">Products</a></li>
-    <li><a onclick="showPage(&#39;home&#39;);setTimeout(()=&gt;document.getElementById(&#39;story&#39;)?.scrollIntoView({behavior:&#39;smooth&#39;}),100)" data-page="home">Story</a></li>
-    <li><a onclick="showPage(&#39;product&#39;)" data-page="product" class="active-link">Product</a></li>
+    <li><a onclick="showPage(&#39;home&#39;)" data-page="home" class="active-link">Home</a></li>
+    <li><a onclick="showPage(&#39;home&#39;);setTimeout(()=&gt;document.getElementById(&#39;catalogue&#39;)?.scrollIntoView({behavior:&#39;smooth&#39;}),100)" data-page="home" class="active-link">Products</a></li>
+    <li><a onclick="showPage(&#39;home&#39;);setTimeout(()=&gt;document.getElementById(&#39;story&#39;)?.scrollIntoView({behavior:&#39;smooth&#39;}),100)" data-page="home" class="active-link">Story</a></li>
+    <li><a onclick="showPage(&#39;product&#39;)" data-page="product" class="">Product</a></li>
   </ul>
   <button class="nav-cart" onclick="showPage(&#39;cart&#39;)">
     🛒 Cart <span class="cart-badge" id="cart-badge">0</span>
@@ -460,7 +460,7 @@ footer{padding:36px 52px;border-top:1px solid var(--border);display:flex;
 <!-- ══════════════════════════════════════
      HOME PAGE
 ══════════════════════════════════════ -->
-<div class="page" id="page-home">
+<div class="page active" id="page-home">
 
   <!-- HERO -->
   <section id="hero">
@@ -491,9 +491,9 @@ footer{padding:36px 52px;border-top:1px solid var(--border);display:flex;
       </div>
     </div>
 
-    <div class="hero-visual rv d2">
+    <div class="hero-visual rv d2 in">
       <div class="img-wrap">
-        <img class="hero-img" src="./EasyRide_files/71bG4CIM2VL._AC_SL1500.jpg" alt="EasyRide Dog Bike Leash" style="transform: translateY(51.1px);">
+        <img class="hero-img" src="./EasyRide_files/71bG4CIM2VL._AC_SL1500.jpg" alt="EasyRide Dog Bike Leash" style="transform: translateY(0px);">
         <div class="float-card fc-price">
           <div class="lbl">Sale Price Today</div>
           <div class="val">$79.95 <span class="old">$99.95</span></div>
@@ -568,7 +568,7 @@ footer{padding:36px 52px;border-top:1px solid var(--border);display:flex;
         </div>
       </div>
 
-      <div class="pcard rv d3" onclick="showPage(&#39;product&#39;)">
+      <div class="pcard rv d3" onclick="showPage(&#39;product&#39;)" style="transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s;">
         <img class="pcard-img" src="./EasyRide_files/71JHtHX-rcL._AC_SL1500.jpg" alt="Full Set" loading="lazy">
         <div class="pcard-body">
           <div class="pcard-cat">Complete Kit</div>
@@ -669,7 +669,7 @@ footer{padding:36px 52px;border-top:1px solid var(--border);display:flex;
 <!-- ══════════════════════════════════════
      PRODUCT PAGE
 ══════════════════════════════════════ -->
-<div class="page active" id="page-product">
+<div class="page" id="page-product">
   <div class="prod-layout">
     <!-- Gallery -->
     <div>
@@ -729,13 +729,13 @@ footer{padding:36px 52px;border-top:1px solid var(--border);display:flex;
 
   <!-- Specs -->
   <div class="specs-sec">
-    <div class="sec-eye rv in">Technical Specifications</div>
-    <h2 class="sec-h rv d1 in">BUILT TO LAST</h2>
+    <div class="sec-eye rv">Technical Specifications</div>
+    <h2 class="sec-h rv d1">BUILT TO LAST</h2>
     <div class="specs-grid">
-      <div class="spec rv d1 in"><div class="spec-n">10×</div><div class="spec-l">Stronger Than Steel</div><div class="spec-d">Carbon fiber construction outperforms aluminum and stainless at a fraction of the weight.</div></div>
-      <div class="spec rv d2 in"><div class="spec-n">180°</div><div class="spec-l">Full Rotation Arc</div><div class="spec-d">Patent-pending pivot system allows total side-to-side movement without tangling.</div></div>
-      <div class="spec rv d3 in"><div class="spec-n">15×</div><div class="spec-l">Lighter Than Steel</div><div class="spec-d">At just 14"L × 2"W you'll barely notice it — until your dog lunges suddenly.</div></div>
-      <div class="spec rv d4 in"><div class="spec-n">2×</div><div class="spec-l">Shock Absorbers</div><div class="spec-d">Dual absorption system neutralizes sudden movements, keeping you balanced.</div></div>
+      <div class="spec rv d1"><div class="spec-n">10×</div><div class="spec-l">Stronger Than Steel</div><div class="spec-d">Carbon fiber construction outperforms aluminum and stainless at a fraction of the weight.</div></div>
+      <div class="spec rv d2"><div class="spec-n">180°</div><div class="spec-l">Full Rotation Arc</div><div class="spec-d">Patent-pending pivot system allows total side-to-side movement without tangling.</div></div>
+      <div class="spec rv d3"><div class="spec-n">15×</div><div class="spec-l">Lighter Than Steel</div><div class="spec-d">At just 14"L × 2"W you'll barely notice it — until your dog lunges suddenly.</div></div>
+      <div class="spec rv d4"><div class="spec-n">2×</div><div class="spec-l">Shock Absorbers</div><div class="spec-d">Dual absorption system neutralizes sudden movements, keeping you balanced.</div></div>
     </div>
   </div>
 
