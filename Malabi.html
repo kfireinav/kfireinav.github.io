@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<!-- saved from url=(0049)file:///Users/kfireinav/Downloads/easyride_2.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>EasyRide — Ride Together</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="./Malabi_files/css2" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --black:#07070a;--white:#f0ede8;--carbon:#101014;--steel:#1e1e28;
+  --accent:#c9a227;--accent2:#e8c96a;--muted:#666;--border:rgba(255,255,255,0.07);
+  --fd:'Bebas Neue',sans-serif;--fs:'DM Serif Display',serif;--fb:'DM Sans',sans-serif;
+  --ease:cubic-bezier(0.16,1,0.3,1);
+}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--white);font-family:var(--fb);font-weight:300;overflow-x:hidden;line-height:1.6;min-height:100vh}
+
+/* NOISE */
+body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:0.04;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:160px}
+
+/* CANVAS */
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+/* PAGES — key fix: all pages are position:relative above canvas */
+.page{position:relative;z-index:2;display:none;min-height:100vh}
+.page.active{display:block}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:18px 52px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:linear-gradient(to bottom,rgba(7,7,10,0.95),transparent);
+  transition:all 0.4s;border-bottom:1px solid transparent}
+nav.scrolled{background:rgba(7,7,10,0.97);backdrop-filter:blur(20px);border-color:var(--border)}
+.logo{font-family:var(--fd);font-size:28px;letter-spacing:0.12em;color:var(--white);
+  cursor:pointer;user-select:none}
+.logo em{color:var(--accent);font-style:normal}
+.nav-links{display:flex;gap:32px;list-style:none;align-items:center}
+.nav-links a{color:rgba(240,237,232,0.5);text-decoration:none;font-size:11px;font-weight:500;
+  letter-spacing:0.16em;text-transform:uppercase;transition:color 0.2s;cursor:pointer}
+.nav-links a:hover,.nav-links a.active-link{color:var(--accent)}
+.nav-cart{display:flex;align-items:center;gap:8px;background:var(--accent);color:var(--black);
+  padding:9px 20px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;
+  cursor:pointer;border:none;border-radius:2px;transition:all 0.2s;font-family:var(--fb)}
+.nav-cart:hover{background:var(--accent2);transform:translateY(-1px)}
+.cart-badge{background:var(--black);color:var(--accent);width:18px;height:18px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;
+  transition:transform 0.2s}
+.cart-badge.bump{transform:scale(1.4)}
+
+/* REVEAL — starts visible by default, animate-in on scroll */
+.rv{opacity:0;transform:translateY(32px);transition:opacity 0.8s var(--ease),transform 0.8s var(--ease)}
+.rv.in{opacity:1;transform:none}
+.rvL{opacity:0;transform:translateX(-44px);transition:opacity 0.85s var(--ease),transform 0.85s var(--ease)}
+.rvL.in{opacity:1;transform:none}
+.rvR{opacity:0;transform:translateX(44px);transition:opacity 0.85s var(--ease),transform 0.85s var(--ease)}
+.rvR.in{opacity:1;transform:none}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.26s}.d4{transition-delay:.38s}
+
+/* ═══════════════ HOME ═══════════════ */
+
+/* HERO */
+#hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;
+  gap:60px;padding:120px 52px 80px;position:relative;overflow:hidden}
+.orb{position:absolute;border-radius:50%;pointer-events:none;filter:blur(100px)}
+.o1{width:700px;height:700px;top:-150px;left:-250px;background:radial-gradient(circle,rgba(201,162,39,0.14) 0%,transparent 65%)}
+.o2{width:550px;height:550px;top:10%;right:-180px;background:radial-gradient(circle,rgba(80,100,255,0.12) 0%,transparent 65%)}
+.o3{width:400px;height:400px;bottom:-60px;left:30%;background:radial-gradient(circle,rgba(201,162,39,0.07) 0%,transparent 65%)}
+.grid-bg{position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);
+  background-size:80px 80px;
+  -webkit-mask-image:radial-gradient(ellipse 80% 70% at 50% 50%,transparent 30%,black 100%);
+  mask-image:radial-gradient(ellipse 80% 70% at 50% 50%,transparent 30%,black 100%)}
+
+.eyebrow{display:inline-flex;align-items:center;gap:10px;margin-bottom:26px;
+  font-size:10px;font-weight:600;letter-spacing:0.22em;text-transform:uppercase;color:var(--accent)}
+.eyebrow::before{content:'';width:26px;height:1px;background:var(--accent)}
+.pulse-dot{width:7px;height:7px;background:var(--accent);border-radius:50%;
+  animation:pdot 2s ease-in-out infinite;box-shadow:0 0 0 0 rgba(201,162,39,0.4)}
+@keyframes pdot{0%,100%{box-shadow:0 0 0 0 rgba(201,162,39,0.4)}60%{box-shadow:0 0 0 10px rgba(201,162,39,0)}}
+
+h1.hero-h{font-family:var(--fd);font-size:clamp(80px,9.5vw,136px);line-height:0.84;
+  letter-spacing:0.01em;margin-bottom:28px}
+h1.hero-h .stroke{color:transparent;-webkit-text-stroke:1.5px var(--accent)}
+h1.hero-h .glow{text-shadow:0 0 60px rgba(201,162,39,0.5),0 0 120px rgba(201,162,39,0.2)}
+.hero-sub{font-size:15px;color:rgba(240,237,232,0.5);max-width:400px;line-height:1.88;margin-bottom:44px}
+.hero-btns{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+
+.btn-gold{display:inline-flex;align-items:center;gap:10px;background:var(--accent);color:var(--black);
+  padding:16px 36px;font-family:var(--fb);font-size:12px;font-weight:700;letter-spacing:0.14em;
+  text-transform:uppercase;border:none;cursor:pointer;border-radius:2px;
+  box-shadow:0 8px 40px rgba(201,162,39,0.32),0 0 80px rgba(201,162,39,0.1);transition:all 0.3s}
+.btn-gold:hover{background:var(--accent2);transform:translateY(-2px);
+  box-shadow:0 16px 60px rgba(201,162,39,0.52),0 0 100px rgba(201,162,39,0.18)}
+.btn-gold svg{width:14px;height:14px;transition:transform 0.2s}
+.btn-gold:hover svg{transform:translateX(4px)}
+
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;background:transparent;
+  color:rgba(240,237,232,0.55);padding:16px 28px;font-size:11px;font-weight:500;
+  letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;
+  border:1px solid rgba(255,255,255,0.12);border-radius:2px;transition:all 0.2s;font-family:var(--fb)}
+.btn-ghost:hover{border-color:rgba(201,162,39,0.4);color:var(--accent)}
+
+.hero-stats{display:flex;gap:48px;margin-top:60px;padding-top:30px;border-top:1px solid var(--border)}
+.stat-n{font-family:var(--fd);font-size:48px;color:var(--accent);line-height:1;
+  text-shadow:0 0 40px rgba(201,162,39,0.35)}
+.stat-l{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+
+.hero-visual{position:relative;display:flex;justify-content:center}
+.img-wrap{position:relative;width:100%;max-width:520px}
+.img-wrap::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:80%;height:80%;background:radial-gradient(circle,rgba(201,162,39,0.22) 0%,transparent 65%);
+  border-radius:50%;filter:blur(70px);z-index:0}
+.img-wrap::after{content:'';position:absolute;inset:-1px;border-radius:4px;z-index:2;pointer-events:none;
+  background:linear-gradient(135deg,rgba(201,162,39,0.22) 0%,transparent 35%,transparent 65%,rgba(80,100,255,0.12) 100%)}
+.hero-img{width:100%;height:520px;object-fit:cover;border-radius:3px;display:block;
+  position:relative;z-index:1;filter:brightness(0.88) contrast(1.08);
+  box-shadow:0 4px 8px rgba(0,0,0,0.3),0 32px 80px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.04)}
+
+.float-card{position:absolute;z-index:4;border-radius:3px;backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.08)}
+.fc-price{bottom:36px;left:-36px;padding:16px 24px;min-width:195px;
+  background:rgba(10,10,14,0.95);box-shadow:0 20px 60px rgba(0,0,0,0.7),0 0 0 1px rgba(201,162,39,0.1)}
+.fc-price .lbl{font-size:8px;letter-spacing:0.22em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.fc-price .val{font-family:var(--fd);font-size:38px;color:var(--accent);line-height:1;
+  text-shadow:0 0 30px rgba(201,162,39,0.3)}
+.fc-price .old{font-size:12px;color:var(--muted);text-decoration:line-through;margin-left:8px}
+.fc-badge{top:24px;right:-18px;padding:12px 18px;text-align:center;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--black);
+  box-shadow:0 8px 32px rgba(201,162,39,0.55)}
+.fc-badge .bt{font-size:8px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase}
+.fc-badge .bn{font-family:var(--fd);font-size:30px;line-height:1}
+
+/* TICKER */
+.ticker{border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  padding:13px 0;overflow:hidden;position:relative;z-index:2;
+  background:linear-gradient(to right,var(--carbon),rgba(16,16,20,0.4),var(--carbon))}
+.ticker-inner{display:flex;gap:60px;animation:tick 22s linear infinite;white-space:nowrap}
+.ti{display:flex;align-items:center;gap:12px;font-size:10px;font-weight:600;
+  letter-spacing:0.22em;text-transform:uppercase;color:rgba(240,237,232,0.3);flex-shrink:0}
+.tdot{width:4px;height:4px;background:var(--accent);border-radius:50%;box-shadow:0 0 6px var(--accent)}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* SECTIONS */
+.sec{padding:110px 52px;position:relative;z-index:2}
+.sec-eye{display:inline-flex;align-items:center;gap:12px;font-size:10px;font-weight:600;
+  letter-spacing:0.25em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+.sec-eye::before{content:'';width:24px;height:1px;background:var(--accent)}
+.sec-h{font-family:var(--fd);font-size:clamp(48px,5.5vw,80px);line-height:0.9;
+  letter-spacing:0.02em;margin-bottom:20px}
+.sec-sub{font-size:15px;color:rgba(240,237,232,0.45);line-height:1.8;max-width:480px}
+
+/* PRODUCT GRID */
+.prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:1px;background:var(--border);margin-top:60px}
+.pcard{background:var(--carbon);overflow:hidden;position:relative;cursor:pointer;
+  transition:transform 0.4s var(--ease),box-shadow 0.4s}
+.pcard:hover{transform:translateY(-8px);z-index:2;
+  box-shadow:0 24px 60px rgba(0,0,0,0.55),0 0 0 1px rgba(201,162,39,0.15),0 0 60px rgba(201,162,39,0.04)}
+.pcard-img{width:100%;height:280px;object-fit:cover;display:block;
+  filter:brightness(0.84) contrast(1.08);transition:transform 0.6s var(--ease),filter 0.4s}
+.pcard:hover .pcard-img{transform:scale(1.06);filter:brightness(0.94) contrast(1.08)}
+.pcard-bdg{position:absolute;top:14px;left:14px;background:var(--accent);color:var(--black);
+  font-size:9px;font-weight:800;letter-spacing:0.12em;padding:4px 10px}
+.pcard-body{padding:22px 24px 26px;border-top:1px solid var(--border)}
+.pcard-cat{font-size:8px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:7px}
+.pcard-name{font-family:var(--fd);font-size:20px;letter-spacing:0.04em;line-height:1.1;margin-bottom:9px}
+.pcard-desc{font-size:12.5px;color:rgba(240,237,232,0.46);line-height:1.7;margin-bottom:18px}
+.pcard-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:18px}
+.tag{font-size:8px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;
+  color:rgba(240,237,232,0.3);background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.06);padding:3px 8px}
+.pcard-foot{display:flex;align-items:center;justify-content:space-between;
+  padding-top:16px;border-top:1px solid var(--border)}
+.price-now{font-family:var(--fd);font-size:28px;color:var(--accent);
+  text-shadow:0 0 20px rgba(201,162,39,0.2)}
+.price-was{font-size:12px;color:var(--muted);text-decoration:line-through}
+.btn-sm{display:inline-flex;align-items:center;gap:6px;background:transparent;color:var(--white);
+  border:1px solid rgba(255,255,255,0.14);padding:9px 16px;font-family:var(--fb);
+  font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;
+  cursor:pointer;border-radius:2px;transition:all 0.2s}
+.btn-sm:hover{background:var(--accent);border-color:var(--accent);color:var(--black);transform:translateY(-1px)}
+.btn-sm svg{width:10px;height:10px}
+
+/* FEATURES */
+.feat-sec{background:var(--carbon);border-top:1px solid var(--border);border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.feat-sec::before{content:'';position:absolute;top:-200px;right:-200px;width:700px;height:700px;
+  background:radial-gradient(circle,rgba(201,162,39,0.05) 0%,transparent 65%);pointer-events:none}
+.feat-sec::after{content:'';position:absolute;bottom:-150px;left:-150px;width:600px;height:600px;
+  background:radial-gradient(circle,rgba(80,100,255,0.07) 0%,transparent 65%);pointer-events:none}
+.feat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin-top:56px}
+.fi{background:var(--carbon);padding:40px 32px;transition:background 0.3s;
+  border:1px solid transparent;position:relative;overflow:hidden}
+.fi::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(to right,transparent,rgba(201,162,39,0),transparent);transition:background 0.4s}
+.fi:hover{background:rgba(201,162,39,0.022);border-color:rgba(201,162,39,0.09)}
+.fi:hover::before{background:linear-gradient(to right,transparent,rgba(201,162,39,0.45),transparent)}
+.fi-ico{width:48px;height:48px;border:1px solid rgba(201,162,39,0.18);
+  background:rgba(201,162,39,0.06);display:flex;align-items:center;justify-content:center;
+  font-size:22px;margin-bottom:24px;transition:all 0.3s}
+.fi:hover .fi-ico{background:rgba(201,162,39,0.12);box-shadow:0 0 24px rgba(201,162,39,0.18)}
+.fi-t{font-family:var(--fd);font-size:20px;letter-spacing:0.05em;margin-bottom:10px}
+.fi-d{font-size:13px;color:rgba(240,237,232,0.42);line-height:1.82}
+
+/* STORY */
+.story-grid{display:grid;grid-template-columns:1fr 1fr;gap:100px;align-items:center}
+.story-imgs{position:relative}
+.story-main{width:100%;height:560px;object-fit:cover;border-radius:3px;display:block;
+  filter:brightness(0.8) contrast(1.08);box-shadow:0 40px 100px rgba(0,0,0,0.65),0 0 0 1px rgba(255,255,255,0.04)}
+.story-inset{position:absolute;bottom:-32px;right:-32px;width:210px;height:210px;
+  object-fit:cover;border-radius:3px;border:3px solid var(--black);
+  box-shadow:0 20px 50px rgba(0,0,0,0.6),0 0 0 1px rgba(201,162,39,0.12);filter:brightness(0.82)}
+.story-line{position:absolute;top:40px;right:-4px;width:3px;height:90px;
+  background:linear-gradient(to bottom,var(--accent),transparent)}
+.story-q{font-family:var(--fs);font-style:italic;font-size:clamp(18px,2vw,26px);
+  line-height:1.55;color:rgba(240,237,232,0.8);border-left:2px solid var(--accent);
+  padding-left:22px;margin-bottom:28px}
+.story-p{font-size:14px;font-weight:300;color:rgba(240,237,232,0.5);line-height:1.95;margin-bottom:14px}
+.sig{display:flex;align-items:center;gap:14px;margin-top:40px;padding-top:28px;border-top:1px solid var(--border)}
+.sig-av{width:52px;height:52px;background:var(--steel);border:1.5px solid rgba(201,162,39,0.25);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:var(--fd);font-size:22px;color:var(--accent);flex-shrink:0;
+  box-shadow:0 0 20px rgba(201,162,39,0.12)}
+.sig-name{font-family:var(--fd);font-size:18px;letter-spacing:0.06em}
+.sig-role{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
+
+/* REVIEWS */
+.rev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin-top:56px}
+.rc{background:var(--carbon);padding:34px 30px;transition:background 0.3s;border:1px solid transparent}
+.rc:hover{background:rgba(201,162,39,0.02);border-color:rgba(201,162,39,0.09)}
+.rc-stars{color:var(--accent);letter-spacing:3px;font-size:12px;margin-bottom:18px;
+  text-shadow:0 0 12px rgba(201,162,39,0.3)}
+.rc-text{font-size:13.5px;font-style:italic;color:rgba(240,237,232,0.62);line-height:1.85;margin-bottom:24px}
+.rc-auth{display:flex;align-items:center;gap:11px}
+.rc-av{width:36px;height:36px;background:var(--steel);border:1px solid rgba(201,162,39,0.18);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:var(--fd);font-size:14px;color:var(--accent);flex-shrink:0}
+.rc-name{font-size:13px;font-weight:500;color:rgba(240,237,232,0.72)}
+.rc-tag{font-size:9px;color:var(--muted);letter-spacing:0.08em}
+
+/* CTA */
+.cta-sec{text-align:center;position:relative;overflow:hidden}
+.cta-sec::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:900px;height:450px;pointer-events:none;
+  background:radial-gradient(ellipse,rgba(201,162,39,0.12) 0%,rgba(80,100,255,0.05) 40%,transparent 70%)}
+.cta-h{font-family:var(--fd);font-size:clamp(62px,8vw,114px);line-height:0.88;
+  margin-bottom:24px;position:relative;z-index:1}
+.hollow{color:transparent;-webkit-text-stroke:1.5px rgba(240,237,232,0.18)}
+.cta-sub{font-size:16px;color:rgba(240,237,232,0.43);max-width:440px;margin:0 auto 52px;
+  line-height:1.85;position:relative;z-index:1}
+.cta-btns{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;
+  position:relative;z-index:1}
+.btn-wa{display:inline-flex;align-items:center;gap:11px;background:#25D366;color:#fff;
+  padding:17px 40px;border-radius:2px;text-decoration:none;border:none;cursor:pointer;
+  font-family:var(--fb);font-size:12px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;
+  box-shadow:0 8px 32px rgba(37,211,102,0.22);transition:all 0.25s}
+.btn-wa:hover{background:#1ebe5d;transform:translateY(-2px);box-shadow:0 16px 50px rgba(37,211,102,0.38)}
+.btn-wa svg{width:18px;height:18px}
+.btn-ol{display:inline-flex;align-items:center;gap:9px;background:transparent;color:var(--white);
+  border:1px solid rgba(255,255,255,0.14);padding:17px 38px;border-radius:2px;cursor:pointer;
+  font-family:var(--fb);font-size:12px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;transition:all 0.25s}
+.btn-ol:hover{border-color:rgba(201,162,39,0.4);color:var(--accent);transform:translateY(-2px)}
+
+/* FOOTER */
+footer{padding:36px 52px;border-top:1px solid var(--border);display:flex;
+  align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;
+  position:relative;z-index:2}
+.foot-logo{font-family:var(--fd);font-size:22px;letter-spacing:0.12em;color:rgba(240,237,232,0.28)}
+.foot-logo em{color:rgba(201,162,39,0.55);font-style:normal}
+.foot-copy{font-size:10px;color:rgba(240,237,232,0.2);letter-spacing:0.06em}
+.foot-links{display:flex;gap:22px}
+.foot-links a{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;
+  color:rgba(240,237,232,0.2);text-decoration:none;transition:color 0.2s}
+.foot-links a:hover{color:var(--accent)}
+
+/* ═══════════════ PRODUCT PAGE ═══════════════ */
+#page-product{padding-top:90px}
+.prod-layout{display:grid;grid-template-columns:1fr 1fr;gap:80px;
+  padding:60px 52px 80px;position:relative;z-index:2}
+.gallery-main{width:100%;aspect-ratio:1;object-fit:cover;border-radius:3px;display:block;
+  filter:brightness(0.9) contrast(1.06);
+  box-shadow:0 4px 8px rgba(0,0,0,0.2),0 30px 80px rgba(0,0,0,0.55),0 0 0 1px rgba(255,255,255,0.04);
+  transition:opacity 0.3s,transform 0.3s}
+.gallery-thumbs{display:flex;gap:10px;margin-top:14px}
+.thumb{width:80px;height:80px;object-fit:cover;border-radius:2px;cursor:pointer;opacity:0.45;
+  transition:opacity 0.2s,border-color 0.2s;border:1px solid transparent;filter:brightness(0.85)}
+.thumb.active,.thumb:hover{opacity:1;border-color:rgba(201,162,39,0.5);filter:brightness(1)}
+.prod-info{padding-top:12px}
+.prod-cat{font-size:9px;font-weight:700;letter-spacing:0.25em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.prod-name{font-family:var(--fd);font-size:clamp(36px,4vw,60px);line-height:0.92;
+  letter-spacing:0.02em;margin-bottom:20px}
+.prod-stars{display:flex;align-items:center;gap:8px;margin-bottom:24px}
+.stars{color:var(--accent);font-size:14px;text-shadow:0 0 10px rgba(201,162,39,0.3)}
+.star-ct{font-size:12px;color:rgba(240,237,232,0.38)}
+.prod-price-row{display:flex;align-items:baseline;gap:14px;margin-bottom:28px}
+.prod-price{font-family:var(--fd);font-size:54px;color:var(--accent);line-height:1;
+  text-shadow:0 0 40px rgba(201,162,39,0.25)}
+.prod-price-orig{font-size:20px;color:var(--muted);text-decoration:line-through}
+.prod-save{background:rgba(201,162,39,0.12);border:1px solid rgba(201,162,39,0.25);
+  color:var(--accent);font-size:10px;font-weight:700;letter-spacing:0.12em;padding:4px 10px;border-radius:2px}
+.prod-desc{font-size:14px;color:rgba(240,237,232,0.5);line-height:1.9;margin-bottom:32px}
+.prod-feats{display:flex;flex-direction:column;gap:10px;margin-bottom:36px}
+.pf{display:flex;align-items:center;gap:12px;font-size:13px;color:rgba(240,237,232,0.62)}
+.pf::before{content:'✓';color:var(--accent);font-weight:700;font-size:12px;flex-shrink:0}
+.qty-row{display:flex;align-items:center;gap:16px;margin-bottom:28px}
+.qty-lbl{font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted)}
+.qty-ctrl{display:flex;align-items:center;border:1px solid rgba(255,255,255,0.1);border-radius:2px}
+.qty-btn{background:transparent;color:var(--white);border:none;width:36px;height:36px;
+  font-size:18px;cursor:pointer;transition:background 0.2s;display:flex;align-items:center;justify-content:center}
+.qty-btn:hover{background:rgba(201,162,39,0.1)}
+.qty-val{width:40px;text-align:center;font-size:14px;font-weight:500;
+  border-left:1px solid rgba(255,255,255,0.08);border-right:1px solid rgba(255,255,255,0.08)}
+.prod-actions{display:flex;gap:12px;flex-wrap:wrap}
+.btn-add{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;
+  background:var(--accent);color:var(--black);padding:18px 32px;
+  font-family:var(--fb);font-size:13px;font-weight:700;letter-spacing:0.14em;
+  text-transform:uppercase;border:none;cursor:pointer;border-radius:2px;
+  box-shadow:0 8px 40px rgba(201,162,39,0.3);transition:all 0.3s}
+.btn-add:hover{background:var(--accent2);transform:translateY(-2px);box-shadow:0 16px 60px rgba(201,162,39,0.45)}
+.btn-add.added{background:#25D366 !important;box-shadow:0 8px 30px rgba(37,211,102,0.3) !important}
+.btn-wish{width:54px;height:54px;background:transparent;border:1px solid rgba(255,255,255,0.1);
+  color:rgba(240,237,232,0.45);border-radius:2px;cursor:pointer;font-size:20px;
+  display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.btn-wish:hover{border-color:rgba(201,162,39,0.4);color:var(--accent)}
+.prod-meta{margin-top:32px;padding-top:28px;border-top:1px solid var(--border);
+  display:flex;flex-wrap:wrap;gap:20px}
+.meta-i{font-size:11px;color:rgba(240,237,232,0.32);letter-spacing:0.06em}
+.meta-i strong{color:rgba(240,237,232,0.6)}
+
+/* SPECS */
+.specs-sec{padding:60px 52px 80px;position:relative;z-index:2;background:var(--carbon);border-top:1px solid var(--border)}
+.specs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);margin-top:44px}
+.spec{background:var(--carbon);padding:32px 28px}
+.spec-n{font-family:var(--fd);font-size:38px;color:var(--accent);
+  text-shadow:0 0 30px rgba(201,162,39,0.2);margin-bottom:6px}
+.spec-l{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted)}
+.spec-d{font-size:13px;color:rgba(240,237,232,0.45);margin-top:8px;line-height:1.6}
+
+/* ═══════════════ CART PAGE ═══════════════ */
+#page-cart{padding:120px 52px 80px;position:relative;z-index:2;min-height:100vh}
+.cart-header{display:flex;align-items:baseline;gap:16px;margin-bottom:40px}
+.cart-title{font-family:var(--fd);font-size:clamp(44px,5vw,72px);line-height:1}
+.cart-count-lbl{font-size:12px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase}
+.cart-layout{display:grid;grid-template-columns:1fr 380px;gap:60px;align-items:start}
+.cart-empty{text-align:center;padding:80px 40px;border:1px solid var(--border);border-radius:3px}
+.cart-empty-ico{font-size:64px;margin-bottom:24px;opacity:0.25}
+.cart-empty-t{font-family:var(--fd);font-size:32px;color:rgba(240,237,232,0.35);margin-bottom:12px}
+.cart-empty-s{font-size:14px;color:var(--muted);margin-bottom:28px}
+.cart-items-wrap{display:flex;flex-direction:column;gap:1px;background:var(--border)}
+.cart-item{background:var(--carbon);display:grid;grid-template-columns:90px 1fr auto;
+  gap:20px;padding:22px 24px;align-items:center;transition:background 0.2s}
+.cart-item:hover{background:rgba(201,162,39,0.015)}
+.ci-img{width:90px;height:90px;object-fit:cover;border-radius:2px;
+  border:1px solid rgba(255,255,255,0.05);filter:brightness(0.85)}
+.ci-name{font-family:var(--fd);font-size:16px;letter-spacing:0.04em;margin-bottom:4px}
+.ci-sku{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted)}
+.ci-price{font-family:var(--fd);font-size:22px;color:var(--accent);
+  text-shadow:0 0 16px rgba(201,162,39,0.2);margin-top:10px}
+.ci-ctrl{display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+.ci-qty{display:flex;align-items:center;border:1px solid rgba(255,255,255,0.08);border-radius:2px}
+.cq-btn{background:transparent;color:var(--white);border:none;width:30px;height:30px;
+  font-size:16px;cursor:pointer;transition:background 0.2s;display:flex;align-items:center;justify-content:center}
+.cq-btn:hover{background:rgba(201,162,39,0.1)}
+.cq-val{width:32px;text-align:center;font-size:13px;
+  border-left:1px solid rgba(255,255,255,0.06);border-right:1px solid rgba(255,255,255,0.06);padding:4px 0}
+.ci-remove{background:transparent;border:none;color:rgba(240,237,232,0.18);font-size:20px;
+  cursor:pointer;transition:color 0.2s;line-height:1;padding:4px}
+.ci-remove:hover{color:rgba(255,80,80,0.65)}
+
+/* ORDER SUMMARY */
+.order-summary{background:var(--carbon);border:1px solid var(--border);padding:32px;position:sticky;top:100px}
+.os-title{font-family:var(--fd);font-size:24px;letter-spacing:0.06em;margin-bottom:28px;
+  padding-bottom:18px;border-bottom:1px solid var(--border)}
+.os-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-size:13px}
+.os-row.total{font-family:var(--fd);font-size:22px;padding-top:18px;margin-top:8px;
+  border-top:1px solid var(--border);color:var(--accent)}
+.os-lbl{color:rgba(240,237,232,0.45)}
+.os-val{color:rgba(240,237,232,0.75)}
+.os-val.green{color:#4ade80}
+.promo-row{display:flex;gap:8px;margin:20px 0}
+.promo-input{flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);
+  color:var(--white);padding:10px 14px;font-size:12px;font-family:var(--fb);
+  border-radius:2px;outline:none;transition:border-color 0.2s}
+.promo-input:focus{border-color:rgba(201,162,39,0.3)}
+.promo-btn{background:rgba(201,162,39,0.1);border:1px solid rgba(201,162,39,0.2);
+  color:var(--accent);padding:10px 16px;font-size:10px;font-weight:700;letter-spacing:0.12em;
+  text-transform:uppercase;cursor:pointer;border-radius:2px;font-family:var(--fb);
+  transition:all 0.2s;white-space:nowrap}
+.promo-btn:hover{background:rgba(201,162,39,0.18)}
+.checkout-btn{width:100%;padding:18px;background:var(--accent);color:var(--black);
+  font-family:var(--fb);font-size:13px;font-weight:700;letter-spacing:0.14em;
+  text-transform:uppercase;border:none;cursor:pointer;border-radius:2px;margin-top:16px;
+  box-shadow:0 8px 40px rgba(201,162,39,0.28);transition:all 0.3s;
+  display:flex;align-items:center;justify-content:center;gap:10px}
+.checkout-btn:hover{background:var(--accent2);transform:translateY(-2px);box-shadow:0 16px 60px rgba(201,162,39,0.45)}
+.secure-note{text-align:center;margin-top:16px;font-size:11px;color:rgba(240,237,232,0.22);
+  letter-spacing:0.06em;display:flex;align-items:center;justify-content:center;gap:6px}
+
+/* TOAST */
+.toast{position:fixed;bottom:32px;right:32px;z-index:9999;
+  background:rgba(10,10,14,0.97);border:1px solid rgba(201,162,39,0.28);
+  padding:16px 22px;display:flex;align-items:center;gap:12px;border-radius:3px;
+  backdrop-filter:blur(24px);box-shadow:0 8px 40px rgba(0,0,0,0.5);
+  transform:translateY(80px);opacity:0;transition:all 0.4s var(--ease);
+  font-size:13px;max-width:320px;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+.toast-ico{font-size:20px}
+.toast-title{font-weight:600;font-size:13px;margin-bottom:2px}
+.toast-sub{font-size:11px;color:rgba(240,237,232,0.45)}
+
+/* RESPONSIVE */
+@media(max-width:1100px){
+  #hero,.prod-layout{grid-template-columns:1fr;gap:50px}
+  .story-grid{grid-template-columns:1fr;gap:50px}.story-inset{display:none}
+  .feat-grid{grid-template-columns:repeat(2,1fr)}
+  .rev-grid{grid-template-columns:repeat(2,1fr)}
+  .cart-layout{grid-template-columns:1fr}
+  .specs-grid{grid-template-columns:repeat(2,1fr)}
+  .prod-layout,.specs-sec,.sec{padding-left:28px;padding-right:28px}
+  #page-cart{padding-left:28px;padding-right:28px}
+}
+@media(max-width:768px){
+  nav{padding:14px 20px}.nav-links{display:none}
+  .sec,#page-cart,footer{padding-left:18px;padding-right:18px}
+  .hero-stats{flex-wrap:wrap;gap:24px}
+  #hero{padding:110px 18px 60px}
+  .feat-grid,.rev-grid{grid-template-columns:1fr}
+  footer{flex-direction:column;text-align:center}
+  .foot-links{flex-wrap:wrap;justify-content:center}
+  .prod-layout{padding:40px 18px 60px}
+  .specs-grid{grid-template-columns:1fr 1fr}
+  .cart-item{grid-template-columns:70px 1fr auto;gap:12px;padding:16px}
+  .ci-img{width:70px;height:70px}
+}
+</style>
+</head>
+<body>
+
+<canvas id="bg-canvas" width="1728" height="969"></canvas>
+
+<!-- ── NAV ── -->
+<nav id="nav">
+  <span class="logo" onclick="showPage(&#39;home&#39;)">EASY<em>RIDE</em></span>
+  <ul class="nav-links">
+    <li><a onclick="showPage(&#39;home&#39;)" data-page="home">Home</a></li>
+    <li><a onclick="showPage(&#39;home&#39;);setTimeout(()=&gt;document.getElementById(&#39;catalogue&#39;)?.scrollIntoView({behavior:&#39;smooth&#39;}),100)" data-page="home">Products</a></li>
+    <li><a onclick="showPage(&#39;home&#39;);setTimeout(()=&gt;document.getElementById(&#39;story&#39;)?.scrollIntoView({behavior:&#39;smooth&#39;}),100)" data-page="home">Story</a></li>
+    <li><a onclick="showPage(&#39;product&#39;)" data-page="product">Product</a></li>
+  </ul>
+  <button class="nav-cart" onclick="showPage(&#39;cart&#39;)">
+    🛒 Cart <span class="cart-badge" id="cart-badge">0</span>
+  </button>
+</nav>
+
+<!-- ══════════════════════════════════════
+     HOME PAGE
+══════════════════════════════════════ -->
+<div class="page active" id="page-home">
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="grid-bg"></div>
+    <div class="orb o1"></div>
+    <div class="orb o2"></div>
+    <div class="orb o3"></div>
+
+    <div>
+      <div class="eyebrow"><span class="pulse-dot"></span>Patent Pending · MALABI Design</div>
+      <h1 class="hero-h">
+        RIDE<br>
+        <span class="stroke">FREE.</span><br>
+        <span class="glow">TOGETHER.</span>
+      </h1>
+      <p class="hero-sub">The world's most advanced dog bike leash. Aerospace-grade carbon fiber, 180° rotation, built-in shock absorption — engineered for riders who refuse to leave their dog behind.</p>
+      <div class="hero-btns">
+        <button class="btn-gold" onclick="showPage(&#39;product&#39;)">
+          Shop Now
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
+        </button>
+        <button class="btn-ghost" onclick="document.getElementById(&#39;story&#39;).scrollIntoView({behavior:&#39;smooth&#39;})">Our Story</button>
+      </div>
+      <div class="hero-stats">
+        <div><div class="stat-n">180°</div><div class="stat-l">Rotation</div></div>
+        <div><div class="stat-n">10×</div><div class="stat-l">Stronger</div></div>
+        <div><div class="stat-n">$79</div><div class="stat-l">From</div></div>
+      </div>
+    </div>
+
+    <div class="hero-visual rv d2 in">
+      <div class="img-wrap">
+        <img class="hero-img" src="./Malabi_files/71bG4CIM2VL._AC_SL1500.jpg" alt="EasyRide Dog Bike Leash">
+        <div class="float-card fc-price">
+          <div class="lbl">Sale Price Today</div>
+          <div class="val">$79.95 <span class="old">$99.95</span></div>
+        </div>
+        <div class="float-card fc-badge">
+          <div class="bt">Save</div>
+          <div class="bn">21%</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <div class="ticker">
+    <div class="ticker-inner">
+      <span class="ti"><span class="tdot"></span>Carbon Fiber</span>
+      <span class="ti"><span class="tdot"></span>180° Rotation</span>
+      <span class="ti"><span class="tdot"></span>Shock Absorbers</span>
+      <span class="ti"><span class="tdot"></span>Quick-Attach</span>
+      <span class="ti"><span class="tdot"></span>Free US Shipping</span>
+      <span class="ti"><span class="tdot"></span>Patent Pending</span>
+      <span class="ti"><span class="tdot"></span>4.9★ Rated</span>
+      <span class="ti"><span class="tdot"></span>MALABI Design</span>
+      <span class="ti"><span class="tdot"></span>Carbon Fiber</span>
+      <span class="ti"><span class="tdot"></span>180° Rotation</span>
+      <span class="ti"><span class="tdot"></span>Shock Absorbers</span>
+      <span class="ti"><span class="tdot"></span>Quick-Attach</span>
+      <span class="ti"><span class="tdot"></span>Free US Shipping</span>
+      <span class="ti"><span class="tdot"></span>Patent Pending</span>
+      <span class="ti"><span class="tdot"></span>4.9★ Rated</span>
+      <span class="ti"><span class="tdot"></span>MALABI Design</span>
+    </div>
+  </div>
+
+  <!-- CATALOGUE -->
+  <section class="sec" id="catalogue">
+    <div class="sec-eye rv">Product Catalogue</div>
+    <h2 class="sec-h rv d1">THE COLLECTION</h2>
+    <p class="sec-sub rv d2">Premium dog exercise equipment. Engineered by dog owners who happen to be engineers.</p>
+
+    <div class="prod-grid">
+      <div class="pcard rv d1" onclick="showPage(&#39;product&#39;)">
+        <div class="pcard-bdg">−21% OFF</div>
+        <img class="pcard-img" src="./Malabi_files/61LSrtiakCL._AC_SL1500_005f4139-86ae-4035-a5ff-0f56e1d870d2.jpg" alt="180° Rotating Dog Bike Leash" loading="lazy">
+        <div class="pcard-body">
+          <div class="pcard-cat">Best Seller</div>
+          <div class="pcard-name">180° ROTATING DOG BIKE LEASH</div>
+          <p class="pcard-desc">Full 180° rotation, shock absorption, quick release. Patent pending. Your dog's favourite adventure companion.</p>
+          <div class="pcard-tags"><span class="tag">Carbon Fiber</span><span class="tag">Shock Absorber</span><span class="tag">Quick Release</span></div>
+          <div class="pcard-foot">
+            <div><div class="price-now">$79.95</div><div class="price-was">$99.95</div></div>
+            <button class="btn-sm" onclick="event.stopPropagation();showPage(&#39;product&#39;)">
+              View <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pcard rv d2" onclick="showPage(&#39;product&#39;)">
+        <img class="pcard-img" src="./Malabi_files/71v8tVJpt3L._AC_SL1500.jpg" alt="Quick Release" loading="lazy">
+        <div class="pcard-body">
+          <div class="pcard-cat">Feature Highlight</div>
+          <div class="pcard-name">QUICK RELEASE MECHANISM</div>
+          <p class="pcard-desc">Attach and detach in seconds. Fits all standard bike frames — no tools, no fuss, just ride.</p>
+          <div class="pcard-tags"><span class="tag">Universal Fit</span><span class="tag">Tool-Free</span><span class="tag">Secure Lock</span></div>
+          <div class="pcard-foot">
+            <div><div class="price-now">$79.95</div><div class="price-was">$99.95</div></div>
+            <button class="btn-sm" onclick="event.stopPropagation();showPage(&#39;product&#39;)">
+              View <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pcard rv d3" onclick="showPage(&#39;product&#39;)">
+        <img class="pcard-img" src="./Malabi_files/71JHtHX-rcL._AC_SL1500.jpg" alt="Full Set" loading="lazy">
+        <div class="pcard-body">
+          <div class="pcard-cat">Complete Kit</div>
+          <div class="pcard-name">EASYRIDE FULL SET</div>
+          <p class="pcard-desc">Everything in one box. Leash, mount, adjustable strap. Ready to ride from the moment it arrives.</p>
+          <div class="pcard-tags"><span class="tag">Full Kit</span><span class="tag">14"L × 2"W</span><span class="tag">Black Carbon</span></div>
+          <div class="pcard-foot">
+            <div><div class="price-now">$79.95</div><div class="price-was">$99.95</div></div>
+            <button class="btn-sm" onclick="event.stopPropagation();showPage(&#39;product&#39;)">
+              View <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="sec feat-sec" id="features">
+    <div class="sec-eye rv">Why EasyRide</div>
+    <h2 class="sec-h rv d1">ENGINEERED TO PERFORM</h2>
+    <div class="feat-grid">
+      <div class="fi rv d1"><div class="fi-ico">🔄</div><div class="fi-t">180° ROTATION</div><p class="fi-d">Your dog moves freely side to side without tangling or pulling you off balance. Total freedom, total control.</p></div>
+      <div class="fi rv d2"><div class="fi-ico">⚡</div><div class="fi-t">CARBON FIBER</div><p class="fi-d">Aerospace-grade carbon fiber — 10× stronger than steel, 15× lighter. Built for thousands of miles.</p></div>
+      <div class="fi rv d3"><div class="fi-ico">🛡️</div><div class="fi-t">SHOCK ABSORBED</div><p class="fi-d">Dual shock absorbers neutralize sudden lunges, keeping you balanced and in control at all speeds.</p></div>
+      <div class="fi rv d4"><div class="fi-ico">🔗</div><div class="fi-t">QUICK ATTACH</div><p class="fi-d">Mount in seconds on virtually all bike frames. Zero tools required. Built for real riders.</p></div>
+    </div>
+  </section>
+
+  <!-- STORY -->
+  <section class="sec" id="story">
+    <div class="story-grid">
+      <div class="story-imgs rvL">
+        <div class="story-line"></div>
+        <img class="story-main" src="./Malabi_files/81f2uCwedOL._AC_SL1500.jpg" alt="Riding with dog" loading="lazy">
+        <img class="story-inset" src="./Malabi_files/71qwV3hREOL._AC_SL1500.jpg" alt="EasyRide detail" loading="lazy">
+      </div>
+      <div class="rvR">
+        <div class="sec-eye">Our Story</div>
+        <h2 class="sec-h">BUILT BY<br>DOG OWNERS.</h2>
+        <blockquote class="story-q">"I decided it was time to make things more interesting for my pooch — and safer for me."</blockquote>
+        <p class="story-p">Malabi is a company created by dog owners who happen to be engineers. We build quality-made, unique dog exercise equipment to enhance the experience for both dogs and their humans.</p>
+        <p class="story-p">The EasyRide leash is the fruit of years of personal experience riding with a dog. After many prototypes we built something unlike anything else on the market.</p>
+        <div class="sig">
+          <div class="sig-av">G</div>
+          <div><div class="sig-name">GAVIN</div><div class="sig-role">Founder, Malabi Design Ltd</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="sec" id="reviews" style="background:var(--carbon);border-top:1px solid var(--border)">
+    <div style="text-align:center">
+      <div class="sec-eye rv" style="justify-content:center">Customer Reviews</div>
+      <h2 class="sec-h rv d1" style="text-align:center">RIDERS LOVE IT</h2>
+    </div>
+    <div class="rev-grid">
+      <div class="rc rv d1"><div class="rc-stars">★★★★★</div><p class="rc-text">"Well made, easy to mount and durable. My dog took to this in 30 seconds. We've been using it every single day since it arrived."</p><div class="rc-auth"><div class="rc-av">N</div><div><div class="rc-name">NH Resident</div><div class="rc-tag">Verified Buyer</div></div></div></div>
+      <div class="rc rv d2"><div class="rc-stars">★★★★★</div><p class="rc-text">"I don't typically write reviews but this product needs to be praised! My high-energy dog is finally tired after our rides. Worth every penny."</p><div class="rc-auth"><div class="rc-av">D</div><div><div class="rc-name">David</div><div class="rc-tag">Verified Buyer</div></div></div></div>
+      <div class="rc rv d3"><div class="rc-stars">★★★★★</div><p class="rc-text">"Not many products are worth the money but this one is. It's become our favourite activity together. The engineering is genuinely impressive."</p><div class="rc-auth"><div class="rc-av">M</div><div><div class="rc-name">Mike Herrera</div><div class="rc-tag">Verified Buyer</div></div></div></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="sec cta-sec">
+    <div class="sec-eye rv" style="justify-content:center;margin-bottom:28px">
+      <span style="width:24px;height:1px;background:var(--accent);display:inline-block"></span>
+      Ready to Ride
+      <span style="width:24px;height:1px;background:var(--accent);display:inline-block"></span>
+    </div>
+    <h2 class="cta-h rv d1">LET'S RIDE<br><span class="hollow">TOGETHER</span></h2>
+    <p class="cta-sub rv d2">Join thousands of dog owners who've discovered the joy of biking with their best friend. Free US shipping, 4–8 business days.</p>
+    <div class="cta-btns rv d3">
+      <a href="https://wa.me/15854600560" class="btn-wa" target="_blank">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path></svg>
+        Chat on WhatsApp
+      </a>
+      <button class="btn-ol" onclick="showPage(&#39;product&#39;)">
+        Order Now — $79.95
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
+      </button>
+    </div>
+  </section>
+
+  <footer>
+    <div class="foot-logo">EASY<em>RIDE</em></div>
+    <div class="foot-copy">© 2026 Malabi Design Ltd. All rights reserved.</div>
+    <div class="foot-links">
+      <a href="https://get-easyride.com/policies/terms-of-service" target="_blank">Terms</a>
+      <a href="https://get-easyride.com/policies/refund-policy" target="_blank">Refunds</a>
+      <a href="https://get-easyride.com/policies/privacy-policy" target="_blank">Privacy</a>
+      <a href="https://get-easyride.com/pages/contact-us" target="_blank">Contact</a>
+    </div>
+  </footer>
+</div>
+
+<!-- ══════════════════════════════════════
+     PRODUCT PAGE
+══════════════════════════════════════ -->
+<div class="page" id="page-product">
+  <div class="prod-layout">
+    <!-- Gallery -->
+    <div>
+      <img class="gallery-main" id="gallery-main" src="./Malabi_files/61LSrtiakCL(1)._AC_SL1500_005f4139-86ae-4035-a5ff-0f56e1d870d2.jpg" alt="EasyRide Dog Bike Leash">
+      <div class="gallery-thumbs">
+        <img class="thumb active" src="./Malabi_files/61LSrtiakCL(2)._AC_SL1500_005f4139-86ae-4035-a5ff-0f56e1d870d2.jpg" onclick="setThumb(this,&#39;https://get-easyride.com/cdn/shop/files/61LSrtiakCL._AC_SL1500_005f4139-86ae-4035-a5ff-0f56e1d870d2.jpg?v=1723112062&amp;width=1200&#39;)" loading="lazy">
+        <img class="thumb" src="./Malabi_files/71JHtHX-rcL(1)._AC_SL1500.jpg" onclick="setThumb(this,&#39;https://get-easyride.com/cdn/shop/files/71JHtHX-rcL._AC_SL1500.jpg?v=1723112062&amp;width=1200&#39;)" loading="lazy">
+        <img class="thumb" src="./Malabi_files/71v8tVJpt3L(1)._AC_SL1500.jpg" onclick="setThumb(this,&#39;https://get-easyride.com/cdn/shop/files/71v8tVJpt3L._AC_SL1500.jpg?v=1723112062&amp;width=1200&#39;)" loading="lazy">
+        <img class="thumb" src="./Malabi_files/71qwV3hREOL(1)._AC_SL1500.jpg" onclick="setThumb(this,&#39;https://get-easyride.com/cdn/shop/files/71qwV3hREOL._AC_SL1500.jpg?v=1723112062&amp;width=1200&#39;)" loading="lazy">
+        <img class="thumb" src="./Malabi_files/71bG4CIM2VL(1)._AC_SL1500.jpg" onclick="setThumb(this,&#39;https://get-easyride.com/cdn/shop/files/71bG4CIM2VL._AC_SL1500.jpg?v=1723112062&amp;width=1200&#39;)" loading="lazy">
+        <img class="thumb" src="./Malabi_files/81f2uCwedOL(1)._AC_SL1500.jpg" onclick="setThumb(this,&#39;https://get-easyride.com/cdn/shop/files/81f2uCwedOL._AC_SL1500.jpg?v=1723112062&amp;width=1200&#39;)" loading="lazy">
+      </div>
+    </div>
+
+    <!-- Info -->
+    <div class="prod-info">
+      <div class="prod-cat">MALABI Design Ltd · Patent Pending</div>
+      <h1 class="prod-name">180° ROTATING DOG BIKE LEASH</h1>
+      <div class="prod-stars">
+        <span class="stars">★★★★★</span>
+        <span class="star-ct">4.9 (127 reviews)</span>
+      </div>
+      <div class="prod-price-row">
+        <span class="prod-price">$79.95</span>
+        <span class="prod-price-orig">$99.95</span>
+        <span class="prod-save">SAVE 21%</span>
+      </div>
+      <p class="prod-desc">The most advanced dog bike leash ever made. Full 180° rotation means your dog runs freely beside you — never tangled, never pulling you off balance. Aerospace-grade carbon fiber with dual shock absorbers and quick-release mount. Fits all standard bikes, all dog sizes.</p>
+      <div class="prod-feats">
+        <div class="pf">Lightweight carbon fiber — 10× stronger than steel</div>
+        <div class="pf">180° rotating mechanism — patent pending design</div>
+        <div class="pf">Built-in dual shock absorbers for smooth riding</div>
+        <div class="pf">Quick-attach/detach — no tools required</div>
+        <div class="pf">Adjustable length — fits all dog sizes</div>
+        <div class="pf">Free US shipping in 4–8 business days</div>
+      </div>
+      <div class="qty-row">
+        <span class="qty-lbl">Quantity</span>
+        <div class="qty-ctrl">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <span class="qty-val" id="qty-display">1</span>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+      </div>
+      <div class="prod-actions">
+        <button class="btn-add" id="btn-add" onclick="addToCart()">🛒 Add to Cart</button>
+        <button class="btn-wish" title="Save to wishlist">♡</button>
+      </div>
+      <div class="prod-meta">
+        <span class="meta-i">Size: <strong>14"L × 2"W × 4"H</strong></span>
+        <span class="meta-i">Material: <strong>Carbon Fiber</strong></span>
+        <span class="meta-i">Color: <strong>Black</strong></span>
+        <span class="meta-i">Brand: <strong>MALABI</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Specs -->
+  <div class="specs-sec">
+    <div class="sec-eye rv">Technical Specifications</div>
+    <h2 class="sec-h rv d1">BUILT TO LAST</h2>
+    <div class="specs-grid">
+      <div class="spec rv d1"><div class="spec-n">10×</div><div class="spec-l">Stronger Than Steel</div><div class="spec-d">Carbon fiber construction outperforms aluminum and stainless at a fraction of the weight.</div></div>
+      <div class="spec rv d2"><div class="spec-n">180°</div><div class="spec-l">Full Rotation Arc</div><div class="spec-d">Patent-pending pivot system allows total side-to-side movement without tangling.</div></div>
+      <div class="spec rv d3"><div class="spec-n">15×</div><div class="spec-l">Lighter Than Steel</div><div class="spec-d">At just 14"L × 2"W you'll barely notice it — until your dog lunges suddenly.</div></div>
+      <div class="spec rv d4"><div class="spec-n">2×</div><div class="spec-l">Shock Absorbers</div><div class="spec-d">Dual absorption system neutralizes sudden movements, keeping you balanced.</div></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="foot-logo">EASY<em>RIDE</em></div>
+    <div class="foot-copy">© 2026 Malabi Design Ltd. All rights reserved.</div>
+    <div class="foot-links">
+      <a href="https://get-easyride.com/policies/terms-of-service" target="_blank">Terms</a>
+      <a href="https://get-easyride.com/policies/refund-policy" target="_blank">Refunds</a>
+      <a href="https://get-easyride.com/policies/privacy-policy" target="_blank">Privacy</a>
+    </div>
+  </footer>
+</div>
+
+<!-- ══════════════════════════════════════
+     CART PAGE
+══════════════════════════════════════ -->
+<div class="page" id="page-cart">
+  <div class="cart-header">
+    <h1 class="cart-title">YOUR CART</h1>
+    <span class="cart-count-lbl" id="cart-count-lbl">0 items</span>
+  </div>
+  <div class="cart-layout">
+    <div id="cart-items-container"></div>
+    <div class="order-summary">
+      <div class="os-title">Order Summary</div>
+      <div class="os-row"><span class="os-lbl">Subtotal</span><span class="os-val" id="os-subtotal">$0.00</span></div>
+      <div class="os-row"><span class="os-lbl">Shipping</span><span class="os-val green">FREE</span></div>
+      <div class="os-row"><span class="os-lbl">Discount</span><span class="os-val" id="os-discount">—</span></div>
+      <div class="os-row total"><span>Total</span><span id="os-total">$0.00</span></div>
+      <div class="promo-row">
+        <input class="promo-input" id="promo-input" placeholder="Promo code…" type="text">
+        <button class="promo-btn" onclick="applyPromo()">Apply</button>
+      </div>
+      <button class="checkout-btn" onclick="window.open(&#39;https://get-easyride.com/products/180-rotating-dog-bike-leash&#39;,&#39;_blank&#39;)">
+        Checkout Securely
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"></path></svg>
+      </button>
+      <div class="secure-note">🔒 Secure checkout · PayPal accepted</div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="toast-ico" id="toast-ico">🛒</div>
+  <div>
+    <div class="toast-title" id="toast-title">Added to cart</div>
+    <div class="toast-sub" id="toast-sub">180° Dog Bike Leash</div>
+  </div>
+</div>
+
+<script>
+// ── ANIMATED BACKGROUND CANVAS ──
+(function(){
+  const cv = document.getElementById('bg-canvas');
+  const cx = cv.getContext('2d');
+  let W, H;
+  function resize() { W = cv.width = window.innerWidth; H = cv.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Particles
+  const particles = [];
+  class Particle {
+    constructor() { this.reset(true); }
+    reset(init) {
+      this.x = Math.random() * W;
+      this.y = init ? Math.random() * H : H + 10;
+      this.r = Math.random() * 1.4 + 0.2;
+      this.vx = (Math.random() - 0.5) * 0.2;
+      this.vy = -(Math.random() * 0.3 + 0.05);
+      this.life = init ? Math.random() : 0;
+      this.maxLife = Math.random() * 0.4 + 0.2;
+      this.gold = Math.random() < 0.4;
+    }
+    update() {
+      this.x += this.vx; this.y += this.vy; this.life += 0.003;
+      if (this.life > this.maxLife || this.y < -10) this.reset(false);
+    }
+    draw() {
+      const t = this.life / this.maxLife;
+      const a = t < 0.3 ? t / 0.3 : t > 0.7 ? (1 - t) / 0.3 : 1;
+      cx.beginPath();
+      cx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      cx.fillStyle = this.gold
+        ? `rgba(201,162,39,${a * 0.65})`
+        : `rgba(90,110,255,${a * 0.22})`;
+      cx.fill();
+    }
+  }
+  for (let i = 0; i < 150; i++) particles.push(new Particle());
+
+  // Scanning glow
+  let scanY = 0;
+
+  function frame() {
+    cx.clearRect(0, 0, W, H);
+    // Grid
+    cx.strokeStyle = 'rgba(255,255,255,0.018)';
+    cx.lineWidth = 1;
+    for (let x = 0; x < W; x += 80) { cx.beginPath(); cx.moveTo(x, 0); cx.lineTo(x, H); cx.stroke(); }
+    for (let y = 0; y < H; y += 80) { cx.beginPath(); cx.moveTo(0, y); cx.lineTo(W, y); cx.stroke(); }
+    // Scan line
+    const sg = cx.createLinearGradient(0, scanY - 80, 0, scanY + 80);
+    sg.addColorStop(0, 'transparent');
+    sg.addColorStop(0.5, 'rgba(201,162,39,0.016)');
+    sg.addColorStop(1, 'transparent');
+    cx.fillStyle = sg;
+    cx.fillRect(0, scanY - 80, W, 160);
+    scanY += 0.4; if (scanY > H + 80) scanY = -80;
+    // Particles
+    particles.forEach(p => { p.update(); p.draw(); });
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
+// ── NAV SCROLL ──
+const navEl = document.getElementById('nav');
+window.addEventListener('scroll', () => navEl.classList.toggle('scrolled', window.scrollY > 50));
+
+// ── SCROLL REVEAL ──
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.07, rootMargin: '0px 0px -30px 0px' });
+
+function initReveal() {
+  document.querySelectorAll('.rv, .rvL, .rvR').forEach(el => {
+    el.classList.remove('in');
+    revObs.observe(el);
+  });
+  // Immediately show elements already in viewport
+  document.querySelectorAll('.rv, .rvL, .rvR').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      el.classList.add('in');
+    }
+  });
+}
+initReveal();
+
+// ── PAGE ROUTING ── (the key fix — clean, reliable)
+function showPage(name) {
+  // Hide all pages
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  // Show target
+  const target = document.getElementById('page-' + name);
+  if (!target) { console.error('Page not found:', name); return; }
+  target.classList.add('active');
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'instant' });
+  // Update nav links
+  document.querySelectorAll('.nav-links a[data-page]').forEach(a => {
+    a.classList.toggle('active-link', a.dataset.page === name);
+  });
+  // Re-init reveal for new page
+  setTimeout(initReveal, 50);
+  // Render cart if switching to cart
+  if (name === 'cart') renderCart();
+}
+
+// ── STATE ──
+let cart = [];
+let qty = 1;
+let discount = 0;
+
+// ── PRODUCT PAGE ──
+function setThumb(el, src) {
+  document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const main = document.getElementById('gallery-main');
+  main.style.opacity = '0';
+  main.style.transform = 'scale(0.97)';
+  main.style.transition = 'opacity 0.25s, transform 0.25s';
+  setTimeout(() => {
+    main.src = src;
+    main.style.opacity = '1';
+    main.style.transform = 'scale(1)';
+  }, 150);
+}
+
+function changeQty(d) {
+  qty = Math.max(1, qty + d);
+  document.getElementById('qty-display').textContent = qty;
+}
+
+function addToCart() {
+  const existing = cart.find(i => i.id === 'leash');
+  if (existing) {
+    existing.qty += qty;
+  } else {
+    cart.push({
+      id: 'leash',
+      name: '180° Dog Bike Leash',
+      sku: 'EZR-180-CF-BLK',
+      price: 79.95,
+      img: 'https://get-easyride.com/cdn/shop/files/61LSrtiakCL._AC_SL1500_005f4139-86ae-4035-a5ff-0f56e1d870d2.jpg?v=1723112062&width=300',
+      qty: qty
+    });
+  }
+  updateCartBadge();
+  showToast('🛒', 'Added to cart!', '180° Dog Bike Leash ×' + qty);
+  const btn = document.getElementById('btn-add');
+  btn.classList.add('added');
+  btn.textContent = '✓ Added!';
+  setTimeout(() => { btn.classList.remove('added'); btn.innerHTML = '🛒 Add to Cart'; }, 2200);
+  qty = 1;
+  document.getElementById('qty-display').textContent = 1;
+}
+
+function updateCartBadge() {
+  const total = cart.reduce((a, i) => a + i.qty, 0);
+  const badge = document.getElementById('cart-badge');
+  badge.textContent = total;
+  // Bump animation
+  badge.classList.add('bump');
+  setTimeout(() => badge.classList.remove('bump'), 300);
+  // Update cart page label
+  const lbl = document.getElementById('cart-count-lbl');
+  if (lbl) lbl.textContent = total + ' item' + (total !== 1 ? 's' : '');
+}
+
+// ── CART RENDER ──
+function renderCart() {
+  const container = document.getElementById('cart-items-container');
+  const total = cart.reduce((a, i) => a + i.qty, 0);
+  // Update label
+  document.getElementById('cart-count-lbl').textContent = total + ' item' + (total !== 1 ? 's' : '');
+
+  if (cart.length === 0) {
+    container.innerHTML = `
+      <div class="cart-empty">
+        <div class="cart-empty-ico">🛒</div>
+        <div class="cart-empty-t">Your cart is empty</div>
+        <div class="cart-empty-s">Add some products to get started</div>
+        <button class="btn-gold" onclick="showPage('product')" style="margin-top:8px">Browse Products</button>
+      </div>`;
+    document.getElementById('os-subtotal').textContent = '$0.00';
+    document.getElementById('os-total').textContent = '$0.00';
+    document.getElementById('os-discount').textContent = '—';
+    return;
+  }
+
+  const sub = cart.reduce((a, i) => a + (i.price * i.qty), 0);
+  const tot = Math.max(0, sub - discount);
+  document.getElementById('os-subtotal').textContent = '$' + sub.toFixed(2);
+  document.getElementById('os-total').textContent = '$' + tot.toFixed(2);
+  document.getElementById('os-discount').textContent = discount > 0 ? '-$' + discount.toFixed(2) : '—';
+
+  container.innerHTML = '<div class="cart-items-wrap">' + cart.map((item, idx) => `
+    <div class="cart-item">
+      <img class="ci-img" src="${item.img}" alt="${item.name}"/>
+      <div>
+        <div class="ci-name">${item.name}</div>
+        <div class="ci-sku">SKU: ${item.sku}</div>
+        <div class="ci-price">$${(item.price * item.qty).toFixed(2)}</div>
+      </div>
+      <div class="ci-ctrl">
+        <button class="ci-remove" onclick="removeItem(${idx})" title="Remove">×</button>
+        <div class="ci-qty">
+          <button class="cq-btn" onclick="cartQty(${idx},-1)">−</button>
+          <span class="cq-val">${item.qty}</span>
+          <button class="cq-btn" onclick="cartQty(${idx},1)">+</button>
+        </div>
+      </div>
+    </div>`).join('') + '</div>';
+}
+
+function cartQty(idx, d) {
+  cart[idx].qty = Math.max(1, cart[idx].qty + d);
+  updateCartBadge();
+  renderCart();
+}
+
+function removeItem(idx) {
+  const name = cart[idx].name;
+  cart.splice(idx, 1);
+  updateCartBadge();
+  renderCart();
+  showToast('🗑️', 'Removed', name);
+}
+
+function applyPromo() {
+  const code = document.getElementById('promo-input').value.trim().toUpperCase();
+  if (code === 'EASYRIDE10') { discount = 10; showToast('🎉', 'Code applied!', '$10 off your order'); }
+  else if (code === 'RIDE20') { discount = 20; showToast('🎉', 'Code applied!', '$20 off your order'); }
+  else { showToast('❌', 'Invalid code', 'Try EASYRIDE10 for $10 off'); }
+  renderCart();
+}
+
+// ── TOAST ──
+let toastTimer;
+function showToast(ico, title, sub) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-ico').textContent = ico;
+  document.getElementById('toast-title').textContent = title;
+  document.getElementById('toast-sub').textContent = sub;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+// ── PARALLAX on hero image ──
+window.addEventListener('scroll', () => {
+  const img = document.querySelector('.hero-img');
+  if (img && window.scrollY < window.innerHeight) {
+    img.style.transform = `translateY(${window.scrollY * 0.07}px)`;
+  }
+});
+
+// ── CARD 3D TILT ──
+document.querySelectorAll('.pcard').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    card.style.transition = 'transform 0.06s, box-shadow 0.4s';
+    card.style.transform = `translateY(-8px) rotateY(${x * 6}deg) rotateX(${-y * 6}deg)`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.transition = 'transform 0.5s cubic-bezier(0.16,1,0.3,1), box-shadow 0.4s';
+    card.style.transform = '';
+  });
+});
+</script>
+
+
+</body></html>
