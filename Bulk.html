@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<!-- saved from url=(0059)file:///Users/kfireinav/Downloads/bulk-order-catalog_2.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bulk Order Catalog</title>
+<link href="./Bulk_files/css2" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f11;
+    --surface: #18181c;
+    --surface2: #222228;
+    --border: #2e2e38;
+    --accent: #e8ff47;
+    --accent2: #47c4ff;
+    --text: #f0f0f0;
+    --muted: #7a7a8a;
+    --danger: #ff5c5c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; min-height: 100vh; }
+
+  /* HEADER */
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 40px;
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(15,15,17,0.95); backdrop-filter: blur(12px);
+  }
+  .logo { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+  .logo span { color: var(--accent); }
+  .header-badge {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: var(--muted); letter-spacing: 1px; text-transform: uppercase;
+  }
+
+  /* MAIN LAYOUT */
+  .container { display: flex; min-height: calc(100vh - 73px); }
+
+  /* SIDEBAR */
+  aside {
+    width: 260px; flex-shrink: 0;
+    border-right: 1px solid var(--border);
+    padding: 32px 24px;
+    position: sticky; top: 73px; height: calc(100vh - 73px);
+    overflow-y: auto;
+  }
+  .sidebar-title {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 2px; color: var(--muted); text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .cat-btn {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; padding: 10px 14px; border-radius: 8px;
+    background: transparent; border: none; cursor: pointer;
+    color: var(--muted); font-family: 'Syne', sans-serif;
+    font-size: 14px; font-weight: 600; text-align: left;
+    transition: all 0.15s; margin-bottom: 4px;
+  }
+  .cat-btn:hover { background: var(--surface); color: var(--text); }
+  .cat-btn.active { background: var(--accent); color: #0f0f11; }
+  .cat-btn .count {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    background: rgba(255,255,255,0.1); padding: 2px 7px; border-radius: 20px;
+  }
+  .cat-btn.active .count { background: rgba(0,0,0,0.2); }
+
+  .sidebar-divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+  /* CART SUMMARY */
+  .cart-summary { background: var(--surface); border-radius: 12px; padding: 16px; }
+  .cart-summary h3 { font-size: 13px; font-weight: 700; margin-bottom: 12px; }
+  .cart-item-preview { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); margin-bottom: 6px; }
+  .cart-total { font-size: 13px; font-weight: 700; color: var(--accent); margin-top: 10px; }
+  .export-btn {
+    display: block; width: 100%; margin-top: 12px;
+    background: var(--accent); color: #0f0f11;
+    border: none; border-radius: 8px; padding: 12px;
+    font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700;
+    cursor: pointer; transition: opacity 0.15s;
+  }
+  .export-btn:hover { opacity: 0.85; }
+  .clear-btn {
+    display: block; width: 100%; margin-top: 6px;
+    background: transparent; color: var(--muted);
+    border: 1px solid var(--border); border-radius: 8px; padding: 8px;
+    font-family: 'Syne', sans-serif; font-size: 12px;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .clear-btn:hover { border-color: var(--danger); color: var(--danger); }
+
+  /* MAIN CONTENT */
+  main { flex: 1; padding: 32px 40px; overflow-y: auto; }
+
+  .search-bar {
+    display: flex; gap: 12px; margin-bottom: 28px;
+  }
+  .search-input {
+    flex: 1; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 16px;
+    color: var(--text); font-family: 'DM Mono', monospace; font-size: 14px;
+    outline: none; transition: border-color 0.15s;
+  }
+  .search-input:focus { border-color: var(--accent); }
+  .search-input::placeholder { color: var(--muted); }
+  .result-count {
+    font-family: 'DM Mono', monospace; font-size: 12px;
+    color: var(--muted); padding: 12px 0; margin-bottom: 8px;
+  }
+  .result-count span { color: var(--accent); font-weight: 500; }
+
+  /* TABLE */
+  .table-wrap { border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  thead { background: var(--surface2); }
+  th {
+    font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted);
+    padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border);
+    cursor: pointer; user-select: none;
+  }
+  th:hover { color: var(--text); }
+  th.sort-asc::after { content: ' ↑'; color: var(--accent); }
+  th.sort-desc::after { content: ' ↓'; color: var(--accent); }
+  td {
+    padding: 13px 16px; font-size: 13px;
+    border-bottom: 1px solid rgba(46,46,56,0.5);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface); }
+  .td-part { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--accent2); }
+  .td-sku { font-family: 'DM Mono', monospace; font-size: 12px; }
+  .td-desc { font-size: 13px; color: var(--text); max-width: 340px; }
+  .td-cat {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+    padding: 3px 9px; border-radius: 20px; display: inline-block;
+    background: var(--surface2); color: var(--muted);
+  }
+  .qty-cell { display: flex; align-items: center; gap: 6px; }
+  .qty-input {
+    width: 64px; background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; padding: 5px 8px; color: var(--text);
+    font-family: 'DM Mono', monospace; font-size: 13px;
+    text-align: center; outline: none; transition: border-color 0.15s;
+  }
+  .qty-input:focus { border-color: var(--accent); }
+  .qty-input.has-value { border-color: var(--accent); background: rgba(232,255,71,0.06); }
+  .add-btn {
+    background: none; border: 1px solid var(--border);
+    color: var(--muted); border-radius: 6px; padding: 5px 10px;
+    cursor: pointer; font-size: 16px; transition: all 0.15s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .add-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .add-btn.in-cart { border-color: var(--accent); color: var(--accent); background: rgba(232,255,71,0.08); }
+
+  /* PAGINATION */
+  .pagination {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 24px; justify-content: center;
+  }
+  .page-btn {
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); border-radius: 8px; padding: 8px 14px;
+    cursor: pointer; font-family: 'DM Mono', monospace; font-size: 13px;
+    transition: all 0.15s;
+  }
+  .page-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+  .page-btn.active { background: var(--accent); color: #0f0f11; border-color: var(--accent); font-weight: 700; }
+  .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* EMPTY */
+  .empty { text-align: center; padding: 60px 20px; color: var(--muted); }
+  .empty .icon { font-size: 40px; margin-bottom: 12px; }
+  .empty h3 { font-size: 18px; margin-bottom: 6px; color: var(--text); }
+
+  /* MODAL */
+  .modal-backdrop {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.8); z-index: 200;
+    align-items: center; justify-content: center;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 32px; max-width: 700px; width: 90%;
+    max-height: 80vh; overflow-y: auto;
+  }
+  .modal h2 { font-size: 20px; margin-bottom: 20px; }
+  .modal table { width: 100%; }
+  .modal th { font-size: 9px; }
+  .modal-footer { margin-top: 20px; display: flex; gap: 10px; }
+  .modal-close {
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text); border-radius: 8px; padding: 10px 20px;
+    cursor: pointer; font-family: 'Syne', sans-serif; font-weight: 600;
+  }
+  .copy-btn {
+    background: var(--accent2); color: #0f0f11;
+    border: none; border-radius: 8px; padding: 10px 20px;
+    cursor: pointer; font-family: 'Syne', sans-serif; font-weight: 700;
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">EMS <span>Bulk</span> Catalog</div>
+  <div class="header-badge">B2B Direct Order — 619 Products</div>
+</header>
+<div class="container">
+  <aside>
+    <div class="sidebar-title">Category</div>
+    <button class="cat-btn active" data-cat="All" onclick="filterCat(&#39;All&#39;)">
+      All Products <span class="count" id="cnt-All">619</span>
+    </button>
+    <button class="cat-btn" data-cat="Patch Cords" onclick="filterCat(&#39;Patch Cords&#39;)">
+      Patch Cords <span class="count" id="cnt-Patch Cords">270</span>
+    </button>
+    <button class="cat-btn" data-cat="Keystone Jacks" onclick="filterCat(&#39;Keystone Jacks&#39;)">
+      Keystone Jacks <span class="count" id="cnt-Keystone Jacks">237</span>
+    </button>
+    <button class="cat-btn" data-cat="Keystone Tools &amp; Kits" onclick="filterCat(&#39;Keystone Tools &amp; Kits&#39;)">
+      Keystone Tools <span class="count" id="cnt-Keystone Tools &amp; Kits">26</span>
+    </button>
+    <button class="cat-btn" data-cat="Inline Couplers" onclick="filterCat(&#39;Inline Couplers&#39;)">
+      Inline Couplers <span class="count" id="cnt-Inline Couplers">40</span>
+    </button>
+    <button class="cat-btn" data-cat="Connectors &amp; Jars" onclick="filterCat(&#39;Connectors &amp; Jars&#39;)">
+      Connectors &amp; Jars <span class="count" id="cnt-Connectors &amp; Jars">31</span>
+    </button>
+    <button class="cat-btn" data-cat="Patch Panels" onclick="filterCat(&#39;Patch Panels&#39;)">
+      Patch Panels <span class="count" id="cnt-Patch Panels">11</span>
+    </button>
+    <button class="cat-btn" data-cat="EZ Tools &amp; Kits" onclick="filterCat(&#39;EZ Tools &amp; Kits&#39;)">
+      EZ Tools <span class="count" id="cnt-EZ Tools &amp; Kits">3</span>
+    </button>
+    <hr class="sidebar-divider">
+    <div class="sidebar-title">Your Order</div>
+    <div class="cart-summary">
+      <h3>🛒 Selected Items: <span id="cart-count">0</span></h3>
+      <div id="cart-preview"><div style="color:var(--muted);font-size:12px;font-family:DM Mono,monospace">No items yet</div></div>
+      <div class="cart-total" id="cart-total-text" style="display:none"></div>
+      <button class="export-btn" onclick="showOrder()">Review &amp; Export Order</button>
+      <button class="clear-btn" onclick="clearCart()">Clear All</button>
+    </div>
+  </aside>
+
+  <main>
+    <div class="search-bar">
+      <input class="search-input" type="text" id="searchInput" placeholder="Search by description, SKU, or part number..." oninput="handleSearch()">
+    </div>
+    <div class="result-count" id="resultCount">Showing <span>50</span> of <span>619</span> products</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th onclick="sortBy(&#39;part&#39;)" id="th-part">Part #</th>
+            <th onclick="sortBy(&#39;sku&#39;)" id="th-sku">SKU</th>
+            <th onclick="sortBy(&#39;desc&#39;)" id="th-desc">Description</th>
+            <th onclick="sortBy(&#39;cat&#39;)" id="th-cat">Category</th>
+            <th>Qty</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"><tr>
+        <td class="td-part">10011</td>
+        <td class="td-sku">U5EZB50G</td>
+        <td class="td-desc">GTZ Cat5e 50/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;10011&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;10011&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">10021</td>
+        <td class="td-sku">U5EZB100G</td>
+        <td class="td-desc">GTZ Cat5e 100/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;10021&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;10021&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">10031</td>
+        <td class="td-sku">U5EZB200G</td>
+        <td class="td-desc">GTZ Cat5e 200/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;10031&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;10031&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">10040</td>
+        <td class="td-sku">U5EZB50JB50JG</td>
+        <td class="td-desc">Cat5e 50/bag + Boots 50/Bag</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;10040&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;10040&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">10050</td>
+        <td class="td-sku">U5EZB100JB100JG</td>
+        <td class="td-desc">Cat5e 100/bag  + Boots 100/Bag</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;10050&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;10050&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">10511</td>
+        <td class="td-sku">U6EZB50G</td>
+        <td class="td-desc">GTZ GTZ 50/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;10511&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;10511&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">10521</td>
+        <td class="td-sku">U6EZB100G</td>
+        <td class="td-desc">GTZ Cat6 100/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;10521&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;10521&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">10531</td>
+        <td class="td-sku">U6EZB200G</td>
+        <td class="td-desc">GTZ Cat6 200/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;10531&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;10531&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">10541</td>
+        <td class="td-sku">U6EZB50JB50JG</td>
+        <td class="td-desc">GTZ Cat6 50/Jar + Boots 50/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;10541&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;10541&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">10551</td>
+        <td class="td-sku">U6EZB100JB100JG</td>
+        <td class="td-desc">GTZ Cat6 100/Jar  + Boots 100/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;10551&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;10551&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">11011</td>
+        <td class="td-sku">U6AEZB50G</td>
+        <td class="td-desc">GTZ Cat6A  50/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;11011&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;11011&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">11021</td>
+        <td class="td-sku">U6AEZB100G</td>
+        <td class="td-desc">GTZ Cat6A 100/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;11021&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;11021&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">11031</td>
+        <td class="td-sku">U6AEZB200G</td>
+        <td class="td-desc">GTZ Cat6A 200/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;11031&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;11031&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">11041</td>
+        <td class="td-sku">U6AEZB50JB50JG</td>
+        <td class="td-desc">GTZ Cat6A 50/Jar + Boots 50/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;11041&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;11041&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">11051</td>
+        <td class="td-sku">U6AEZB100JB100JG</td>
+        <td class="td-desc">GTZ Cat6A 100/Jar + Boots 100/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;11051&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;11051&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">11510</td>
+        <td class="td-sku">U5EZB50J</td>
+        <td class="td-desc">Cat5e 50/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;11510&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;11510&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">11520</td>
+        <td class="td-sku">U5EZB100J</td>
+        <td class="td-desc">Cat5e 100/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;11520&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;11520&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">11530</td>
+        <td class="td-sku">U5EZB200J</td>
+        <td class="td-desc">Cat5e 200/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;11530&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;11530&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">11540</td>
+        <td class="td-sku">U5EZB50JB50J</td>
+        <td class="td-desc">Cat5e 50/jar + Boots 50/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;11540&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;11540&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">11550</td>
+        <td class="td-sku">U5EZB100JB100J</td>
+        <td class="td-desc">Cat5e 100/jar + Boots 100/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;11550&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;11550&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">12010</td>
+        <td class="td-sku">U6EZB50J</td>
+        <td class="td-desc">Cat6 50/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;12010&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;12010&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">12020</td>
+        <td class="td-sku">U6EZB100J</td>
+        <td class="td-desc">Cat6 100/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;12020&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;12020&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">12030</td>
+        <td class="td-sku">U6EZB200J</td>
+        <td class="td-desc">Cat6 200/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;12030&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;12030&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">12040</td>
+        <td class="td-sku">U6EZB50JB50J</td>
+        <td class="td-desc">Cat6 50/jar + Boots 50/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;12040&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;12040&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">12050</td>
+        <td class="td-sku">U6EZB100JB100J</td>
+        <td class="td-desc">Cat6 100/jar + Boots 100/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;12050&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;12050&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">12510</td>
+        <td class="td-sku">U6AEZB50J</td>
+        <td class="td-desc">Cat6A  50/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;12510&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;12510&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">12520</td>
+        <td class="td-sku">U6AEZB100J</td>
+        <td class="td-desc">Cat6A  100/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;12520&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;12520&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">12530</td>
+        <td class="td-sku">U6AEZB200J</td>
+        <td class="td-desc">Cat6A  200/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;12530&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;12530&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">12540</td>
+        <td class="td-sku">U6AEZB50JB50J</td>
+        <td class="td-desc">Cat6A 50/Jar + Boots 50/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;12540&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;12540&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">12550</td>
+        <td class="td-sku">U6AEZB100JB100J</td>
+        <td class="td-desc">Cat6A 100/Jar + Boots 100/Jar</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;12550&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;12550&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">13011</td>
+        <td class="td-sku">CAT7B30</td>
+        <td class="td-desc">Cat7 30/Bag</td>
+        <td><span class="td-cat">Connectors &amp; Jars</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;13011&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;13011&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">13510</td>
+        <td class="td-sku">EZT</td>
+        <td class="td-desc">EZ Tool</td>
+        <td><span class="td-cat">EZ Tools &amp; Kits</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;13510&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;13510&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">13520</td>
+        <td class="td-sku">KITCAT5BOOT-NEW</td>
+        <td class="td-desc">EZ Tool + 50 Cat5e + 50 Boots + Blades</td>
+        <td><span class="td-cat">EZ Tools &amp; Kits</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;13520&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;13520&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">13530</td>
+        <td class="td-sku">KITCAT6BOOT-NEW</td>
+        <td class="td-desc">EZ Tool + 50 Cat6 + 50 Boots + Blades</td>
+        <td><span class="td-cat">EZ Tools &amp; Kits</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;13530&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;13530&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">14000</td>
+        <td class="td-sku">KTOOL</td>
+        <td class="td-desc">Keystone Tool</td>
+        <td><span class="td-cat">Keystone Tools &amp; Kits</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;14000&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;14000&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">14001</td>
+        <td class="td-sku">KTOOL-RH</td>
+        <td class="td-desc">Replacement Head FOR CAT6 KEYSTONE TOOL</td>
+        <td><span class="td-cat">Keystone Tools &amp; Kits</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;14001&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;14001&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">17623</td>
+        <td class="td-sku">24KPANEL-N</td>
+        <td class="td-desc">Keystone Patch Panel 24 Ports</td>
+        <td><span class="td-cat">Patch Panels</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;17623&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;17623&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">17626</td>
+        <td class="td-sku">24KPANEL-2P-N</td>
+        <td class="td-desc">Keystone Patch Panel 24 Ports - 2 Pack</td>
+        <td><span class="td-cat">Patch Panels</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;17626&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;17626&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">17629</td>
+        <td class="td-sku">24KPANEL-4P-N</td>
+        <td class="td-desc">Keystone Patch Panel 24 Ports - 4 Pack</td>
+        <td><span class="td-cat">Patch Panels</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;17629&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;17629&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">17650</td>
+        <td class="td-sku">48KPANEL</td>
+        <td class="td-desc">Keystone Patch Panel 48 Ports</td>
+        <td><span class="td-cat">Patch Panels</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;17650&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;17650&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">17660</td>
+        <td class="td-sku">48KPANEL-2P</td>
+        <td class="td-desc">Keystone Patch Panel 48 Ports - 2 Pack</td>
+        <td><span class="td-cat">Patch Panels</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;17660&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;17660&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">17670</td>
+        <td class="td-sku">48KPANEL-4P</td>
+        <td class="td-desc">Keystone Patch Panel 48 Ports - 4 Pack</td>
+        <td><span class="td-cat">Patch Panels</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;17670&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;17670&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">17700</td>
+        <td class="td-sku">12KPANEL</td>
+        <td class="td-desc">Keystone Patch Panel 12 Ports</td>
+        <td><span class="td-cat">Patch Panels</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;17700&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;17700&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">17710</td>
+        <td class="td-sku">12KPANEL-2P</td>
+        <td class="td-desc">Keystone Patch Panel 12 Ports - 2 Pack</td>
+        <td><span class="td-cat">Patch Panels</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;17710&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;17710&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">17720</td>
+        <td class="td-sku">12KPANEL-4P</td>
+        <td class="td-desc">Keystone Patch Panel 12 Ports - 4 Pack</td>
+        <td><span class="td-cat">Patch Panels</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;17720&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;17720&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">18010</td>
+        <td class="td-sku">KTOOLFCAT6A</td>
+        <td class="td-desc">KEYSTONE TOOL + 12 CAT6A FTP + 24 COPPER TAPE</td>
+        <td><span class="td-cat">Keystone Tools &amp; Kits</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;18010&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;18010&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">18020</td>
+        <td class="td-sku">KFCAT6A-6</td>
+        <td class="td-desc">6 KEYSTONE CAT6A FTP + 12 X COPPER TAPE</td>
+        <td><span class="td-cat">Keystone Jacks</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;18020&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;18020&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">18030</td>
+        <td class="td-sku">KFCAT6A-12</td>
+        <td class="td-desc">12 KEYSTONE CAT6A FTP + 24 X COPPER TAPE</td>
+        <td><span class="td-cat">Keystone Jacks</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;18030&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;18030&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">18040</td>
+        <td class="td-sku">KFCAT6A-24</td>
+        <td class="td-desc">24 KEYSTONE CAT6A FTP + 48 X COPPER TAPE</td>
+        <td><span class="td-cat">Keystone Jacks</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;18040&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;18040&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr><tr>
+        <td class="td-part">19510</td>
+        <td class="td-sku">45KTOOL</td>
+        <td class="td-desc">EMS 45 Angel Keystone Tool</td>
+        <td><span class="td-cat">Keystone Tools &amp; Kits</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input" type="number" min="0" value="" onchange="updateCart(&#39;19510&#39;, this.value, this)" placeholder="0">
+          <button class="add-btn" onclick="quickAdd(&#39;19510&#39;, this)" title="Add 1">+</button>
+        </div></td>
+      </tr></tbody>
+      </table>
+    </div>
+    <div class="pagination" id="pagination"><button class="page-btn" onclick="goPage(0)" disabled="">← Prev</button><button class="page-btn active" onclick="goPage(1)">1</button><button class="page-btn" onclick="goPage(2)">2</button><span style="color:var(--muted);padding:0 4px">…</span><button class="page-btn" onclick="goPage(12)">12</button><button class="page-btn" onclick="goPage(13)">13</button><button class="page-btn" onclick="goPage(2)">Next →</button></div>
+  </main>
+</div>
+
+<div class="modal-backdrop" id="orderModal">
+  <div class="modal">
+    <h2>📋 Your Bulk Order</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Part #</th><th>SKU</th><th>Description</th><th>Qty</th></tr></thead>
+        <tbody id="orderTableBody"></tbody>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-close" onclick="closeModal()">Close</button>
+      <button class="copy-btn" onclick="copyOrder()">📋 Copy as Text</button>
+      <button class="copy-btn" style="background:var(--accent)" onclick="downloadCSV()">⬇ Download CSV</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const PRODUCTS = [{"part":"10011","sku":"U5EZB50G","desc":"GTZ Cat5e 50/Jar","cat":"Connectors & Jars"},{"part":"10021","sku":"U5EZB100G","desc":"GTZ Cat5e 100/Jar","cat":"Connectors & Jars"},{"part":"10031","sku":"U5EZB200G","desc":"GTZ Cat5e 200/Jar","cat":"Connectors & Jars"},{"part":"10040","sku":"U5EZB50JB50JG","desc":"Cat5e 50/bag + Boots 50/Bag","cat":"Connectors & Jars"},{"part":"10050","sku":"U5EZB100JB100JG","desc":"Cat5e 100/bag  + Boots 100/Bag","cat":"Connectors & Jars"},{"part":"10511","sku":"U6EZB50G","desc":"GTZ GTZ 50/Jar","cat":"Connectors & Jars"},{"part":"10521","sku":"U6EZB100G","desc":"GTZ Cat6 100/Jar","cat":"Connectors & Jars"},{"part":"10531","sku":"U6EZB200G","desc":"GTZ Cat6 200/Jar","cat":"Connectors & Jars"},{"part":"10541","sku":"U6EZB50JB50JG","desc":"GTZ Cat6 50/Jar + Boots 50/Jar","cat":"Connectors & Jars"},{"part":"10551","sku":"U6EZB100JB100JG","desc":"GTZ Cat6 100/Jar  + Boots 100/Jar","cat":"Connectors & Jars"},{"part":"11011","sku":"U6AEZB50G","desc":"GTZ Cat6A  50/Jar","cat":"Connectors & Jars"},{"part":"11021","sku":"U6AEZB100G","desc":"GTZ Cat6A 100/Jar","cat":"Connectors & Jars"},{"part":"11031","sku":"U6AEZB200G","desc":"GTZ Cat6A 200/Jar","cat":"Connectors & Jars"},{"part":"11041","sku":"U6AEZB50JB50JG","desc":"GTZ Cat6A 50/Jar + Boots 50/Jar","cat":"Connectors & Jars"},{"part":"11051","sku":"U6AEZB100JB100JG","desc":"GTZ Cat6A 100/Jar + Boots 100/Jar","cat":"Connectors & Jars"},{"part":"11510","sku":"U5EZB50J","desc":"Cat5e 50/Jar","cat":"Connectors & Jars"},{"part":"11520","sku":"U5EZB100J","desc":"Cat5e 100/Jar","cat":"Connectors & Jars"},{"part":"11530","sku":"U5EZB200J","desc":"Cat5e 200/Jar","cat":"Connectors & Jars"},{"part":"11540","sku":"U5EZB50JB50J","desc":"Cat5e 50/jar + Boots 50/Jar","cat":"Connectors & Jars"},{"part":"11550","sku":"U5EZB100JB100J","desc":"Cat5e 100/jar + Boots 100/Jar","cat":"Connectors & Jars"},{"part":"12010","sku":"U6EZB50J","desc":"Cat6 50/Jar","cat":"Connectors & Jars"},{"part":"12020","sku":"U6EZB100J","desc":"Cat6 100/Jar","cat":"Connectors & Jars"},{"part":"12030","sku":"U6EZB200J","desc":"Cat6 200/Jar","cat":"Connectors & Jars"},{"part":"12040","sku":"U6EZB50JB50J","desc":"Cat6 50/jar + Boots 50/Jar","cat":"Connectors & Jars"},{"part":"12050","sku":"U6EZB100JB100J","desc":"Cat6 100/jar + Boots 100/Jar","cat":"Connectors & Jars"},{"part":"12510","sku":"U6AEZB50J","desc":"Cat6A  50/Jar","cat":"Connectors & Jars"},{"part":"12520","sku":"U6AEZB100J","desc":"Cat6A  100/Jar","cat":"Connectors & Jars"},{"part":"12530","sku":"U6AEZB200J","desc":"Cat6A  200/Jar","cat":"Connectors & Jars"},{"part":"12540","sku":"U6AEZB50JB50J","desc":"Cat6A 50/Jar + Boots 50/Jar","cat":"Connectors & Jars"},{"part":"12550","sku":"U6AEZB100JB100J","desc":"Cat6A 100/Jar + Boots 100/Jar","cat":"Connectors & Jars"},{"part":"13011","sku":"CAT7B30","desc":"Cat7 30/Bag","cat":"Connectors & Jars"},{"part":"13510","sku":"EZT","desc":"EZ Tool","cat":"EZ Tools & Kits"},{"part":"13520","sku":"KITCAT5BOOT-NEW","desc":"EZ Tool + 50 Cat5e + 50 Boots + Blades","cat":"EZ Tools & Kits"},{"part":"13530","sku":"KITCAT6BOOT-NEW","desc":"EZ Tool + 50 Cat6 + 50 Boots + Blades","cat":"EZ Tools & Kits"},{"part":"14000","sku":"KTOOL","desc":"Keystone Tool","cat":"Keystone Tools & Kits"},{"part":"14001","sku":"KTOOL-RH","desc":"Replacement Head FOR CAT6 KEYSTONE TOOL","cat":"Keystone Tools & Kits"},{"part":"17623","sku":"24KPANEL-N","desc":"Keystone Patch Panel 24 Ports","cat":"Patch Panels"},{"part":"17626","sku":"24KPANEL-2P-N","desc":"Keystone Patch Panel 24 Ports - 2 Pack","cat":"Patch Panels"},{"part":"17629","sku":"24KPANEL-4P-N","desc":"Keystone Patch Panel 24 Ports - 4 Pack","cat":"Patch Panels"},{"part":"17650","sku":"48KPANEL","desc":"Keystone Patch Panel 48 Ports","cat":"Patch Panels"},{"part":"17660","sku":"48KPANEL-2P","desc":"Keystone Patch Panel 48 Ports - 2 Pack","cat":"Patch Panels"},{"part":"17670","sku":"48KPANEL-4P","desc":"Keystone Patch Panel 48 Ports - 4 Pack","cat":"Patch Panels"},{"part":"17700","sku":"12KPANEL","desc":"Keystone Patch Panel 12 Ports","cat":"Patch Panels"},{"part":"17710","sku":"12KPANEL-2P","desc":"Keystone Patch Panel 12 Ports - 2 Pack","cat":"Patch Panels"},{"part":"17720","sku":"12KPANEL-4P","desc":"Keystone Patch Panel 12 Ports - 4 Pack","cat":"Patch Panels"},{"part":"18010","sku":"KTOOLFCAT6A","desc":"KEYSTONE TOOL + 12 CAT6A FTP + 24 COPPER TAPE","cat":"Keystone Tools & Kits"},{"part":"18020","sku":"KFCAT6A-6","desc":"6 KEYSTONE CAT6A FTP + 12 X COPPER TAPE","cat":"Keystone Jacks"},{"part":"18030","sku":"KFCAT6A-12","desc":"12 KEYSTONE CAT6A FTP + 24 X COPPER TAPE","cat":"Keystone Jacks"},{"part":"18040","sku":"KFCAT6A-24","desc":"24 KEYSTONE CAT6A FTP + 48 X COPPER TAPE","cat":"Keystone Jacks"},{"part":"19510","sku":"45KTOOL","desc":"EMS 45 Angel Keystone Tool","cat":"Keystone Tools & Kits"},{"part":"19515","sku":"45KTOOL-RH","desc":"45 Angled Kestone Tool Replacement Head","cat":"Other"},{"part":"30010","sku":"RSU6A05BLU10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft Blue 10's set per Box","cat":"Patch Cords"},{"part":"30020","sku":"RSU6A10BLU10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft Blue 10's set per Box","cat":"Patch Cords"},{"part":"30030","sku":"RSU6A15BLU10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft Blue 10's set per Box","cat":"Patch Cords"},{"part":"30040","sku":"RSU6A20BLU10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft Blue 10's set per Box","cat":"Patch Cords"},{"part":"30050","sku":"RSU6A30BLU10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft Blue 10's set per Box","cat":"Patch Cords"},{"part":"30060","sku":"RSU6A50BLU10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft Blue 10's set per Box","cat":"Patch Cords"},{"part":"30070","sku":"RSU6A60BLU10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t Blue 10's set per Box","cat":"Patch Cords"},{"part":"30080","sku":"RSU6A70BLU10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft Blue 10's set per Box","cat":"Patch Cords"},{"part":"30090","sku":"RSU6A100BLU10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft Blue 10's set per Box","cat":"Patch Cords"},{"part":"30100","sku":"RSU6A150BLU10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft Blue 10's set per Box","cat":"Patch Cords"},{"part":"30110","sku":"RSU6A05BLK10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft BLKe 10's set per Box","cat":"Patch Cords"},{"part":"30120","sku":"RSU6A10BLK10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft BLKe 10's set per Box","cat":"Patch Cords"},{"part":"30130","sku":"RSU6A15BLK10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft BLKe 10's set per Box","cat":"Patch Cords"},{"part":"30140","sku":"RSU6A20BLK10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft BLKe 10's set per Box","cat":"Patch Cords"},{"part":"30150","sku":"RSU6A30BLK10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft BLKe 10's set per Box","cat":"Patch Cords"},{"part":"30160","sku":"RSU6A50BLK10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft BLKe 10's set per Box","cat":"Patch Cords"},{"part":"30170","sku":"RSU6A60BLK10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t BLKe 10's set per Box","cat":"Patch Cords"},{"part":"30180","sku":"RSU6A70BLK10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft BLKe 10's set per Box","cat":"Patch Cords"},{"part":"30190","sku":"RSU6A100BLK10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft BLKe 10's set per Box","cat":"Patch Cords"},{"part":"30200","sku":"RSU6A150BLK10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft BLKe 10's set per Box","cat":"Patch Cords"},{"part":"30210","sku":"RSU6A05WHI10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft White 10's set per Box","cat":"Patch Cords"},{"part":"30220","sku":"RSU6A10WHI10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft White 10's set per Box","cat":"Patch Cords"},{"part":"30230","sku":"RSU6A15WHI10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft White 10's set per Box","cat":"Patch Cords"},{"part":"30240","sku":"RSU6A20WHI10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft White 10's set per Box","cat":"Patch Cords"},{"part":"30250","sku":"RSU6A30WHI10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft White 10's set per Box","cat":"Patch Cords"},{"part":"30260","sku":"RSU6A50WHI10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft White 10's set per Box","cat":"Patch Cords"},{"part":"30270","sku":"RSU6A60WHI10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t White 10's set per Box","cat":"Patch Cords"},{"part":"30280","sku":"RSU6A70WHI10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft White 10's set per Box","cat":"Patch Cords"},{"part":"30290","sku":"RSU6A100WHI10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft White 10's set per Box","cat":"Patch Cords"},{"part":"30300","sku":"RSU6A150WHI10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft White 10's set per Box","cat":"Patch Cords"},{"part":"30310","sku":"RSU6A05RED10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft Red 10's set per Box","cat":"Patch Cords"},{"part":"30320","sku":"RSU6A10RED10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft Red 10's set per Box","cat":"Patch Cords"},{"part":"30330","sku":"RSU6A15RED10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft Red 10's set per Box","cat":"Patch Cords"},{"part":"30340","sku":"RSU6A20RED10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft Red 10's set per Box","cat":"Patch Cords"},{"part":"30350","sku":"RSU6A30RED10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft Red 10's set per Box","cat":"Patch Cords"},{"part":"30360","sku":"RSU6A50RED10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft Red 10's set per Box","cat":"Patch Cords"},{"part":"30370","sku":"RSU6A60RED10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t Red 10's set per Box","cat":"Patch Cords"},{"part":"30380","sku":"RSU6A70RED10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft Red 10's set per Box","cat":"Patch Cords"},{"part":"30390","sku":"RSU6A100RED10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft Red 10's set per Box","cat":"Patch Cords"},{"part":"30400","sku":"RSU6A150RED10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft Red 10's set per Box","cat":"Patch Cords"},{"part":"30410","sku":"RSU6A05YEL10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft Yellow 10's set per Box","cat":"Patch Cords"},{"part":"30420","sku":"RSU6A10YEL10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft Yellow 10's set per Box","cat":"Patch Cords"},{"part":"30430","sku":"RSU6A15YEL10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft Yellow 10's set per Box","cat":"Patch Cords"},{"part":"30440","sku":"RSU6A20YEL10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft Yellow 10's set per Box","cat":"Patch Cords"},{"part":"30450","sku":"RSU6A30YEL10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft Yellow 10's set per Box","cat":"Patch Cords"},{"part":"30460","sku":"RSU6A50YEL10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft Yellow 10's set per Box","cat":"Patch Cords"},{"part":"30470","sku":"RSU6A60YEL10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t Yellow 10's set per Box","cat":"Patch Cords"},{"part":"30480","sku":"RSU6A70YEL10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft Yellow 10's set per Box","cat":"Patch Cords"},{"part":"30490","sku":"RSU6A100YEL10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft Yellow 10's set per Box","cat":"Patch Cords"},{"part":"30500","sku":"RSU6A150YEL10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft Yellow 10's set per Box","cat":"Patch Cords"},{"part":"30510","sku":"RSU6A05GRN10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft Green 10's set per Box","cat":"Patch Cords"},{"part":"30520","sku":"RSU6A10GRN10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft Green 10's set per Box","cat":"Patch Cords"},{"part":"30530","sku":"RSU6A15GRN10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft Green 10's set per Box","cat":"Patch Cords"},{"part":"30540","sku":"RSU6A20GRN10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft Green 10's set per Box","cat":"Patch Cords"},{"part":"30550","sku":"RSU6A30GRN10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft Green 10's set per Box","cat":"Patch Cords"},{"part":"30560","sku":"RSU6A50GRN10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft Green 10's set per Box","cat":"Patch Cords"},{"part":"30570","sku":"RSU6A60GRN10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t Green 10's set per Box","cat":"Patch Cords"},{"part":"30580","sku":"RSU6A70GRN10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft Green 10's set per Box","cat":"Patch Cords"},{"part":"30590","sku":"RSU6A100GRN10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft Green 10's set per Box","cat":"Patch Cords"},{"part":"30600","sku":"RSU6A150GRN10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft Green 10's set per Box","cat":"Patch Cords"},{"part":"30610","sku":"RSU6A05ORA10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft Orange 10's set per Box","cat":"Patch Cords"},{"part":"30620","sku":"RSU6A10ORA10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft Orange 10's set per Box","cat":"Patch Cords"},{"part":"30630","sku":"RSU6A15ORA10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft Orange 10's set per Box","cat":"Patch Cords"},{"part":"30640","sku":"RSU6A20ORA10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft Orange 10's set per Box","cat":"Patch Cords"},{"part":"30650","sku":"RSU6A30ORA10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft Orange 10's set per Box","cat":"Patch Cords"},{"part":"30660","sku":"RSU6A50ORA10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft Orange 10's set per Box","cat":"Patch Cords"},{"part":"30670","sku":"RSU6A60ORA10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t Orange 10's set per Box","cat":"Patch Cords"},{"part":"30680","sku":"RSU6A70ORA10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft Orange 10's set per Box","cat":"Patch Cords"},{"part":"30690","sku":"RSU6A100ORA10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft Orange 10's set per Box","cat":"Patch Cords"},{"part":"30700","sku":"RSU6A150ORA10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft Orange 10's set per Box","cat":"Patch Cords"},{"part":"30710","sku":"RSU6A05PUR10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft Purple 10's set per Box","cat":"Patch Cords"},{"part":"30720","sku":"RSU6A10PUR10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft Purple 10's set per Box","cat":"Patch Cords"},{"part":"30730","sku":"RSU6A15PUR10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft Purple 10's set per Box","cat":"Patch Cords"},{"part":"30740","sku":"RSU6A20PUR10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft Purple 10's set per Box","cat":"Patch Cords"},{"part":"30750","sku":"RSU6A30PUR10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft Purple 10's set per Box","cat":"Patch Cords"},{"part":"30760","sku":"RSU6A50PUR10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft Purple 10's set per Box","cat":"Patch Cords"},{"part":"30770","sku":"RSU6A60PUR10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t Purple 10's set per Box","cat":"Patch Cords"},{"part":"30780","sku":"RSU6A70PUR10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft Purple 10's set per Box","cat":"Patch Cords"},{"part":"30790","sku":"RSU6A100PUR10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft Purple 10's set per Box","cat":"Patch Cords"},{"part":"30800","sku":"RSU6A150PUR10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft Purple 10's set per Box","cat":"Patch Cords"},{"part":"30810","sku":"RSU6A05GRY10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft Grey 10's set per Box","cat":"Patch Cords"},{"part":"30820","sku":"RSU6A10GRY10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft Grey 10's set per Box","cat":"Patch Cords"},{"part":"30830","sku":"RSU6A15GRY10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft Grey 10's set per Box","cat":"Patch Cords"},{"part":"30840","sku":"RSU6A20GRY10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft Grey 10's set per Box","cat":"Patch Cords"},{"part":"30850","sku":"RSU6A30GRY10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft Grey 10's set per Box","cat":"Patch Cords"},{"part":"30860","sku":"RSU6A50GRY10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft Grey 10's set per Box","cat":"Patch Cords"},{"part":"30870","sku":"RSU6A60GRY10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t Grey 10's set per Box","cat":"Patch Cords"},{"part":"30880","sku":"RSU6A70GRY10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft Grey 10's set per Box","cat":"Patch Cords"},{"part":"30890","sku":"RSU6A100GRY10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft Grey 10's set per Box","cat":"Patch Cords"},{"part":"30900","sku":"RSU6A150GRY10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft Grey 10's set per Box","cat":"Patch Cords"},{"part":"30010","sku":"RSU6A05BLU10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft Blue 24's set per Box","cat":"Patch Cords"},{"part":"30020","sku":"RSU6A10BLU10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft Blue 24's set per Box","cat":"Patch Cords"},{"part":"30030","sku":"RSU6A15BLU10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft Blue 24's set per Box","cat":"Patch Cords"},{"part":"30040","sku":"RSU6A20BLU10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft Blue 24's set per Box","cat":"Patch Cords"},{"part":"30050","sku":"RSU6A30BLU10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft Blue 24's set per Box","cat":"Patch Cords"},{"part":"30060","sku":"RSU6A50BLU10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft Blue 24's set per Box","cat":"Patch Cords"},{"part":"30070","sku":"RSU6A60BLU10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t Blue 24's set per Box","cat":"Patch Cords"},{"part":"30080","sku":"RSU6A70BLU10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft Blue 24's set per Box","cat":"Patch Cords"},{"part":"30090","sku":"RSU6A100BLU10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft Blue 24's set per Box","cat":"Patch Cords"},{"part":"30100","sku":"RSU6A150BLU10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft Blue 24's set per Box","cat":"Patch Cords"},{"part":"30110","sku":"RSU6A05BLK10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft BLKe 24's set per Box","cat":"Patch Cords"},{"part":"30120","sku":"RSU6A10BLK10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft BLKe 24's set per Box","cat":"Patch Cords"},{"part":"30130","sku":"RSU6A15BLK10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft BLKe 24's set per Box","cat":"Patch Cords"},{"part":"30140","sku":"RSU6A20BLK10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft BLKe 24's set per Box","cat":"Patch Cords"},{"part":"30150","sku":"RSU6A30BLK10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft BLKe 24's set per Box","cat":"Patch Cords"},{"part":"30160","sku":"RSU6A50BLK10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft BLKe 24's set per Box","cat":"Patch Cords"},{"part":"30170","sku":"RSU6A60BLK10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t BLKe 24's set per Box","cat":"Patch Cords"},{"part":"30180","sku":"RSU6A70BLK10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft BLKe 24's set per Box","cat":"Patch Cords"},{"part":"30190","sku":"RSU6A100BLK10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft BLKe 24's set per Box","cat":"Patch Cords"},{"part":"30200","sku":"RSU6A150BLK10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft BLKe 24's set per Box","cat":"Patch Cords"},{"part":"30210","sku":"RSU6A05WHI10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft White 24's set per Box","cat":"Patch Cords"},{"part":"30220","sku":"RSU6A10WHI10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft White 24's set per Box","cat":"Patch Cords"},{"part":"30230","sku":"RSU6A15WHI10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft White 24's set per Box","cat":"Patch Cords"},{"part":"30240","sku":"RSU6A20WHI10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft White 24's set per Box","cat":"Patch Cords"},{"part":"30250","sku":"RSU6A30WHI10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft White 24's set per Box","cat":"Patch Cords"},{"part":"30260","sku":"RSU6A50WHI10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft White 24's set per Box","cat":"Patch Cords"},{"part":"30270","sku":"RSU6A60WHI10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t White 24's set per Box","cat":"Patch Cords"},{"part":"30280","sku":"RSU6A70WHI10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft White 24's set per Box","cat":"Patch Cords"},{"part":"30290","sku":"RSU6A100WHI10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft White 24's set per Box","cat":"Patch Cords"},{"part":"30300","sku":"RSU6A150WHI10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft White 24's set per Box","cat":"Patch Cords"},{"part":"30310","sku":"RSU6A05RED10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft Red 24's set per Box","cat":"Patch Cords"},{"part":"30320","sku":"RSU6A10RED10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft Red 24's set per Box","cat":"Patch Cords"},{"part":"30330","sku":"RSU6A15RED10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft Red 24's set per Box","cat":"Patch Cords"},{"part":"30340","sku":"RSU6A20RED10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft Red 24's set per Box","cat":"Patch Cords"},{"part":"30350","sku":"RSU6A30RED10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft Red 24's set per Box","cat":"Patch Cords"},{"part":"30360","sku":"RSU6A50RED10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft Red 24's set per Box","cat":"Patch Cords"},{"part":"30370","sku":"RSU6A60RED10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t Red 24's set per Box","cat":"Patch Cords"},{"part":"30380","sku":"RSU6A70RED10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft Red 24's set per Box","cat":"Patch Cords"},{"part":"30390","sku":"RSU6A100RED10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft Red 24's set per Box","cat":"Patch Cords"},{"part":"30400","sku":"RSU6A150RED10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft Red 24's set per Box","cat":"Patch Cords"},{"part":"30410","sku":"RSU6A05YEL10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft Yellow 24's set per Box","cat":"Patch Cords"},{"part":"30420","sku":"RSU6A10YEL10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft Yellow 24's set per Box","cat":"Patch Cords"},{"part":"30430","sku":"RSU6A15YEL10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft Yellow 24's set per Box","cat":"Patch Cords"},{"part":"30440","sku":"RSU6A20YEL10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft Yellow 24's set per Box","cat":"Patch Cords"},{"part":"30450","sku":"RSU6A30YEL10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft Yellow 24's set per Box","cat":"Patch Cords"},{"part":"30460","sku":"RSU6A50YEL10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft Yellow 24's set per Box","cat":"Patch Cords"},{"part":"30470","sku":"RSU6A60YEL10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t Yellow 24's set per Box","cat":"Patch Cords"},{"part":"30480","sku":"RSU6A70YEL10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft Yellow 24's set per Box","cat":"Patch Cords"},{"part":"30490","sku":"RSU6A100YEL10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft Yellow 24's set per Box","cat":"Patch Cords"},{"part":"30500","sku":"RSU6A150YEL10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft Yellow 24's set per Box","cat":"Patch Cords"},{"part":"30510","sku":"RSU6A05GRN10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft Green 24's set per Box","cat":"Patch Cords"},{"part":"30520","sku":"RSU6A10GRN10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft Green 24's set per Box","cat":"Patch Cords"},{"part":"30530","sku":"RSU6A15GRN10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft Green 24's set per Box","cat":"Patch Cords"},{"part":"30540","sku":"RSU6A20GRN10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft Green 24's set per Box","cat":"Patch Cords"},{"part":"30550","sku":"RSU6A30GRN10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft Green 24's set per Box","cat":"Patch Cords"},{"part":"30560","sku":"RSU6A50GRN10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft Green 24's set per Box","cat":"Patch Cords"},{"part":"30570","sku":"RSU6A60GRN10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t Green 24's set per Box","cat":"Patch Cords"},{"part":"30580","sku":"RSU6A70GRN10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft Green 24's set per Box","cat":"Patch Cords"},{"part":"30590","sku":"RSU6A100GRN10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft Green 24's set per Box","cat":"Patch Cords"},{"part":"30600","sku":"RSU6A150GRN10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft Green 24's set per Box","cat":"Patch Cords"},{"part":"30610","sku":"RSU6A05ORA10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft Orange 24's set per Box","cat":"Patch Cords"},{"part":"30620","sku":"RSU6A10ORA10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft Orange 24's set per Box","cat":"Patch Cords"},{"part":"30630","sku":"RSU6A15ORA10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft Orange 24's set per Box","cat":"Patch Cords"},{"part":"30640","sku":"RSU6A20ORA10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft Orange 24's set per Box","cat":"Patch Cords"},{"part":"30650","sku":"RSU6A30ORA10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft Orange 24's set per Box","cat":"Patch Cords"},{"part":"30660","sku":"RSU6A50ORA10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft Orange 24's set per Box","cat":"Patch Cords"},{"part":"30670","sku":"RSU6A60ORA10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t Orange 24's set per Box","cat":"Patch Cords"},{"part":"30680","sku":"RSU6A70ORA10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft Orange 24's set per Box","cat":"Patch Cords"},{"part":"30690","sku":"RSU6A100ORA10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft Orange 24's set per Box","cat":"Patch Cords"},{"part":"30700","sku":"RSU6A150ORA10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft Orange 24's set per Box","cat":"Patch Cords"},{"part":"30710","sku":"RSU6A05PUR10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft Purple 24's set per Box","cat":"Patch Cords"},{"part":"30720","sku":"RSU6A10PUR10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft Purple 24's set per Box","cat":"Patch Cords"},{"part":"30730","sku":"RSU6A15PUR10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft Purple 24's set per Box","cat":"Patch Cords"},{"part":"30740","sku":"RSU6A20PUR10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft Purple 24's set per Box","cat":"Patch Cords"},{"part":"30750","sku":"RSU6A30PUR10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft Purple 24's set per Box","cat":"Patch Cords"},{"part":"30760","sku":"RSU6A50PUR10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft Purple 24's set per Box","cat":"Patch Cords"},{"part":"30770","sku":"RSU6A60PUR10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t Purple 24's set per Box","cat":"Patch Cords"},{"part":"30780","sku":"RSU6A70PUR10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft Purple 24's set per Box","cat":"Patch Cords"},{"part":"30790","sku":"RSU6A100PUR10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft Purple 24's set per Box","cat":"Patch Cords"},{"part":"30800","sku":"RSU6A150PUR10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft Purple 24's set per Box","cat":"Patch Cords"},{"part":"30810","sku":"RSU6A05GRY10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft Grey 24's set per Box","cat":"Patch Cords"},{"part":"30820","sku":"RSU6A10GRY10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft Grey 24's set per Box","cat":"Patch Cords"},{"part":"30830","sku":"RSU6A15GRY10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft Grey 24's set per Box","cat":"Patch Cords"},{"part":"30840","sku":"RSU6A20GRY10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft Grey 24's set per Box","cat":"Patch Cords"},{"part":"30850","sku":"RSU6A30GRY10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft Grey 24's set per Box","cat":"Patch Cords"},{"part":"30860","sku":"RSU6A50GRY10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft Grey 24's set per Box","cat":"Patch Cords"},{"part":"30870","sku":"RSU6A60GRY10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t Grey 24's set per Box","cat":"Patch Cords"},{"part":"30880","sku":"RSU6A70GRY10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft Grey 24's set per Box","cat":"Patch Cords"},{"part":"30890","sku":"RSU6A100GRY10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft Grey 24's set per Box","cat":"Patch Cords"},{"part":"30900","sku":"RSU6A150GRY10P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft Grey 24's set per Box","cat":"Patch Cords"},{"part":"30200","sku":"RSU6A05BLU24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft Blue 24's set per Box","cat":"Patch Cords"},{"part":"30210","sku":"RSU6A10BLU24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft Blue 24's set per Box","cat":"Patch Cords"},{"part":"30220","sku":"RSU6A15BLU24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft Blue 24's set per Box","cat":"Patch Cords"},{"part":"30230","sku":"RSU6A20BLU24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft Blue 24's set per Box","cat":"Patch Cords"},{"part":"30240","sku":"RSU6A30BLU24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft Blue 24's set per Box","cat":"Patch Cords"},{"part":"30250","sku":"RSU6A50BLU24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft Blue 24's set per Box","cat":"Patch Cords"},{"part":"30260","sku":"RSU6A60BLU24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t Blue 24's set per Box","cat":"Patch Cords"},{"part":"30270","sku":"RSU6A70BLU24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft Blue 24's set per Box","cat":"Patch Cords"},{"part":"30280","sku":"RSU6A100BLU24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft Blue 24's set per Box","cat":"Patch Cords"},{"part":"30290","sku":"RSU6A150BLU24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft Blue 24's set per Box","cat":"Patch Cords"},{"part":"30300","sku":"RSU6A05BLK24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft BLKe 24's set per Box","cat":"Patch Cords"},{"part":"30310","sku":"RSU6A10BLK24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft BLKe 24's set per Box","cat":"Patch Cords"},{"part":"30320","sku":"RSU6A15BLK24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft BLKe 24's set per Box","cat":"Patch Cords"},{"part":"30330","sku":"RSU6A20BLK24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft BLKe 24's set per Box","cat":"Patch Cords"},{"part":"30340","sku":"RSU6A30BLK24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft BLKe 24's set per Box","cat":"Patch Cords"},{"part":"30350","sku":"RSU6A50BLK24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft BLKe 24's set per Box","cat":"Patch Cords"},{"part":"30360","sku":"RSU6A60BLK24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t BLKe 24's set per Box","cat":"Patch Cords"},{"part":"30370","sku":"RSU6A70BLK24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft BLKe 24's set per Box","cat":"Patch Cords"},{"part":"30380","sku":"RSU6A100BLK24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft BLKe 24's set per Box","cat":"Patch Cords"},{"part":"30390","sku":"RSU6A150BLK24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft BLKe 24's set per Box","cat":"Patch Cords"},{"part":"30400","sku":"RSU6A05WHI24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft White 24's set per Box","cat":"Patch Cords"},{"part":"30410","sku":"RSU6A10WHI24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft White 24's set per Box","cat":"Patch Cords"},{"part":"30420","sku":"RSU6A15WHI24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft White 24's set per Box","cat":"Patch Cords"},{"part":"30430","sku":"RSU6A20WHI24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft White 24's set per Box","cat":"Patch Cords"},{"part":"30440","sku":"RSU6A30WHI24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft White 24's set per Box","cat":"Patch Cords"},{"part":"30450","sku":"RSU6A50WHI24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft White 24's set per Box","cat":"Patch Cords"},{"part":"30460","sku":"RSU6A60WHI24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t White 24's set per Box","cat":"Patch Cords"},{"part":"30470","sku":"RSU6A70WHI24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft White 24's set per Box","cat":"Patch Cords"},{"part":"30480","sku":"RSU6A100WHI24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft White 24's set per Box","cat":"Patch Cords"},{"part":"30490","sku":"RSU6A150WHI24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft White 24's set per Box","cat":"Patch Cords"},{"part":"30500","sku":"RSU6A05RED24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft Red 24's set per Box","cat":"Patch Cords"},{"part":"30510","sku":"RSU6A10RED24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft Red 24's set per Box","cat":"Patch Cords"},{"part":"30520","sku":"RSU6A15RED24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft Red 24's set per Box","cat":"Patch Cords"},{"part":"30530","sku":"RSU6A20RED24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft Red 24's set per Box","cat":"Patch Cords"},{"part":"30540","sku":"RSU6A30RED24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft Red 24's set per Box","cat":"Patch Cords"},{"part":"30550","sku":"RSU6A50RED24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft Red 24's set per Box","cat":"Patch Cords"},{"part":"30560","sku":"RSU6A60RED24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t Red 24's set per Box","cat":"Patch Cords"},{"part":"30570","sku":"RSU6A70RED24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft Red 24's set per Box","cat":"Patch Cords"},{"part":"30580","sku":"RSU6A100RED24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft Red 24's set per Box","cat":"Patch Cords"},{"part":"30590","sku":"RSU6A150RED24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft Red 24's set per Box","cat":"Patch Cords"},{"part":"30600","sku":"RSU6A05YEL24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft Yellow 24's set per Box","cat":"Patch Cords"},{"part":"30610","sku":"RSU6A10YEL24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft Yellow 24's set per Box","cat":"Patch Cords"},{"part":"30620","sku":"RSU6A15YEL24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft Yellow 24's set per Box","cat":"Patch Cords"},{"part":"30630","sku":"RSU6A20YEL24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft Yellow 24's set per Box","cat":"Patch Cords"},{"part":"30640","sku":"RSU6A30YEL24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft Yellow 24's set per Box","cat":"Patch Cords"},{"part":"30650","sku":"RSU6A50YEL24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft Yellow 24's set per Box","cat":"Patch Cords"},{"part":"30660","sku":"RSU6A60YEL24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t Yellow 24's set per Box","cat":"Patch Cords"},{"part":"30670","sku":"RSU6A70YEL24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft Yellow 24's set per Box","cat":"Patch Cords"},{"part":"30680","sku":"RSU6A100YEL24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft Yellow 24's set per Box","cat":"Patch Cords"},{"part":"30690","sku":"RSU6A150YEL24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft Yellow 24's set per Box","cat":"Patch Cords"},{"part":"30700","sku":"RSU6A05GRN24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft Green 24's set per Box","cat":"Patch Cords"},{"part":"30710","sku":"RSU6A10GRN24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft Green 24's set per Box","cat":"Patch Cords"},{"part":"30720","sku":"RSU6A15GRN24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft Green 24's set per Box","cat":"Patch Cords"},{"part":"30730","sku":"RSU6A20GRN24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft Green 24's set per Box","cat":"Patch Cords"},{"part":"30740","sku":"RSU6A30GRN24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft Green 24's set per Box","cat":"Patch Cords"},{"part":"30750","sku":"RSU6A50GRN24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft Green 24's set per Box","cat":"Patch Cords"},{"part":"30760","sku":"RSU6A60GRN24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t Green 24's set per Box","cat":"Patch Cords"},{"part":"30770","sku":"RSU6A70GRN24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft Green 24's set per Box","cat":"Patch Cords"},{"part":"30780","sku":"RSU6A100GRN24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft Green 24's set per Box","cat":"Patch Cords"},{"part":"30790","sku":"RSU6A150GRN24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft Green 24's set per Box","cat":"Patch Cords"},{"part":"30800","sku":"RSU6A05ORA24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft Orange 24's set per Box","cat":"Patch Cords"},{"part":"30810","sku":"RSU6A10ORA24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft Orange 24's set per Box","cat":"Patch Cords"},{"part":"30820","sku":"RSU6A15ORA24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft Orange 24's set per Box","cat":"Patch Cords"},{"part":"30830","sku":"RSU6A20ORA24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft Orange 24's set per Box","cat":"Patch Cords"},{"part":"30840","sku":"RSU6A30ORA24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft Orange 24's set per Box","cat":"Patch Cords"},{"part":"30850","sku":"RSU6A50ORA24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft Orange 24's set per Box","cat":"Patch Cords"},{"part":"30860","sku":"RSU6A60ORA24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t Orange 24's set per Box","cat":"Patch Cords"},{"part":"30870","sku":"RSU6A70ORA24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft Orange 24's set per Box","cat":"Patch Cords"},{"part":"30880","sku":"RSU6A100ORA24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft Orange 24's set per Box","cat":"Patch Cords"},{"part":"30890","sku":"RSU6A150ORA24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft Orange 24's set per Box","cat":"Patch Cords"},{"part":"30900","sku":"RSU6A05PUR24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft Purple 24's set per Box","cat":"Patch Cords"},{"part":"30910","sku":"RSU6A10PUR24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft Purple 24's set per Box","cat":"Patch Cords"},{"part":"30920","sku":"RSU6A15PUR24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft Purple 24's set per Box","cat":"Patch Cords"},{"part":"30930","sku":"RSU6A20PUR24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft Purple 24's set per Box","cat":"Patch Cords"},{"part":"30940","sku":"RSU6A30PUR24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft Purple 24's set per Box","cat":"Patch Cords"},{"part":"30950","sku":"RSU6A50PUR24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft Purple 24's set per Box","cat":"Patch Cords"},{"part":"30960","sku":"RSU6A60PUR24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t Purple 24's set per Box","cat":"Patch Cords"},{"part":"30970","sku":"RSU6A70PUR24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft Purple 24's set per Box","cat":"Patch Cords"},{"part":"30980","sku":"RSU6A100PUR24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft Purple 24's set per Box","cat":"Patch Cords"},{"part":"30990","sku":"RSU6A150PUR24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft Purple 24's set per Box","cat":"Patch Cords"},{"part":"31000","sku":"RSU6A05GRY24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 0.5ft Grey 24's set per Box","cat":"Patch Cords"},{"part":"31010","sku":"RSU6A10GRY24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1ft Grey 24's set per Box","cat":"Patch Cords"},{"part":"31020","sku":"RSU6A15GRY24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 1.5ft Grey 24's set per Box","cat":"Patch Cords"},{"part":"31030","sku":"RSU6A20GRY24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 2ft Grey 24's set per Box","cat":"Patch Cords"},{"part":"31040","sku":"RSU6A30GRY24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 3ft Grey 24's set per Box","cat":"Patch Cords"},{"part":"31050","sku":"RSU6A50GRY24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 5ft Grey 24's set per Box","cat":"Patch Cords"},{"part":"31060","sku":"RSU6A60GRY24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 6t Grey 24's set per Box","cat":"Patch Cords"},{"part":"31070","sku":"RSU6A70GRY24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 7ft Grey 24's set per Box","cat":"Patch Cords"},{"part":"31080","sku":"RSU6A100GRY24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 10ft Grey 24's set per Box","cat":"Patch Cords"},{"part":"31090","sku":"RSU6A150GRY24P","desc":"Rotateble Ultra-Slim Patch Cord UTP Ca6A 15ft Grey 24's set per Box","cat":"Patch Cords"},{"part":"40010","sku":"NU6CP6WHI","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 6 Pack, White","cat":"Inline Couplers"},{"part":"40020","sku":"NU6CP6BLU","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 6 Pack, Blue","cat":"Inline Couplers"},{"part":"40030","sku":"NU6CP6BLA","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 6 Pack, Black","cat":"Inline Couplers"},{"part":"40040","sku":"NU6CP6RED","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 6 Pack, Red","cat":"Inline Couplers"},{"part":"40050","sku":"NU6CP6GRN","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 6 Pack, Green","cat":"Inline Couplers"},{"part":"40060","sku":"NU6CP6YEL","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 6 Pack, Yellow","cat":"Inline Couplers"},{"part":"40070","sku":"NU6CP6ORA","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 6 Pack, Orange","cat":"Inline Couplers"},{"part":"40080","sku":"NU6CP6PUR","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 6 Pack, Purple","cat":"Inline Couplers"},{"part":"40090","sku":"NU6CP6GRY","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 6 Pack, Grey","cat":"Inline Couplers"},{"part":"40100","sku":"NU6CP6PIN","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 6 Pack, Pink","cat":"Inline Couplers"},{"part":"40110","sku":"NU6CP12WHI","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 12 Pack, White","cat":"Inline Couplers"},{"part":"40120","sku":"NU6CP12BLU","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 12 Pack, Blue","cat":"Inline Couplers"},{"part":"40130","sku":"NU6CP12BLA","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 12 Pack, Black","cat":"Inline Couplers"},{"part":"40140","sku":"NU6CP12RED","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 12 Pack, Red","cat":"Inline Couplers"},{"part":"40150","sku":"NU6CP12GRN","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 12 Pack, Green","cat":"Inline Couplers"},{"part":"40160","sku":"NU6CP12YEL","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 12 Pack, Yellow","cat":"Inline Couplers"},{"part":"40170","sku":"NU6CP12ORA","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 12 Pack, Orange","cat":"Inline Couplers"},{"part":"40180","sku":"NU6CP12PUR","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 12 Pack, Purple","cat":"Inline Couplers"},{"part":"40190","sku":"NU6CP12GRY","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 12 Pack, Grey","cat":"Inline Couplers"},{"part":"40200","sku":"NU6CP12PIN","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 12 Pack, Pink","cat":"Inline Couplers"},{"part":"40210","sku":"NU6CP24WHI","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 24 Pack, White","cat":"Inline Couplers"},{"part":"40220","sku":"NU6CP24BLU","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 24 Pack, Blue","cat":"Inline Couplers"},{"part":"40230","sku":"NU6CP24BLA","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 24 Pack, Black","cat":"Inline Couplers"},{"part":"40240","sku":"NU6CP24RED","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 24 Pack, Red","cat":"Inline Couplers"},{"part":"40250","sku":"NU6CP24GRN","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 24 Pack, Green","cat":"Inline Couplers"},{"part":"40260","sku":"NU6CP24YEL","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 24 Pack, Yellow","cat":"Inline Couplers"},{"part":"40270","sku":"NU6CP24ORA","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 24 Pack, Orange","cat":"Inline Couplers"},{"part":"40280","sku":"NU6CP24PUR","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 24 Pack, Purple","cat":"Inline Couplers"},{"part":"40290","sku":"NU6CP24GRY","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 24 Pack, Grey","cat":"Inline Couplers"},{"part":"40300","sku":"NU6CP24PIN","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 24 Pack, Pink","cat":"Inline Couplers"},{"part":"40310","sku":"NU6CP48WHI","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 48 Pack, White","cat":"Inline Couplers"},{"part":"40320","sku":"NU6CP48BLU","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 48 Pack, Blue","cat":"Inline Couplers"},{"part":"40330","sku":"NU6CP48BLA","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 48 Pack, Black","cat":"Inline Couplers"},{"part":"40340","sku":"NU6CP48RED","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 48 Pack, Red","cat":"Inline Couplers"},{"part":"40350","sku":"NU6CP48GRN","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 48 Pack, Green","cat":"Inline Couplers"},{"part":"40360","sku":"NU6CP48YEL","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 48 Pack, Yellow","cat":"Inline Couplers"},{"part":"40370","sku":"NU6CP48ORA","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 48 Pack, Orange","cat":"Inline Couplers"},{"part":"40380","sku":"NU6CP48PUR","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 48 Pack, Purple","cat":"Inline Couplers"},{"part":"40390","sku":"NU6CP48GRY","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 48 Pack, Grey","cat":"Inline Couplers"},{"part":"40400","sku":"NU6CP48PIN","desc":"EMS RJ45 CAT6 Keystone Jack Inline Coupler - 48 Pack, Pink","cat":"Inline Couplers"},{"part":"42001","sku":"90KTU6-10WHI10BLU","desc":"EMS 90 Angle Keystone Tool + CAT6 (10 Blue + 10 White)","cat":"Keystone Tools & Kits"},{"part":"42002","sku":"90KTU6-20WHI","desc":"EMS 90 Angle Keystone Tool + Cat6 - 20 White","cat":"Keystone Tools & Kits"},{"part":"42003","sku":"90KTU6-20BLUE","desc":"EMS 90 Angle Keystone Tool + Cat6 - 20 Blue","cat":"Keystone Tools & Kits"},{"part":"42004","sku":"90KTU6-20BLA","desc":"EMS 90 Angle Keystone Tool + Cat6 - 20 Black","cat":"Keystone Tools & Kits"},{"part":"42005","sku":"90KTU6-20RED","desc":"EMS 90 Angle Keystone Tool + Cat6 - 20 Red","cat":"Keystone Tools & Kits"},{"part":"42006","sku":"90KTU6-20YEL","desc":"EMS 90 Angle Keystone Tool + Cat6 - 20 Yellow","cat":"Keystone Tools & Kits"},{"part":"42007","sku":"90KTU6-20GRN","desc":"EMS 90 Angle Keystone Tool + Cat6 - 20 Green","cat":"Keystone Tools & Kits"},{"part":"42008","sku":"90KTU6-20ORA","desc":"EMS 90 Angle Keystone Tool + Cat6 - 20 Orange","cat":"Keystone Tools & Kits"},{"part":"42009","sku":"90KTU6-20PUR","desc":"EMS 90 Angle Keystone Tool + Cat6 - 20 Purple","cat":"Keystone Tools & Kits"},{"part":"42010","sku":"90KTU6-20GRY","desc":"EMS 90 Angle Keystone Tool + Cat6 - 20 Grey","cat":"Keystone Tools & Kits"},{"part":"42051","sku":"90U6KJ10WHI","desc":"EMS 90 Angle Cat6 Keystone Jack White 10 Pcs","cat":"Keystone Jacks"},{"part":"42052","sku":"90U6KJ10BLU","desc":"EMS 90 Angle Cat6 Keystone Jack Blue 10 Pcs","cat":"Keystone Jacks"},{"part":"42053","sku":"90U6KJ10BLA","desc":"EMS 90 Angle Cat6 Keystone Jack Black 10 Pcs","cat":"Keystone Jacks"},{"part":"42054","sku":"90U6KJ10RED","desc":"EMS 90 Angle Cat6 Keystone Jack Red 10 Pcs","cat":"Keystone Jacks"},{"part":"42055","sku":"90U6KJ10YEL","desc":"EMS 90 Angle Cat6 Keystone Jack Yellow 10 Pcs","cat":"Keystone Jacks"},{"part":"42056","sku":"90U6KJ10GRN","desc":"EMS 90 Angle Cat6 Keystone Jack Green 10 Pcs","cat":"Keystone Jacks"},{"part":"42057","sku":"90U6KJ10ORA","desc":"EMS 90 Angle Cat6 Keystone Jack Orange 10 Pcs","cat":"Keystone Jacks"},{"part":"42058","sku":"90U6KJ10PUR","desc":"EMS 90 Angle Cat6 Keystone Jack Purple 10 Pcs","cat":"Keystone Jacks"},{"part":"42059","sku":"90U6KJ10GRY","desc":"EMS 90 Angle Cat6 Keystone Jack Grey 10 Pcs","cat":"Keystone Jacks"},{"part":"42060","sku":"90U6KJ10PIN","desc":"EMS 90 Angle Cat6 Keystone Jack Pink 10 Pcs","cat":"Keystone Jacks"},{"part":"42061","sku":"90U6KJ10BRN","desc":"EMS 90 Angle Cat6 Keystone Jack Brown 10 Pcs","cat":"Keystone Jacks"},{"part":"42062","sku":"90U6KJ10IVO","desc":"EMS 90 Angle Cat6 Keystone Jack Ivory 10 Pcs","cat":"Keystone Jacks"},{"part":"42063","sku":"90U6KJ10LAD","desc":"EMS 90 Angle Cat6 Keystone Jack Light Almond 10 Pcs","cat":"Keystone Jacks"},{"part":"42101","sku":"90U6KJ20WHI","desc":"EMS 90 Angle Cat6 Keystone Jack White 20 Pcs","cat":"Keystone Jacks"},{"part":"42102","sku":"90U6KJ20BLU","desc":"EMS 90 Angle Cat6 Keystone Jack Blue 20 Pcs","cat":"Keystone Jacks"},{"part":"42103","sku":"90U6KJ20BLA","desc":"EMS 90 Angle Cat6 Keystone Jack Black 20 Pcs","cat":"Keystone Jacks"},{"part":"42104","sku":"90U6KJ20RED","desc":"EMS 90 Angle Cat6 Keystone Jack Red 20 Pcs","cat":"Keystone Jacks"},{"part":"42105","sku":"90U6KJ20YEL","desc":"EMS 90 Angle Cat6 Keystone Jack Yellow 20 Pcs","cat":"Keystone Jacks"},{"part":"42106","sku":"90U6KJ20GRN","desc":"EMS 90 Angle Cat6 Keystone Jack Green 20 Pcs","cat":"Keystone Jacks"},{"part":"42107","sku":"90U6KJ20ORA","desc":"EMS 90 Angle Cat6 Keystone Jack Orange 20 Pcs","cat":"Keystone Jacks"},{"part":"42108","sku":"90U6KJ20PUR","desc":"EMS 90 Angle Cat6 Keystone Jack Purple 20 Pcs","cat":"Keystone Jacks"},{"part":"42109","sku":"90U6KJ20GRY","desc":"EMS 90 Angle Cat6 Keystone Jack Grey 20 Pcs","cat":"Keystone Jacks"},{"part":"42110","sku":"90U6KJ20PIN","desc":"EMS 90 Angle Cat6 Keystone Jack Pink 20 Pcs","cat":"Keystone Jacks"},{"part":"42111","sku":"90U6KJ20BRN","desc":"EMS 90 Angle Cat6 Keystone Jack Brown 20 Pcs","cat":"Keystone Jacks"},{"part":"42112","sku":"90U6KJ20IVO","desc":"EMS 90 Angle Cat6 Keystone Jack Ivory 20 Pcs","cat":"Keystone Jacks"},{"part":"42113","sku":"90U6KJ20LAD","desc":"EMS 90 Angle Cat6 Keystone Jack Light Almond 20 Pcs","cat":"Keystone Jacks"},{"part":"42151","sku":"90U6KJ50WHI","desc":"EMS 90 Angle Cat6 Keystone Jack White 50 Pcs","cat":"Keystone Jacks"},{"part":"42152","sku":"90U6KJ50BLU","desc":"EMS 90 Angle Cat6 Keystone Jack Blue 50 Pcs","cat":"Keystone Jacks"},{"part":"42153","sku":"90U6KJ50BLA","desc":"EMS 90 Angle Cat6 Keystone Jack Black 50 Pcs","cat":"Keystone Jacks"},{"part":"42154","sku":"90U6KJ50RED","desc":"EMS 90 Angle Cat6 Keystone Jack Red 50 Pcs","cat":"Keystone Jacks"},{"part":"42155","sku":"90U6KJ50YEL","desc":"EMS 90 Angle Cat6 Keystone Jack Yellow 50 Pcs","cat":"Keystone Jacks"},{"part":"42156","sku":"90U6KJ50GRN","desc":"EMS 90 Angle Cat6 Keystone Jack Green 50 Pcs","cat":"Keystone Jacks"},{"part":"42157","sku":"90U6KJ50ORA","desc":"EMS 90 Angle Cat6 Keystone Jack Orange 50 Pcs","cat":"Keystone Jacks"},{"part":"42158","sku":"90U6KJ50PUR","desc":"EMS 90 Angle Cat6 Keystone Jack Purple 50 Pcs","cat":"Keystone Jacks"},{"part":"42159","sku":"90U6KJ50GRY","desc":"EMS 90 Angle Cat6 Keystone Jack Grey 50 Pcs","cat":"Keystone Jacks"},{"part":"42160","sku":"90U6KJ50PIN","desc":"EMS 90 Angle Cat6 Keystone Jack Pink 50 Pcs","cat":"Keystone Jacks"},{"part":"42161","sku":"90U6KJ50BRN","desc":"EMS 90 Angle Cat6 Keystone Jack Brown 50 Pcs","cat":"Keystone Jacks"},{"part":"42162","sku":"90U6KJ50IVO","desc":"EMS 90 Angle Cat6 Keystone Jack Ivory 50 Pcs","cat":"Keystone Jacks"},{"part":"42163","sku":"90U6KJ50LAD","desc":"EMS 90 Angle Cat6 Keystone Jack Light Almond 50 Pcs","cat":"Keystone Jacks"},{"part":"42501","sku":"90KTU6A-10WHI10BLU","desc":"EMS 90 Angle Keystone Tool + CAT6A (10 Blue + 10 White)","cat":"Keystone Tools & Kits"},{"part":"42551","sku":"90U6KAJ10WHI","desc":"EMS 90 Angle Cat6A  Keystone Jack White 10 Pcs","cat":"Keystone Jacks"},{"part":"42552","sku":"90U6KAJ10BLU","desc":"EMS 90 Angle Cat6A  Keystone Jack Blue 10 Pcs","cat":"Keystone Jacks"},{"part":"42553","sku":"90U6KAJ10BLA","desc":"EMS 90 Angle Cat6A  Keystone Jack Black 10 Pcs","cat":"Keystone Jacks"},{"part":"42554","sku":"90U6KAJ10RED","desc":"EMS 90 Angle Cat6A  Keystone Jack Red 10 Pcs","cat":"Keystone Jacks"},{"part":"42555","sku":"90U6KAJ10YEL","desc":"EMS 90 Angle Cat6A  Keystone Jack Yellow 10 Pcs","cat":"Keystone Jacks"},{"part":"42556","sku":"90U6KAJ10GRN","desc":"EMS 90 Angle Cat6A  Keystone Jack Green 10 Pcs","cat":"Keystone Jacks"},{"part":"42557","sku":"90U6KAJ10ORA","desc":"EMS 90 Angle Cat6A  Keystone Jack Orange 10 Pcs","cat":"Keystone Jacks"},{"part":"42558","sku":"90U6KAJ10PUR","desc":"EMS 90 Angle Cat6A Keystone Jack Purple 10 Pcs","cat":"Keystone Jacks"},{"part":"42559","sku":"90U6KAJ10GRY","desc":"EMS 90 Angle Cat6A Keystone Jack Grey 10 Pcs","cat":"Keystone Jacks"},{"part":"42560","sku":"90U6KAJ10PIN","desc":"EMS 90 Angle Cat6A Keystone Jack Pink 10 Pcs","cat":"Keystone Jacks"},{"part":"42561","sku":"90U6KAJ10BRN","desc":"EMS 90 Angle Cat6A Keystone Jack Brown 10 Pcs","cat":"Keystone Jacks"},{"part":"42562","sku":"90U6KAJ10IVO","desc":"EMS 90 Angle Cat6A Keystone Jack Ivory 10 Pcs","cat":"Keystone Jacks"},{"part":"42563","sku":"90U6KAJ10LAD","desc":"EMS 90 Angle Cat6A Keystone Jack Light Almond 10 Pcs","cat":"Keystone Jacks"},{"part":"42601","sku":"90U6KAJ20WHI","desc":"EMS 90 Angle Cat6A  Keystone Jack White 20 Pcs","cat":"Keystone Jacks"},{"part":"42602","sku":"90U6KAJ20BLU","desc":"EMS 90 Angle Cat6A  Keystone Jack Blue 20 Pcs","cat":"Keystone Jacks"},{"part":"42603","sku":"90U6KAJ20BLA","desc":"EMS 90 Angle Cat6A  Keystone Jack Black 20 Pcs","cat":"Keystone Jacks"},{"part":"42604","sku":"90U6KAJ20RED","desc":"EMS 90 Angle Cat6A  Keystone Jack Red 20 Pcs","cat":"Keystone Jacks"},{"part":"42605","sku":"90U6KAJ20YEL","desc":"EMS 90 Angle Cat6A  Keystone Jack Yellow 20 Pcs","cat":"Keystone Jacks"},{"part":"42606","sku":"90U6KAJ20GRN","desc":"EMS 90 Angle Cat6A  Keystone Jack Green 20 Pcs","cat":"Keystone Jacks"},{"part":"42607","sku":"90U6KAJ20ORA","desc":"EMS 90 Angle Cat6A  Keystone Jack Orange 20 Pcs","cat":"Keystone Jacks"},{"part":"42608","sku":"90U6KAJ20PUR","desc":"EMS 90 Angle Cat6A Keystone Jack Purple 20 Pcs","cat":"Keystone Jacks"},{"part":"42609","sku":"90U6KAJ20GRY","desc":"EMS 90 Angle Cat6A Keystone Jack Grey 20 Pcs","cat":"Keystone Jacks"},{"part":"42610","sku":"90U6KAJ20PIN","desc":"EMS 90 Angle Cat6A Keystone Jack Pink 20 Pcs","cat":"Keystone Jacks"},{"part":"42611","sku":"90U6KAJ20BRN","desc":"EMS 90 Angle Cat6A Keystone Jack Brown 20 Pcs","cat":"Keystone Jacks"},{"part":"42612","sku":"90U6KAJ20IVO","desc":"EMS 90 Angle Cat6A Keystone Jack Ivory 20 Pcs","cat":"Keystone Jacks"},{"part":"42613","sku":"90U6KAJ20LAD","desc":"EMS 90 Angle Cat6A Keystone Jack Light Almond 20 Pcs","cat":"Keystone Jacks"},{"part":"42651","sku":"90U6KAJ50WHI","desc":"EMS 90 Angle Cat6A  Keystone Jack White 50 Pcs","cat":"Keystone Jacks"},{"part":"42652","sku":"90U6KAJ50BLU","desc":"EMS 90 Angle Cat6A  Keystone Jack Blue 50 Pcs","cat":"Keystone Jacks"},{"part":"42653","sku":"90U6KAJ50BLA","desc":"EMS 90 Angle Cat6A  Keystone Jack Black 50 Pcs","cat":"Keystone Jacks"},{"part":"42654","sku":"90U6KAJ50RED","desc":"EMS 90 Angle Cat6A  Keystone Jack Red 50 Pcs","cat":"Keystone Jacks"},{"part":"42655","sku":"90U6KAJ50YEL","desc":"EMS 90 Angle Cat6A  Keystone Jack Yellow 50 Pcs","cat":"Keystone Jacks"},{"part":"42656","sku":"90U6KAJ50GRN","desc":"EMS 90 Angle Cat6A  Keystone Jack Green 50 Pcs","cat":"Keystone Jacks"},{"part":"42657","sku":"90U6KAJ50ORA","desc":"EMS 90 Angle Cat6A  Keystone Jack Orange 50 Pcs","cat":"Keystone Jacks"},{"part":"42658","sku":"90U6KAJ50PUR","desc":"EMS 90 Angle Cat6A Keystone Jack Purple 50 Pcs","cat":"Keystone Jacks"},{"part":"42659","sku":"90U6KAJ50GRY","desc":"EMS 90 Angle Cat6A Keystone Jack Grey 50 Pcs","cat":"Keystone Jacks"},{"part":"42660","sku":"90U6KAJ50PIN","desc":"EMS 90 Angle Cat6A Keystone Jack Pink 50 Pcs","cat":"Keystone Jacks"},{"part":"42661","sku":"90U6KAJ50BRN","desc":"EMS 90 Angle Cat6A Keystone Jack Brown 50 Pcs","cat":"Keystone Jacks"},{"part":"42662","sku":"90U6KAJ50IVO","desc":"EMS 90 Angle Cat6A Keystone Jack Ivory 50 Pcs","cat":"Keystone Jacks"},{"part":"42663","sku":"90U6KAJ50LAD","desc":"EMS 90 Angle Cat6A Keystone Jack Light Almond 50 Pcs","cat":"Keystone Jacks"},{"part":"43000","sku":"90U5KJ10WHI","desc":"EMS 90 Angle Cat5e Keystone Jack White 10 Pcs","cat":"Keystone Jacks"},{"part":"43005","sku":"90U5KJ10BLU","desc":"EMS 90 Angle Cat5e Keystone Jack Blue 10 Pcs","cat":"Keystone Jacks"},{"part":"43010","sku":"90U5KJ10BLA","desc":"EMS 90 Angle Cat5e Keystone Jack Black 10 Pcs","cat":"Keystone Jacks"},{"part":"43015","sku":"90U5KJ10RED","desc":"EMS 90 Angle Cat5e Keystone Jack Red 10 Pcs","cat":"Keystone Jacks"},{"part":"43020","sku":"90U5KJ10YEL","desc":"EMS 90 Angle Cat5e Keystone Jack Yellow 10 Pcs","cat":"Keystone Jacks"},{"part":"43025","sku":"90U5KJ10GRN","desc":"EMS 90 Angle Cat5e Keystone Jack Green 10 Pcs","cat":"Keystone Jacks"},{"part":"43030","sku":"90U5KJ10ORA","desc":"EMS 90 Angle Cat5e Keystone Jack Orange 10 Pcs","cat":"Keystone Jacks"},{"part":"43035","sku":"90U5KJ10PUR","desc":"EMS 90 Angle Cat5e Keystone Jack Purple 10 Pcs","cat":"Keystone Jacks"},{"part":"43040","sku":"90U5KJ10GRY","desc":"EMS 90 Angle Cat5e Keystone Jack Grey 10 Pcs","cat":"Keystone Jacks"},{"part":"43045","sku":"90U5KJ10PIN","desc":"EMS 90 Angle Cat5e Keystone Jack Pink 10 Pcs","cat":"Keystone Jacks"},{"part":"43050","sku":"90U5KJ10BRN","desc":"EMS 90 Angle Cat5e Keystone Jack Brown 10 Pcs","cat":"Keystone Jacks"},{"part":"43055","sku":"90U5KJ10IVO","desc":"EMS 90 Angle Cat5e Keystone Jack Ivory 10 Pcs","cat":"Keystone Jacks"},{"part":"43060","sku":"90U5KJ10LAD","desc":"EMS 90 Angle Cat5e Keystone Jack Light Almond 10 Pcs","cat":"Keystone Jacks"},{"part":"43100","sku":"90U5KJ20WHI","desc":"EMS 90 Angle Cat5e Keystone Jack White 20 Pcs","cat":"Keystone Jacks"},{"part":"43105","sku":"90U5KJ20BLU","desc":"EMS 90 Angle Cat5e Keystone Jack Blue 20 Pcs","cat":"Keystone Jacks"},{"part":"43110","sku":"90U5KJ20BLA","desc":"EMS 90 Angle Cat5e Keystone Jack Black 20 Pcs","cat":"Keystone Jacks"},{"part":"43115","sku":"90U5KJ20RED","desc":"EMS 90 Angle Cat5e Keystone Jack Red 20 Pcs","cat":"Keystone Jacks"},{"part":"43120","sku":"90U5KJ20YEL","desc":"EMS 90 Angle Cat5e Keystone Jack Yellow 20 Pcs","cat":"Keystone Jacks"},{"part":"43125","sku":"90U5KJ20GRN","desc":"EMS 90 Angle Cat5e Keystone Jack Green 20 Pcs","cat":"Keystone Jacks"},{"part":"43130","sku":"90U5KJ20ORA","desc":"EMS 90 Angle Cat5e Keystone Jack Orange 20 Pcs","cat":"Keystone Jacks"},{"part":"43135","sku":"90U5KJ20PUR","desc":"EMS 90 Angle Cat5e Keystone Jack Purple 20 Pcs","cat":"Keystone Jacks"},{"part":"43140","sku":"90U5KJ20GRY","desc":"EMS 90 Angle Cat5e Keystone Jack Grey 20 Pcs","cat":"Keystone Jacks"},{"part":"43145","sku":"90U5KJ20PIN","desc":"EMS 90 Angle Cat5e Keystone Jack Pink 20 Pcs","cat":"Keystone Jacks"},{"part":"43150","sku":"90U5KJ20BRN","desc":"EMS 90 Angle Cat5e Keystone Jack Brown 20 Pcs","cat":"Keystone Jacks"},{"part":"43155","sku":"90U5KJ20IVO","desc":"EMS 90 Angle Cat5e Keystone Jack Ivory 20 Pcs","cat":"Keystone Jacks"},{"part":"43160","sku":"90U5KJ20LAD","desc":"EMS 90 Angle Cat5e Keystone Jack Light Almond 20 Pcs","cat":"Keystone Jacks"},{"part":"43200","sku":"90U5KJ50WHI","desc":"EMS 90 Angle Cat5e Keystone Jack White 50 Pcs","cat":"Keystone Jacks"},{"part":"43205","sku":"90U5KJ50BLU","desc":"EMS 90 Angle Cat5e Keystone Jack Blue 50 Pcs","cat":"Keystone Jacks"},{"part":"43210","sku":"90U5KJ50BLA","desc":"EMS 90 Angle Cat5e Keystone Jack Black 50 Pcs","cat":"Keystone Jacks"},{"part":"43215","sku":"90U5KJ50RED","desc":"EMS 90 Angle Cat5e Keystone Jack Red 50 Pcs","cat":"Keystone Jacks"},{"part":"43220","sku":"90U5KJ50YEL","desc":"EMS 90 Angle Cat5e Keystone Jack Yellow 50 Pcs","cat":"Keystone Jacks"},{"part":"43225","sku":"90U5KJ50GRN","desc":"EMS 90 Angle Cat5e Keystone Jack Green 50 Pcs","cat":"Keystone Jacks"},{"part":"43230","sku":"90U5KJ50ORA","desc":"EMS 90 Angle Cat5e Keystone Jack Orange 50 Pcs","cat":"Keystone Jacks"},{"part":"43235","sku":"90U5KJ50PUR","desc":"EMS 90 Angle Cat5e Keystone Jack Purple 50 Pcs","cat":"Keystone Jacks"},{"part":"43240","sku":"90U5KJ50GRY","desc":"EMS 90 Angle Cat5e Keystone Jack Grey 50 Pcs","cat":"Keystone Jacks"},{"part":"43245","sku":"90U5KJ50PIN","desc":"EMS 90 Angle Cat5e Keystone Jack Pink 50 Pcs","cat":"Keystone Jacks"},{"part":"43250","sku":"90U5KJ50BRN","desc":"EMS 90 Angle Cat5e Keystone Jack Brown 50 Pcs","cat":"Keystone Jacks"},{"part":"43255","sku":"90U5KJ50IVO","desc":"EMS 90 Angle Cat5e Keystone Jack Ivory 50 Pcs","cat":"Keystone Jacks"},{"part":"43260","sku":"90U5KJ50LAD","desc":"EMS 90 Angle Cat5e Keystone Jack Light Almond 50 Pcs","cat":"Keystone Jacks"},{"part":"44001","sku":"45KTU6-20WHI-N","desc":"EMS 45 Angle Keystone Tool + Cat6 - 20 White","cat":"Keystone Tools & Kits"},{"part":"44002","sku":"45KTU6-20BLUE-N","desc":"EMS 45 Angle Keystone Tool + Cat6 - 20 Blue","cat":"Keystone Tools & Kits"},{"part":"44003","sku":"45KTU6-20BLA-N","desc":"EMS 45 Angle Keystone Tool + Cat6 - 20 Black","cat":"Keystone Tools & Kits"},{"part":"44004","sku":"45KTU6-20RED-N","desc":"EMS 45 Angle Keystone Tool + Cat6 - 20 Red","cat":"Keystone Tools & Kits"},{"part":"44005","sku":"45KTU6-20YEL-N","desc":"EMS 45 Angle Keystone Tool + Cat6 - 20 Yellow","cat":"Keystone Tools & Kits"},{"part":"44006","sku":"45KTU6-20GRN-N","desc":"EMS 45 Angle Keystone Tool + Cat6 - 20 Green","cat":"Keystone Tools & Kits"},{"part":"44007","sku":"45KTU6-20ORA-N","desc":"EMS 45 Angle Keystone Tool + Cat6 - 20 Orange","cat":"Keystone Tools & Kits"},{"part":"44008","sku":"45KTU6-20PUR","desc":"EMS 45 Angle Keystone Tool + Cat6 - 20 Purple","cat":"Keystone Tools & Kits"},{"part":"44009","sku":"45KTU6-20GRY","desc":"EMS 45 Angle Keystone Tool + Cat6 - 20 Grey","cat":"Keystone Tools & Kits"},{"part":"44051","sku":"45U6KJ10WHI-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 10-Pack, White","cat":"Keystone Jacks"},{"part":"44052","sku":"45U6KJ10BLU-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 10-Pack, Blue","cat":"Keystone Jacks"},{"part":"44053","sku":"45U6KJ10BLA-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 10-Pack, Black","cat":"Keystone Jacks"},{"part":"44054","sku":"45U6KJ10RED-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 10-Pack, Red","cat":"Keystone Jacks"},{"part":"44055","sku":"45U6KJ10YEL-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 10-Pack, Yellow","cat":"Keystone Jacks"},{"part":"44056","sku":"45U6KJ10GRN-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 10-Pack, Green","cat":"Keystone Jacks"},{"part":"44057","sku":"45U6KJ10ORA-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 10-Pack, Orange","cat":"Keystone Jacks"},{"part":"44058","sku":"45U6KJ10PUR-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 10-Pack, Purple","cat":"Keystone Jacks"},{"part":"44059","sku":"45U6KJ10GRY-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 10-Pack, Grey","cat":"Keystone Jacks"},{"part":"44060","sku":"45U6KJ10PIN-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 10-Pack, Pink","cat":"Keystone Jacks"},{"part":"44061","sku":"45U6KJ10BRN-N","desc":"EMS 45 Angle Cat6 Keystone Jack Brown 10 Pcs","cat":"Keystone Jacks"},{"part":"44062","sku":"45U6KJ10IVO-N","desc":"EMS 45 Angle Cat6 Keystone Jack Ivory 10 Pcs","cat":"Keystone Jacks"},{"part":"44063","sku":"45U6KJ10LAD-N","desc":"EMS 45 Angle Cat6 Keystone Jack Light Almond 10 Pcs","cat":"Keystone Jacks"},{"part":"44101","sku":"45U6KJ20WHI-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 20-Pack, White","cat":"Keystone Jacks"},{"part":"44102","sku":"45U6KJ20BLU-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 20-Pack, Blue","cat":"Keystone Jacks"},{"part":"44103","sku":"45U6KJ20BLA-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 20-Pack, Black","cat":"Keystone Jacks"},{"part":"44104","sku":"45U6KJ20RED-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 20-Pack, Red","cat":"Keystone Jacks"},{"part":"44105","sku":"45U6KJ20YEL-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 20-Pack, Yellow","cat":"Keystone Jacks"},{"part":"44106","sku":"45U6KJ20GRN-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 20-Pack, Green","cat":"Keystone Jacks"},{"part":"44107","sku":"45U6KJ20ORA-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 20-Pack, Orange","cat":"Keystone Jacks"},{"part":"44108","sku":"45U6KJ20PUR-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 20-Pack, Purple","cat":"Keystone Jacks"},{"part":"44109","sku":"45U6KJ20GRY-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 20-Pack, Grey","cat":"Keystone Jacks"},{"part":"44110","sku":"45U6KJ20PIN-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 20-Pack, Pink","cat":"Keystone Jacks"},{"part":"44111","sku":"45U6KJ20BRN-N","desc":"EMS 45 Angle Cat6 Keystone Jack Brown 20 Pcs","cat":"Keystone Jacks"},{"part":"44112","sku":"45U6KJ20IVO-N","desc":"EMS 45 Angle Cat6 Keystone Jack Ivory 20 Pcs","cat":"Keystone Jacks"},{"part":"44113","sku":"45U6KJ20LAD-N","desc":"EMS 45 Angle Cat6 Keystone Jack Light Almond 20 Pcs","cat":"Keystone Jacks"},{"part":"44151","sku":"45U6KJ50WHI-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 50-Pack, White","cat":"Keystone Jacks"},{"part":"44152","sku":"45U6KJ50BLU-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 50-Pack, Blue","cat":"Keystone Jacks"},{"part":"44153","sku":"45U6KJ50BLA-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 50-Pack, Black","cat":"Keystone Jacks"},{"part":"44154","sku":"45U6KJ50RED-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 50-Pack, Red","cat":"Keystone Jacks"},{"part":"44155","sku":"45U6KJ50YEL-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 50-Pack, Yellow","cat":"Keystone Jacks"},{"part":"44156","sku":"45U6KJ50GRN-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 50-Pack, Green","cat":"Keystone Jacks"},{"part":"44157","sku":"45U6KJ50ORA-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 50-Pack, Orange","cat":"Keystone Jacks"},{"part":"44158","sku":"45U6KJ50PUR-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 50-Pack, Purple","cat":"Keystone Jacks"},{"part":"44159","sku":"45U6KJ50GRY-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 50-Pack, Grey","cat":"Keystone Jacks"},{"part":"44160","sku":"45U6KJ50PIN-N","desc":"EMS 45 Angle Keystone Jack - CAT6, 50-Pack, Pink","cat":"Keystone Jacks"},{"part":"44161","sku":"45U6KJ50BRN-N","desc":"EMS 45 Angle Cat6 Keystone Jack Brown 50 Pcs","cat":"Keystone Jacks"},{"part":"44162","sku":"45U6KJ50IVO-N","desc":"EMS 45 Angle Cat6 Keystone Jack Ivory 50 Pcs","cat":"Keystone Jacks"},{"part":"44163","sku":"45U6KJ50LAD-N","desc":"EMS 45 Angle Cat6 Keystone Jack Light Almond 50 Pcs","cat":"Keystone Jacks"},{"part":"44999","sku":"45KTU6A-20WHI","desc":"EMS 45 Angle Keystone Tool + Cat6A - 20 White","cat":"Keystone Tools & Kits"},{"part":"45000","sku":"45KTU6A-20BLU","desc":"EMS 45 Angle Keystone Tool + Cat6A - 20 Blue","cat":"Keystone Tools & Kits"},{"part":"45001","sku":"45U6AKJ10WHI","desc":"EMS 45 Angel Keystone Jack - CAT6A, 10-Pack, White","cat":"Keystone Jacks"},{"part":"45002","sku":"45U6AKJ10BLU","desc":"EMS 45 Angel Keystone Jack - CAT6A, 10-Pack, Blue","cat":"Keystone Jacks"},{"part":"45003","sku":"45U6AKJ10BLA","desc":"EMS 45 Angel Keystone Jack - CAT6A, 10-Pack, Black","cat":"Keystone Jacks"},{"part":"45004","sku":"45U6AKJ10RED","desc":"EMS 45 Angel Keystone Jack - CAT6A, 10-Pack, Red","cat":"Keystone Jacks"},{"part":"45005","sku":"45U6AKJ10YEL","desc":"EMS 45 Angel Keystone Jack - CAT6A, 10-Pack, Yellow","cat":"Keystone Jacks"},{"part":"45006","sku":"45U6AKJ10GRN","desc":"EMS 45 Angel Keystone Jack - CAT6A, 10-Pack, Green","cat":"Keystone Jacks"},{"part":"45007","sku":"45U6AKJ10ORA","desc":"EMS 45 Angel Keystone Jack - CAT6A, 10-Pack, Orange","cat":"Keystone Jacks"},{"part":"45008","sku":"45U6AKJ10PUR","desc":"EMS 45 Angel Keystone Jack - CAT6A, 10-Pack, Purple","cat":"Keystone Jacks"},{"part":"45009","sku":"45U6AKJ10GRY","desc":"EMS 45 Angel Keystone Jack - CAT6A, 10-Pack, Grey","cat":"Keystone Jacks"},{"part":"45010","sku":"45U6AKJ10PIN","desc":"EMS 45 Angel Keystone Jack - CAT6A, 10-Pack, Pink","cat":"Keystone Jacks"},{"part":"45011","sku":"45U6AKJ10BRN","desc":"EMS 45 Angel Keystone Jack - CAT6A, 10-Pack, Brown","cat":"Keystone Jacks"},{"part":"45012","sku":"45U6AKJ10IVO","desc":"EMS 45 Angel Keystone Jack - CAT6A, 10-Pack, Ivory","cat":"Keystone Jacks"},{"part":"45013","sku":"45U6AKJ10LAD","desc":"EMS 45 Angel Keystone Jack - CAT6A, 10-Pack, Light Almond","cat":"Keystone Jacks"},{"part":"45051","sku":"45U6AKJ20WHI","desc":"EMS 45 Angel Keystone Jack - CAT6A, 20-Pack, White","cat":"Keystone Jacks"},{"part":"45052","sku":"45U6AKJ20BLU","desc":"EMS 45 Angel Keystone Jack - CAT6A, 20-Pack, Blue","cat":"Keystone Jacks"},{"part":"45053","sku":"45U6AKJ20BLA","desc":"EMS 45 Angel Keystone Jack - CAT6A, 20-Pack, Black","cat":"Keystone Jacks"},{"part":"45054","sku":"45U6AKJ20RED","desc":"EMS 45 Angel Keystone Jack - CAT6A, 20-Pack, Red","cat":"Keystone Jacks"},{"part":"45055","sku":"45U6AKJ20YEL","desc":"EMS 45 Angel Keystone Jack - CAT6A, 20-Pack, Yellow","cat":"Keystone Jacks"},{"part":"45056","sku":"45U6AKJ20GRN","desc":"EMS 45 Angel Keystone Jack - CAT6A, 20-Pack, Green","cat":"Keystone Jacks"},{"part":"45057","sku":"45U6AKJ20ORA","desc":"EMS 45 Angel Keystone Jack - CAT6A, 20-Pack, Orange","cat":"Keystone Jacks"},{"part":"45058","sku":"45U6AKJ20PUR","desc":"EMS 45 Angel Keystone Jack - CAT6A, 20-Pack, Purple","cat":"Keystone Jacks"},{"part":"45059","sku":"45U6AKJ20GRY","desc":"EMS 45 Angel Keystone Jack - CAT6A, 20-Pack, Grey","cat":"Keystone Jacks"},{"part":"45060","sku":"45U6AKJ20PIN","desc":"EMS 45 Angel Keystone Jack - CAT6A, 20-Pack, Pink","cat":"Keystone Jacks"},{"part":"45061","sku":"45U6AKJ20BRN","desc":"EMS 45 Angel Keystone Jack - CAT6A, 20-Pack, Brown","cat":"Keystone Jacks"},{"part":"45062","sku":"45U6AKJ20IVO","desc":"EMS 45 Angel Keystone Jack - CAT6A, 20-Pack, Ivory","cat":"Keystone Jacks"},{"part":"45063","sku":"45U6AKJ20LAD","desc":"EMS 45 Angel Keystone Jack - CAT6A, 20-Pack, Light Almond","cat":"Keystone Jacks"},{"part":"45101","sku":"45U6AKJ50WHI","desc":"EMS 45 Angel Keystone Jack - CAT6A, 50-Pack, White","cat":"Keystone Jacks"},{"part":"45102","sku":"45U6AKJ50BLU","desc":"EMS 45 Angel Keystone Jack - CAT6A, 50-Pack, Blue","cat":"Keystone Jacks"},{"part":"45103","sku":"45U6AKJ50BLA","desc":"EMS 45 Angel Keystone Jack - CAT6A, 50-Pack, Black","cat":"Keystone Jacks"},{"part":"45104","sku":"45U6AKJ50RED","desc":"EMS 45 Angel Keystone Jack - CAT6A, 50-Pack, Red","cat":"Keystone Jacks"},{"part":"45105","sku":"45U6AKJ50YEL","desc":"EMS 45 Angel Keystone Jack - CAT6A, 50-Pack, Yellow","cat":"Keystone Jacks"},{"part":"45106","sku":"45U6AKJ50GRN","desc":"EMS 45 Angel Keystone Jack - CAT6A, 50-Pack, Green","cat":"Keystone Jacks"},{"part":"45107","sku":"45U6AKJ50ORA","desc":"EMS 45 Angel Keystone Jack - CAT6A, 50-Pack, Orange","cat":"Keystone Jacks"},{"part":"45108","sku":"45U6AKJ50PUR","desc":"EMS 45 Angel Keystone Jack - CAT6A, 50-Pack, Purple","cat":"Keystone Jacks"},{"part":"45109","sku":"45U6AKJ50GRY","desc":"EMS 45 Angel Keystone Jack - CAT6A, 50-Pack, Grey","cat":"Keystone Jacks"},{"part":"45110","sku":"45U6AKJ50PIN","desc":"EMS 45 Angel Keystone Jack - CAT6A, 50-Pack, Pink","cat":"Keystone Jacks"},{"part":"45111","sku":"45U6AKJ50BRN","desc":"EMS 45 Angel Keystone Jack - CAT6A, 50-Pack, Brown","cat":"Keystone Jacks"},{"part":"45112","sku":"45U6AKJ50IVO","desc":"EMS 45 Angel Keystone Jack - CAT6A, 50-Pack, Ivory","cat":"Keystone Jacks"},{"part":"45113","sku":"45U6AKJ50LAD","desc":"EMS 45 Angel Keystone Jack - CAT6A, 50-Pack, Light Almond","cat":"Keystone Jacks"},{"part":"45500","sku":"45U5KJ10WHI","desc":"EMS 45 Angle Cat5e Keystone Jack White 10 Pcs","cat":"Keystone Jacks"},{"part":"45502","sku":"45U5KJ10BLU","desc":"EMS 45 Angle Cat5e Keystone Jack Blue 10 Pcs","cat":"Keystone Jacks"},{"part":"45504","sku":"45U5KJ10BLA","desc":"EMS 45 Angle Cat5e Keystone Jack Black 10 Pcs","cat":"Keystone Jacks"},{"part":"45506","sku":"45U5KJ10RED","desc":"EMS 45 Angle Cat5e Keystone Jack Red 10 Pcs","cat":"Keystone Jacks"},{"part":"45508","sku":"45U5KJ10YEL","desc":"EMS 45 Angle Cat5e Keystone Jack Yellow 10 Pcs","cat":"Keystone Jacks"},{"part":"45510","sku":"45U5KJ10GRN","desc":"EMS 45 Angle Cat5e Keystone Jack Green 10 Pcs","cat":"Keystone Jacks"},{"part":"45512","sku":"45U5KJ10ORA","desc":"EMS 45 Angle Cat5e Keystone Jack Orange 10 Pcs","cat":"Keystone Jacks"},{"part":"45514","sku":"45U5KJ10PUR","desc":"EMS 45 Angle Cat5e Keystone Jack Purple 10 Pcs","cat":"Keystone Jacks"},{"part":"45516","sku":"45U5KJ10GRY","desc":"EMS 45 Angle Cat5e Keystone Jack Grey 10 Pcs","cat":"Keystone Jacks"},{"part":"45518","sku":"45U5KJ10PIN","desc":"EMS 45 Angle Cat5e Keystone Jack Pink 10 Pcs","cat":"Keystone Jacks"},{"part":"45520","sku":"45U5KJ10BRN","desc":"EMS 45 Angle Cat5e Keystone Jack Brown 10 Pcs","cat":"Keystone Jacks"},{"part":"45522","sku":"45U5KJ10IVO","desc":"EMS 45 Angle Cat5e Keystone Jack Ivory 10 Pcs","cat":"Keystone Jacks"},{"part":"45524","sku":"45U5KJ10LAD","desc":"EMS 45 Angle Cat5e Keystone Jack Light Almond 10 Pcs","cat":"Keystone Jacks"},{"part":"45550","sku":"45U5KJ20WHI","desc":"EMS 45 Angle Cat5e Keystone Jack White 20 Pcs","cat":"Keystone Jacks"},{"part":"45552","sku":"45U5KJ20BLU","desc":"EMS 45 Angle Cat5e Keystone Jack Blue 20 Pcs","cat":"Keystone Jacks"},{"part":"45554","sku":"45U5KJ20BLA","desc":"EMS 45 Angle Cat5e Keystone Jack Black 20 Pcs","cat":"Keystone Jacks"},{"part":"45556","sku":"45U5KJ20RED","desc":"EMS 45 Angle Cat5e Keystone Jack Red 20 Pcs","cat":"Keystone Jacks"},{"part":"45558","sku":"45U5KJ20YEL","desc":"EMS 45 Angle Cat5e Keystone Jack Yellow 20 Pcs","cat":"Keystone Jacks"},{"part":"45560","sku":"45U5KJ20GRN","desc":"EMS 45 Angle Cat5e Keystone Jack Green 20 Pcs","cat":"Keystone Jacks"},{"part":"45562","sku":"45U5KJ20ORA","desc":"EMS 45 Angle Cat5e Keystone Jack Orange 20 Pcs","cat":"Keystone Jacks"},{"part":"45564","sku":"45U5KJ20PUR","desc":"EMS 45 Angle Cat5e Keystone Jack Purple 20 Pcs","cat":"Keystone Jacks"},{"part":"45566","sku":"45U5KJ20GRY","desc":"EMS 45 Angle Cat5e Keystone Jack Grey 20 Pcs","cat":"Keystone Jacks"},{"part":"45568","sku":"45U5KJ20PIN","desc":"EMS 45 Angle Cat5e Keystone Jack Pink 20 Pcs","cat":"Keystone Jacks"},{"part":"45570","sku":"45U5KJ20BRN","desc":"EMS 45 Angle Cat5e Keystone Jack Brown 20 Pcs","cat":"Keystone Jacks"},{"part":"45572","sku":"45U5KJ20IVO","desc":"EMS 45 Angle Cat5e Keystone Jack Ivory 20 Pcs","cat":"Keystone Jacks"},{"part":"45574","sku":"45U5KJ20LAD","desc":"EMS 45 Angle Cat5e Keystone Jack Light Almond 20 Pcs","cat":"Keystone Jacks"},{"part":"45600","sku":"45U5KJ50WHI","desc":"EMS 45 Angle Cat5e Keystone Jack White 50 Pcs","cat":"Keystone Jacks"},{"part":"45602","sku":"45U5KJ50BLU","desc":"EMS 45 Angle Cat5e Keystone Jack Blue 50 Pcs","cat":"Keystone Jacks"},{"part":"45604","sku":"45U5KJ50BLA","desc":"EMS 45 Angle Cat5e Keystone Jack Black 50 Pcs","cat":"Keystone Jacks"},{"part":"45606","sku":"45U5KJ50RED","desc":"EMS 45 Angle Cat5e Keystone Jack Red 50 Pcs","cat":"Keystone Jacks"},{"part":"45608","sku":"45U5KJ50YEL","desc":"EMS 45 Angle Cat5e Keystone Jack Yellow 50 Pcs","cat":"Keystone Jacks"},{"part":"45610","sku":"45U5KJ50GRN","desc":"EMS 45 Angle Cat5e Keystone Jack Green 50 Pcs","cat":"Keystone Jacks"},{"part":"45612","sku":"45U5KJ50ORA","desc":"EMS 45 Angle Cat5e Keystone Jack Orange 50 Pcs","cat":"Keystone Jacks"},{"part":"45614","sku":"45U5KJ50PUR","desc":"EMS 45 Angle Cat5e Keystone Jack Purple 50 Pcs","cat":"Keystone Jacks"},{"part":"45616","sku":"45U5KJ50GRY","desc":"EMS 45 Angle Cat5e Keystone Jack Grey 50 Pcs","cat":"Keystone Jacks"},{"part":"45618","sku":"45U5KJ50PIN","desc":"EMS 45 Angle Cat5e Keystone Jack Pink 50 Pcs","cat":"Keystone Jacks"},{"part":"45620","sku":"45U5KJ50BRN","desc":"EMS 45 Angle Cat5e Keystone Jack Brown 50 Pcs","cat":"Keystone Jacks"},{"part":"45622","sku":"45U5KJ50IVO","desc":"EMS 45 Angle Cat5e Keystone Jack Ivory 50 Pcs","cat":"Keystone Jacks"},{"part":"45624","sku":"45U5KJ50LAD","desc":"EMS 45 Angle Cat5e Keystone Jack Light Almond 50 Pcs","cat":"Keystone Jacks"},{"part":"46000","sku":"F24KPANEL","desc":"EMS Blank Patch Panel 24 Ports Foldable w/o Lasing Bar","cat":"Patch Panels"},{"part":"46100","sku":"F24KPANEL-LB","desc":"EMS Blank Patch Panel 24 Ports Foldable c/w Lasing Bar","cat":"Patch Panels"}];
+
+let cart = {}; // part -> qty
+let currentCat = 'All';
+let currentSearch = '';
+let sortKey = 'part';
+let sortDir = 1;
+let currentPage = 1;
+const PAGE_SIZE = 50;
+
+function getFiltered() {
+  let data = PRODUCTS;
+  if (currentCat !== 'All') data = data.filter(p => p.cat === currentCat);
+  if (currentSearch) {
+    const q = currentSearch.toLowerCase();
+    data = data.filter(p =>
+      p.desc.toLowerCase().includes(q) ||
+      p.sku.toLowerCase().includes(q) ||
+      p.part.toLowerCase().includes(q)
+    );
+  }
+  data = [...data].sort((a, b) => {
+    let av = a[sortKey], bv = b[sortKey];
+    return av < bv ? -sortDir : av > bv ? sortDir : 0;
+  });
+  return data;
+}
+
+function render() {
+  const filtered = getFiltered();
+  const total = filtered.length;
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+  if (currentPage > totalPages) currentPage = 1;
+  const slice = filtered.slice((currentPage-1)*PAGE_SIZE, currentPage*PAGE_SIZE);
+
+  document.getElementById('resultCount').innerHTML =
+    `Showing <span>${slice.length}</span> of <span>${total}</span> products`;
+
+  const tbody = document.getElementById('tableBody');
+  if (slice.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5"><div class="empty"><div class="icon">🔍</div><h3>No products found</h3><p>Try adjusting your search or category filter.</p></div></td></tr>`;
+  } else {
+    tbody.innerHTML = slice.map(p => {
+      const qty = cart[p.part] || '';
+      const inCart = cart[p.part] > 0;
+      return `<tr>
+        <td class="td-part">${p.part}</td>
+        <td class="td-sku">${p.sku}</td>
+        <td class="td-desc">${p.desc}</td>
+        <td><span class="td-cat">${p.cat}</span></td>
+        <td><div class="qty-cell">
+          <input class="qty-input${inCart?' has-value':''}" type="number" min="0" value="${qty}"
+            onchange="updateCart('${p.part}', this.value, this)"
+            placeholder="0">
+          <button class="add-btn${inCart?' in-cart':''}" onclick="quickAdd('${p.part}', this)" title="Add 1">+</button>
+        </div></td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Pagination
+  const pg = document.getElementById('pagination');
+  if (totalPages <= 1) { pg.innerHTML = ''; return; }
+  let html = `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>← Prev</button>`;
+  const pages = getPageNums(currentPage, totalPages);
+  pages.forEach(p => {
+    if (p === '...') html += `<span style="color:var(--muted);padding:0 4px">…</span>`;
+    else html += `<button class="page-btn${p===currentPage?' active':''}" onclick="goPage(${p})">${p}</button>`;
+  });
+  html += `<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===totalPages?'disabled':''}>Next →</button>`;
+  pg.innerHTML = html;
+}
+
+function getPageNums(cur, total) {
+  if (total <= 7) return Array.from({length:total},(_,i)=>i+1);
+  const nums = new Set([1, 2, cur-1, cur, cur+1, total-1, total].filter(n => n>=1 && n<=total));
+  const sorted = [...nums].sort((a,b)=>a-b);
+  const result = [];
+  sorted.forEach((n,i) => {
+    if (i > 0 && n - sorted[i-1] > 1) result.push('...');
+    result.push(n);
+  });
+  return result;
+}
+
+function goPage(n) { currentPage = n; render(); window.scrollTo(0,0); }
+
+function updateCart(part, val, input) {
+  const qty = parseInt(val) || 0;
+  if (qty > 0) {
+    cart[part] = qty;
+    input.classList.add('has-value');
+  } else {
+    delete cart[part];
+    input.classList.remove('has-value');
+  }
+  updateCartUI();
+}
+
+function quickAdd(part, btn) {
+  cart[part] = (cart[part] || 0) + 1;
+  updateCartUI();
+  render();
+}
+
+function updateCartUI() {
+  const keys = Object.keys(cart);
+  document.getElementById('cart-count').textContent = keys.length;
+  const preview = document.getElementById('cart-preview');
+  const totalText = document.getElementById('cart-total-text');
+  if (keys.length === 0) {
+    preview.innerHTML = '<div style="color:var(--muted);font-size:12px;font-family:DM Mono,monospace">No items yet</div>';
+    totalText.style.display = 'none';
+  } else {
+    const total = keys.reduce((s,k) => s + cart[k], 0);
+    preview.innerHTML = keys.slice(0,4).map(k => {
+      const p = PRODUCTS.find(x => x.part === k);
+      return `<div class="cart-item-preview">✓ ${p.part} × ${cart[k]}</div>`;
+    }).join('') + (keys.length > 4 ? `<div class="cart-item-preview">+${keys.length-4} more...</div>` : '');
+    totalText.style.display = 'block';
+    totalText.textContent = `${keys.length} items · ${total} units total`;
+  }
+}
+
+function filterCat(cat) {
+  currentCat = cat;
+  currentPage = 1;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
+  render();
+}
+
+function handleSearch() {
+  currentSearch = document.getElementById('searchInput').value;
+  currentPage = 1;
+  render();
+}
+
+function sortBy(key) {
+  if (sortKey === key) sortDir *= -1; else { sortKey = key; sortDir = 1; }
+  document.querySelectorAll('th[id^="th-"]').forEach(th => th.className = '');
+  document.getElementById('th-'+key).className = sortDir === 1 ? 'sort-asc' : 'sort-desc';
+  render();
+}
+
+function clearCart() {
+  if (Object.keys(cart).length === 0) return;
+  if (!confirm('Clear all items from your order?')) return;
+  cart = {};
+  updateCartUI();
+  render();
+}
+
+function showOrder() {
+  const keys = Object.keys(cart);
+  if (keys.length === 0) { alert('No items in your order yet!'); return; }
+  const tbody = document.getElementById('orderTableBody');
+  tbody.innerHTML = keys.map(k => {
+    const p = PRODUCTS.find(x => x.part === k);
+    return `<tr>
+      <td class="td-part">${p.part}</td>
+      <td class="td-sku">${p.sku}</td>
+      <td>${p.desc}</td>
+      <td style="font-family:DM Mono,monospace;color:var(--accent)">${cart[k]}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('orderModal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('orderModal').classList.remove('open'); }
+
+function copyOrder() {
+  const lines = ['Part Number\tSKU\tDescription\tQty'];
+  Object.keys(cart).forEach(k => {
+    const p = PRODUCTS.find(x => x.part === k);
+    lines.push(`${p.part}\t${p.sku}\t${p.desc}\t${cart[k]}`);
+  });
+  navigator.clipboard.writeText(lines.join('\n'));
+  alert('Order copied to clipboard!');
+}
+
+function downloadCSV() {
+  const lines = ['Part Number,SKU,Description,Qty'];
+  Object.keys(cart).forEach(k => {
+    const p = PRODUCTS.find(x => x.part === k);
+    lines.push(`${p.part},${p.sku},"${p.desc}",${cart[k]}`);
+  });
+  const blob = new Blob([lines.join('\n')], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'bulk-order.csv';
+  a.click();
+}
+
+// Init counts
+const cats = ['Patch Cords','Keystone Jacks','Keystone Tools & Kits','Inline Couplers','Connectors & Jars','Patch Panels','EZ Tools & Kits'];
+cats.forEach(c => {
+  const el = document.getElementById('cnt-'+c);
+  if (el) el.textContent = PRODUCTS.filter(p => p.cat === c).length;
+});
+
+updateCartUI();
+render();
+</script>
+
+
+</body></html>
