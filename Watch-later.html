@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<!-- saved from url=(0046)file:///Users/kfireinav/Downloads/later_7.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Later</title>
+<link href="./Later_files/css2" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0a; --card: #111; --card2: #161616;
+  --border: #1e1e1e; --border2: #2a2a2a; --border3: #333;
+  --text: #efefef; --muted: #555; --faint: #2a2a2a;
+  --sans: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace;
+}
+body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; }
+
+.topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: 52px; background: var(--bg); border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px; padding: 0 20px;
+}
+.logo { font-family: var(--mono); font-size: 14px; color: var(--text); flex-shrink: 0; letter-spacing: -0.02em; }
+.url-bar {
+  flex: 1; max-width: 540px; background: var(--card);
+  border: 1px solid var(--border2); border-radius: 6px; padding: 0 14px; height: 34px;
+  font-family: var(--mono); font-size: 13px; color: var(--text); outline: none; transition: border-color 0.12s;
+}
+.url-bar::placeholder { color: var(--muted); }
+.url-bar:focus { border-color: var(--border3); }
+.btn { font-family: var(--sans); font-size: 13px; font-weight: 500; height: 34px; padding: 0 16px; border-radius: 6px; border: none; cursor: pointer; transition: opacity 0.1s; }
+.btn-primary { background: var(--text); color: #000; }
+.btn-primary:hover { opacity: 0.82; }
+.btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border2); }
+.btn-ghost:hover { color: var(--text); border-color: var(--border3); }
+.topbar-right { margin-left: auto; }
+
+.layout { display: flex; margin-top: 52px; }
+
+.sidebar {
+  width: 192px; flex-shrink: 0; position: fixed; top: 52px; left: 0; bottom: 0;
+  border-right: 1px solid var(--border); padding: 16px 0; overflow-y: auto;
+  display: flex; flex-direction: column;
+}
+.s-label { font-size: 10px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; padding: 0 14px; margin: 16px 0 4px; font-family: var(--mono); }
+.s-label:first-child { margin-top: 0; }
+.nav-btn {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; padding: 7px 14px; background: none; border: none;
+  font-family: var(--sans); font-size: 13px; color: var(--muted); cursor: pointer; text-align: left; transition: color 0.1s;
+}
+.nav-btn:hover { color: var(--text); }
+.nav-btn.active { color: var(--text); }
+.nav-name { display: flex; align-items: center; gap: 8px; }
+.nav-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.nav-cnt { font-size: 11px; font-family: var(--mono); color: var(--faint); }
+.nav-btn.active .nav-cnt { color: #3a3a3a; }
+.sidebar-foot { margin-top: auto; padding: 14px; }
+.mgr-btn { width: 100%; background: none; border: 1px solid var(--border); border-radius: 6px; padding: 7px; font-family: var(--sans); font-size: 12px; color: var(--muted); cursor: pointer; }
+.mgr-btn:hover { color: var(--text); border-color: var(--border2); }
+
+.main { margin-left: 192px; flex: 1; padding: 24px 24px 60px; min-width: 0; }
+.main-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.main-title { font-size: 15px; font-weight: 500; }
+.sort-sel { font-family: var(--mono); font-size: 11px; background: transparent; border: none; color: var(--muted); cursor: pointer; outline: none; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(256px, 1fr)); gap: 10px; }
+
+.card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden; position: relative;
+  transition: border-color 0.12s, transform 0.12s; cursor: pointer;
+  display: flex; flex-direction: column;
+}
+.card:hover { border-color: var(--border2); transform: translateY(-1px); }
+.card.done { opacity: 0.3; }
+.card-img { width: 100%; aspect-ratio: 16/9; background: var(--card2); overflow: hidden; position: relative; flex-shrink: 0; }
+.card-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.card-no-img { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+.no-img-favicon { width: 28px; height: 28px; border-radius: 5px; opacity: 0.6; }
+.no-img-domain { font-family: var(--mono); font-size: 11px; color: #2e2e2e; }
+.fav { position: absolute; bottom: 7px; left: 7px; width: 16px; height: 16px; border-radius: 3px; overflow: hidden; }
+.fav img { width: 100%; height: 100%; }
+.cat-pill {
+  position: absolute; top: 7px; right: 7px;
+  font-size: 10px; font-family: var(--mono); letter-spacing: 0.03em;
+  background: rgba(10,10,10,0.88); padding: 2px 8px; border-radius: 4px;
+}
+.card-acts { position: absolute; top: 7px; left: 7px; display: flex; gap: 3px; opacity: 0; transition: opacity 0.12s; }
+.card:hover .card-acts { opacity: 1; }
+.act { width: 26px; height: 26px; border-radius: 5px; background: rgba(10,10,10,0.9); border: 1px solid #2a2a2a; color: var(--muted); font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.act:hover { color: var(--text); }
+.card-body { padding: 12px 13px 13px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.card-title { font-size: 13px; font-weight: 500; line-height: 1.4; color: var(--text); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.card-creator { font-size: 11px; color: #3a3a3a; font-family: var(--mono); }
+.card-desc { font-size: 11px; color: var(--muted); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.card-note { font-size: 11px; color: #444; font-style: italic; padding-top: 5px; border-top: 1px solid var(--border); }
+.card-foot { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 6px; }
+.card-domain { font-family: var(--mono); font-size: 10px; color: #2e2e2e; }
+.card-ago { font-family: var(--mono); font-size: 10px; color: var(--faint); }
+
+.empty { grid-column: 1/-1; padding: 80px 0; text-align: center; color: var(--muted); font-size: 13px; }
+.empty-hint { color: var(--faint); font-size: 12px; margin-top: 6px; }
+
+.overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.15s; }
+.overlay.open { opacity: 1; pointer-events: all; }
+.modal { background: #111; border: 1px solid var(--border2); border-radius: 12px; padding: 24px; width: min(480px, 95vw); transform: translateY(6px); transition: transform 0.15s; max-height: 90vh; overflow-y: auto; }
+.overlay.open .modal { transform: translateY(0); }
+.modal-h { font-size: 15px; font-weight: 500; margin-bottom: 18px; }
+.field-lbl { font-size: 10px; font-family: var(--mono); color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; display: block; margin: 14px 0 5px; }
+.modal input[type=text], .modal textarea { width: 100%; background: var(--bg); border: 1px solid var(--border2); border-radius: 6px; padding: 9px 12px; color: var(--text); font-family: var(--mono); font-size: 13px; outline: none; transition: border-color 0.12s; }
+.modal input[type=text]:focus, .modal textarea:focus { border-color: var(--border3); }
+.modal input[type=text]::placeholder { color: var(--muted); }
+.modal textarea { resize: vertical; min-height: 56px; font-family: var(--sans); font-size: 13px; }
+.modal-acts { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+
+.prev-strip { margin-bottom: 14px; background: var(--card2); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.prev-img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
+.prev-body { padding: 9px 12px; }
+.prev-title { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+.prev-creator { font-size: 11px; color: #3a3a3a; font-family: var(--mono); margin-bottom: 3px; }
+.prev-desc { font-size: 11px; color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.fetch-status { font-size: 11px; font-family: var(--mono); margin-bottom: 12px; }
+.fetch-status.loading { color: var(--muted); }
+.fetch-status.ok { color: #3a7a3a; }
+.fetch-status.fail { color: #7a3a3a; }
+
+.manual-prompt { background: #1a1212; border: 1px solid #3a2020; border-radius: 8px; padding: 11px 13px; margin-bottom: 14px; display: none; }
+.manual-prompt.show { display: block; }
+.manual-prompt p { font-size: 12px; color: #886; margin-bottom: 8px; line-height: 1.5; }
+
+/* CAT PICKER */
+.cat-picker { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.cat-chip {
+  display: flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 20px;
+  border: 1px solid var(--border2); background: var(--bg);
+  font-size: 12px; color: var(--muted); cursor: pointer; font-family: var(--sans); transition: all 0.1s;
+  user-select: none;
+}
+.cat-chip:hover { border-color: var(--border3); color: var(--text); }
+.cat-chip.selected { border-color: var(--border3); color: var(--text); background: var(--card2); }
+.cat-chip .chip-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.chip-new { padding: 5px 11px; border-radius: 20px; border: 1px dashed var(--border2); background: transparent; font-size: 12px; color: var(--muted); cursor: pointer; font-family: var(--sans); transition: all 0.1s; }
+.chip-new:hover { border-color: var(--border3); color: var(--text); }
+.new-cat-inline { margin-top: 10px; padding: 12px; background: var(--card2); border: 1px solid var(--border2); border-radius: 8px; display: none; }
+.new-cat-inline.open { display: block; }
+.new-cat-row { display: flex; gap: 8px; align-items: center; }
+.new-cat-row input[type=text] { flex: 1; }
+input[type=color] { width: 34px; height: 34px; border: 1px solid var(--border2); border-radius: 6px; background: var(--bg); cursor: pointer; padding: 3px; flex-shrink: 0; }
+.save-cat-btn { height: 34px; padding: 0 14px; font-size: 12px; }
+
+.cat-list { display: flex; flex-direction: column; gap: 5px; max-height: 300px; overflow-y: auto; margin-bottom: 12px; }
+.cat-row { display: flex; align-items: center; gap: 10px; background: var(--card2); border: 1px solid var(--border); border-radius: 7px; padding: 9px 12px; }
+.c-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+.c-name { flex: 1; font-size: 13px; }
+.c-cnt { font-size: 11px; font-family: var(--mono); color: var(--muted); margin-right: 4px; }
+.c-del { background: none; border: none; color: var(--faint); font-size: 14px; cursor: pointer; padding: 0 4px; border-radius: 4px; }
+.c-del:hover { color: #c0392b; }
+.new-row { display: flex; gap: 8px; margin-top: 4px; }
+.new-row input[type=text] { flex: 1; }
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="logo">later.</span>
+  <input class="url-bar" id="url-bar" type="text" placeholder="paste a link and press Enter…">
+  <button class="btn btn-primary" onclick="handleAdd()">Save</button>
+  <div class="topbar-right">
+    <button class="btn btn-ghost" onclick="openManage()">Categories</button>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="s-label">Library</div>
+    <button class="nav-btn" data-filter="all" onclick="setFilter(&#39;all&#39;,this)">
+      <span class="nav-name">All</span><span class="nav-cnt" id="cnt-all">2</span>
+    </button>
+    <button class="nav-btn" data-filter="done" onclick="setFilter(&#39;done&#39;,this)">
+      <span class="nav-name">Done</span><span class="nav-cnt" id="cnt-done">0</span>
+    </button>
+    <div class="s-label">Categories</div>
+    <div id="sidebar-cats"><button class="nav-btn" onclick="setFilter(&#39;c1774691491885&#39;,this)">
+      <span class="nav-name"><span class="nav-dot" style="background:#4a9eff"></span>Auto research</span>
+      <span class="nav-cnt">1</span>
+    </button><button class="nav-btn active" onclick="setFilter(&#39;c1774691528058&#39;,this)">
+      <span class="nav-name"><span class="nav-dot" style="background:#f50062"></span>Wellness</span>
+      <span class="nav-cnt">1</span>
+    </button></div>
+    <div class="sidebar-foot">
+      <button class="mgr-btn" onclick="openManage()">manage categories →</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="main-head">
+      <span class="main-title" id="main-title">Wellness</span>
+      <select class="sort-sel" id="sort-sel" onchange="render()">
+        <option value="newest">newest</option>
+        <option value="oldest">oldest</option>
+      </select>
+    </div>
+    <div class="grid" id="grid"><div class="card" onclick="openLink(&#39;1774691536369&#39;)">
+      <div class="card-img">
+        <img src="./Later_files/hqdefault.jpg" alt="" onerror="this.style.display=&#39;none&#39;;this.nextElementSibling.style.display=&#39;flex&#39;" style="width:100%;height:100%;object-fit:cover;display:block">
+        <div class="card-no-img" style="display:none">
+          <img class="no-img-favicon" src="./Later_files/favicons" alt="">
+          <span class="no-img-domain">youtube.com</span>
+        </div><div class="fav"><img src="./Later_files/favicons(1)" alt=""></div><span class="cat-pill" style="color:#f50062">Wellness</span>
+        <div class="card-acts" onclick="event.stopPropagation()">
+          <button class="act" onclick="toggleDone(&#39;1774691536369&#39;)">✓</button>
+          <button class="act" onclick="openAdd(null,&#39;1774691536369&#39;)">✎</button>
+          <button class="act" onclick="del(&#39;1774691536369&#39;)">✕</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Bryan Johnson: I Just Took the Most Powerful Dose of DMT in the World... Here's What It Was Like</div>
+        <div class="card-creator">by All-In Podcast</div>
+        
+        
+        <div class="card-foot">
+          <span class="card-domain">youtube.com</span>
+          <span class="card-ago">now</span>
+        </div>
+      </div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ADD MODAL -->
+<div class="overlay" id="add-ov" onclick="if(event.target===this)closeAdd()">
+  <div class="modal">
+    <div class="modal-h" id="add-h">Save link</div>
+    <div id="fetch-status" class="fetch-status ok" style="display: none;">✓ preview loaded</div>
+    <div id="prev-strip" class="prev-strip" style="display: block;">
+      <img id="prev-img" class="prev-img" src="./Later_files/hqdefault.jpg" alt="" style="display: block;" onerror="this.style.display=&#39;none&#39;">
+      <div class="prev-body">
+        <div class="prev-title" id="prev-title">Bryan Johnson: I Just Took the Most Powerful Dose of DMT in the World... Here's What It Was Like</div>
+        <div class="prev-creator" id="prev-creator">by All-In Podcast</div>
+        <div class="prev-desc" id="prev-desc"></div>
+      </div>
+    </div>
+    <div id="manual-prompt" class="manual-prompt">
+      <p>Couldn't fetch info for this link. Give it a name so you remember what it is:</p>
+      <input type="text" id="m-manual-title" placeholder="e.g. &#39;Great article about design&#39;">
+    </div>
+    <label class="field-lbl">URL</label>
+    <input type="text" id="m-url" placeholder="https://…" oninput="schedPrev()">
+    <label class="field-lbl">Category</label>
+    <div class="cat-picker" id="cat-picker"><button type="button" class="cat-chip" onclick="selectCat(&#39;c1774691491885&#39;)" style=""><span class="chip-dot" style="background:#4a9eff"></span>Auto research</button><button type="button" class="cat-chip selected" onclick="selectCat(&#39;c1774691528058&#39;)" style="border-color:#f50062;color:#f50062"><span class="chip-dot" style="background:#f50062"></span>Wellness</button><button type="button" class="chip-new" onclick="openNewCatForm()">+ new</button></div>
+    <div class="new-cat-inline" id="new-cat-form">
+      <div class="new-cat-row">
+        <input type="text" id="nc-name" placeholder="Category name…">
+        <input type="color" id="nc-color" value="#4a9eff">
+        <button class="btn btn-primary save-cat-btn" onclick="createCatInline()">Create</button>
+        <button class="btn btn-ghost save-cat-btn" onclick="closeNewCatForm()">✕</button>
+      </div>
+    </div>
+    <label class="field-lbl">Note</label>
+    <textarea id="m-note" placeholder="optional…"></textarea>
+    <div class="modal-acts">
+      <button class="btn btn-ghost" onclick="closeAdd()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveItem()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- MANAGE MODAL -->
+<div class="overlay" id="mgr-ov" onclick="if(event.target===this)closeMgr()">
+  <div class="modal">
+    <div class="modal-h">Categories</div>
+    <div class="cat-list" id="cat-list"></div>
+    <div class="new-row">
+      <input type="text" id="mgr-nc-name" placeholder="New category name…">
+      <input type="color" id="mgr-nc-color" value="#4a9eff">
+      <button class="btn btn-primary" onclick="addCatFromMgr()">Add</button>
+    </div>
+    <div class="modal-acts">
+      <button class="btn btn-ghost" onclick="closeMgr()">Done</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const SK_I='later-items-v7', SK_C='later-cats-v7';
+let items=[], cats=[], currentFilter='all', editId=null, meta={}, prevTimer=null, fetchFailed=false;
+
+// THE FIX: selectedCatId is now a plain variable, 
+// set directly and never accidentally reset by re-renders
+let selectedCatId = '';
+
+function load() {
+  try { items=JSON.parse(localStorage.getItem(SK_I))||[]; } catch(e){ items=[]; }
+  try { cats=JSON.parse(localStorage.getItem(SK_C))||[]; } catch(e){ cats=[]; }
+  render(); renderSidebar();
+}
+function persist(){ localStorage.setItem(SK_I,JSON.stringify(items)); localStorage.setItem(SK_C,JSON.stringify(cats)); }
+
+const getCat    = id => cats.find(c=>c.id===id)||null;
+const getDomain = url => { try{ return new URL(url).hostname.replace(/^www\./,''); }catch(e){ return ''; } };
+const isUrl     = s => /^https?:\/\//i.test(s)||/^[a-z0-9-]+\.[a-z]{2,}/i.test(s);
+const fixUrl    = s => /^https?:\/\//i.test(s)?s:'https://'+s;
+const ago       = ts => { const d=Date.now()-ts,m=Math.floor(d/60000); if(m<2)return'now'; if(m<60)return m+'m'; const h=Math.floor(m/60); if(h<24)return h+'h'; const dy=Math.floor(h/24); if(dy<30)return dy+'d'; return Math.floor(dy/30)+'mo'; };
+
+function getYouTubeId(url) {
+  try {
+    const u=new URL(url);
+    if(u.hostname.includes('youtube.com')) return u.searchParams.get('v');
+    if(u.hostname==='youtu.be') return u.pathname.slice(1).split('?')[0];
+  } catch(e){}
+  return null;
+}
+
+function setStatus(type, msg) {
+  const el=document.getElementById('fetch-status');
+  if(!type){ el.style.display='none'; return; }
+  el.className='fetch-status '+type;
+  el.style.display='block';
+  el.textContent=msg;
+}
+
+function schedPrev() {
+  clearTimeout(prevTimer);
+  const v=document.getElementById('m-url').value.trim();
+  hidePrev(); hideManualPrompt(); fetchFailed=false;
+  if(!v||!isUrl(v)){ setStatus(null); return; }
+  setStatus('loading','fetching preview…');
+  prevTimer=setTimeout(()=>fetchPrev(fixUrl(v)),600);
+}
+
+async function fetchPrev(url) {
+  meta={}; fetchFailed=false;
+  const ytId=getYouTubeId(url);
+  if(ytId){
+    try{
+      const r=await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`);
+      if(r.ok){
+        const d=await r.json();
+        meta={title:d.title||'',creator:d.author_name||'',desc:'',image:`https://img.youtube.com/vi/${ytId}/hqdefault.jpg`,domain:'youtube.com',url};
+        showPrev(meta); setStatus('ok','✓ preview loaded'); return;
+      }
+    }catch(e){}
+    meta={title:'',creator:'',desc:'',image:`https://img.youtube.com/vi/${ytId}/hqdefault.jpg`,domain:'youtube.com',url};
+    showPrev(meta); setStatus('ok','✓ thumbnail loaded'); return;
+  }
+
+  const proxies=[
+    u=>`https://api.allorigins.win/get?url=${encodeURIComponent(u)}`,
+    u=>`https://corsproxy.io/?${encodeURIComponent(u)}`,
+  ];
+  for(const makeProxy of proxies){
+    try{
+      const res=await fetch(makeProxy(url),{signal:AbortSignal.timeout(7000)});
+      if(!res.ok) continue;
+      const ct=res.headers.get('content-type')||'';
+      let html='';
+      if(ct.includes('json')){ const j=await res.json(); html=j.contents||j.body||''; }
+      else html=await res.text();
+      if(!html) continue;
+      const doc=new DOMParser().parseFromString(html,'text/html');
+      const og=p=>{ const e=doc.querySelector(`meta[property="${p}"],meta[name="${p}"]`); return e?e.getAttribute('content'):''; };
+      const title=og('og:title')||og('twitter:title')||doc.title||'';
+      const creator=og('article:author')||og('twitter:creator')||og('author')||'';
+      const desc=og('og:description')||og('twitter:description')||og('description')||'';
+      const image=og('og:image')||og('twitter:image')||'';
+      if(title||image){
+        meta={title,creator:creator.replace(/^@/,''),desc,image,domain:getDomain(url),url};
+        showPrev(meta); setStatus('ok','✓ preview loaded'); return;
+      }
+    }catch(e){ continue; }
+  }
+
+  fetchFailed=true;
+  hidePrev();
+  showManualPrompt();
+  setStatus('fail','couldn\'t fetch — give it a name below');
+}
+
+function showPrev(m){
+  hideManualPrompt();
+  const img=document.getElementById('prev-img');
+  if(m.image){ img.src=m.image; img.style.display='block'; } else { img.style.display='none'; }
+  document.getElementById('prev-title').textContent=m.title||'';
+  document.getElementById('prev-creator').textContent=m.creator?'by '+m.creator:'';
+  document.getElementById('prev-desc').textContent=m.desc||'';
+  document.getElementById('prev-strip').style.display='block';
+}
+function hidePrev(){ document.getElementById('prev-strip').style.display='none'; }
+function showManualPrompt(){ document.getElementById('manual-prompt').classList.add('show'); setTimeout(()=>document.getElementById('m-manual-title').focus(),50); }
+function hideManualPrompt(){ document.getElementById('manual-prompt').classList.remove('show'); document.getElementById('m-manual-title').value=''; }
+
+/* ── CAT PICKER ── 
+   Key fix: chips call selectCat() which sets selectedCatId directly.
+   renderCatPicker() just reads selectedCatId to show which is highlighted.
+   No re-render happens on click that could reset it. */
+function renderCatPicker() {
+  document.getElementById('cat-picker').innerHTML =
+    cats.map(c => {
+      const sel = selectedCatId === c.id;
+      return `<button type="button" class="cat-chip${sel?' selected':''}" 
+        onclick="selectCat('${c.id}')" 
+        style="${sel?`border-color:${c.color};color:${c.color}`:''}"
+      ><span class="chip-dot" style="background:${c.color}"></span>${c.name}</button>`;
+    }).join('')
+    + `<button type="button" class="chip-new" onclick="openNewCatForm()">+ new</button>`;
+}
+
+function selectCat(id) {
+  selectedCatId = (selectedCatId === id) ? '' : id;
+  renderCatPicker();
+}
+
+function openNewCatForm(){ document.getElementById('new-cat-form').classList.add('open'); document.getElementById('nc-name').focus(); }
+function closeNewCatForm(){ document.getElementById('new-cat-form').classList.remove('open'); document.getElementById('nc-name').value=''; }
+
+function createCatInline(){
+  const name=document.getElementById('nc-name').value.trim(); if(!name)return;
+  const color=document.getElementById('nc-color').value;
+  const c={id:'c'+Date.now(),name,color};
+  cats.push(c); persist(); renderSidebar();
+  closeNewCatForm();
+  selectedCatId=c.id;
+  renderCatPicker();
+}
+
+/* ── MODALS ── */
+function handleAdd(){ openAdd(document.getElementById('url-bar').value.trim()); }
+
+function openAdd(prefill, eid) {
+  editId=eid||null; meta={}; fetchFailed=false;
+  hidePrev(); hideManualPrompt(); setStatus(null); closeNewCatForm();
+  document.getElementById('add-h').textContent=eid?'Edit item':'Save link';
+
+  if(eid){
+    const item=items.find(x=>x.id===eid);
+    document.getElementById('m-url').value=item.url||'';
+    document.getElementById('m-note').value=item.note||'';
+    meta={title:item.title,creator:item.creator||'',desc:item.desc||'',image:item.image||'',domain:item.domain||'',url:item.url};
+    if(item.title||item.image) showPrev(meta);
+    selectedCatId=item.catId||'';
+  } else {
+    document.getElementById('m-url').value=prefill||'';
+    document.getElementById('m-note').value='';
+    selectedCatId='';
+    if(prefill&&isUrl(prefill)){ setStatus('loading','fetching preview…'); fetchPrev(fixUrl(prefill)); }
+  }
+
+  renderCatPicker();
+  document.getElementById('add-ov').classList.add('open');
+  setTimeout(()=>document.getElementById(eid?'m-note':'m-url').focus(),80);
+}
+
+function closeAdd(){
+  document.getElementById('add-ov').classList.remove('open');
+  document.getElementById('url-bar').value='';
+  editId=null; meta={}; fetchFailed=false; selectedCatId='';
+  clearTimeout(prevTimer); closeNewCatForm(); setStatus(null);
+}
+function openManage(){ renderCatMgr(); document.getElementById('mgr-ov').classList.add('open'); }
+function closeMgr(){ document.getElementById('mgr-ov').classList.remove('open'); render(); renderSidebar(); }
+
+/* ── SAVE ── */
+function saveItem(){
+  const raw=document.getElementById('m-url').value.trim(); if(!raw)return;
+  const url=isUrl(raw)?fixUrl(raw):null;
+  const note=document.getElementById('m-note').value.trim();
+  const manualTitle=document.getElementById('m-manual-title').value.trim();
+  const domain=meta.domain||(url?getDomain(url):'');
+  const title=manualTitle||meta.title||domain||raw;
+  const creator=meta.creator||'', desc=meta.desc||'', image=meta.image||'';
+  const catId=selectedCatId; // read directly — no getter, no ambiguity
+
+  console.log('Saving with catId:', catId, 'selectedCatId:', selectedCatId); // debug
+
+  if(editId){
+    const item=items.find(x=>x.id===editId);
+    if(item) Object.assign(item,{url,title,creator,desc,image,domain,catId,note});
+  } else {
+    items.unshift({id:Date.now().toString(),url,title,creator,desc,image,domain,catId,note,done:false,added:Date.now()});
+  }
+  persist(); closeAdd(); render(); renderSidebar();
+}
+
+/* ── FILTER / RENDER ── */
+function setFilter(f,btn){
+  currentFilter=f;
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); render();
+}
+function getFiltered(){
+  let list=[...items];
+  if(currentFilter==='done') list=list.filter(x=>x.done);
+  else if(currentFilter==='all') list=list.filter(x=>!x.done);
+  else list=list.filter(x=>x.catId===currentFilter&&!x.done);
+  const s=document.getElementById('sort-sel')?.value||'newest';
+  list.sort(s==='oldest'?(a,b)=>a.added-b.added:(a,b)=>b.added-a.added);
+  return list;
+}
+
+function render(){
+  const list=getFiltered(), grid=document.getElementById('grid');
+  const undone=items.filter(x=>!x.done);
+  document.getElementById('cnt-all').textContent=undone.length;
+  document.getElementById('cnt-done').textContent=items.filter(x=>x.done).length;
+  const cat=getCat(currentFilter);
+  document.getElementById('main-title').textContent=cat?cat.name:({all:'All',done:'Done'}[currentFilter]||'All');
+
+  if(!list.length){
+    grid.innerHTML=`<div class="empty"><div style="font-size:28px;margin-bottom:10px;color:#222">○</div>Nothing here<div class="empty-hint">Paste a URL in the bar above</div></div>`;
+    return;
+  }
+
+  grid.innerHTML=list.map(item=>{
+    const cat=getCat(item.catId);
+    const pill=cat?`<span class="cat-pill" style="color:${cat.color}">${cat.name}</span>`:'';
+    const fav=item.domain?`<div class="fav"><img src="https://www.google.com/s2/favicons?domain=${item.domain}&sz=32" alt=""/></div>`:'';
+
+    const imgArea=item.image
+      ?`<img src="${item.image}" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" style="width:100%;height:100%;object-fit:cover;display:block"/>
+        <div class="card-no-img" style="display:none">
+          ${item.domain?`<img class="no-img-favicon" src="https://www.google.com/s2/favicons?domain=${item.domain}&sz=64" alt=""/>`:''}
+          <span class="no-img-domain">${item.domain||''}</span>
+        </div>`
+      :`<div class="card-no-img">
+          ${item.domain?`<img class="no-img-favicon" src="https://www.google.com/s2/favicons?domain=${item.domain}&sz=64" alt=""/>`:''}
+          <span class="no-img-domain">${item.domain||''}</span>
+        </div>`;
+
+    return `<div class="card${item.done?' done':''}" onclick="openLink('${item.id}')">
+      <div class="card-img">
+        ${imgArea}${fav}${pill}
+        <div class="card-acts" onclick="event.stopPropagation()">
+          <button class="act" onclick="toggleDone('${item.id}')">${item.done?'↺':'✓'}</button>
+          <button class="act" onclick="openAdd(null,'${item.id}')">✎</button>
+          <button class="act" onclick="del('${item.id}')">✕</button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">${item.title||item.domain||'Untitled'}</div>
+        ${item.creator?`<div class="card-creator">by ${item.creator}</div>`:''}
+        ${item.desc?`<div class="card-desc">${item.desc}</div>`:''}
+        ${item.note?`<div class="card-note">${item.note}</div>`:''}
+        <div class="card-foot">
+          <span class="card-domain">${item.domain||''}</span>
+          <span class="card-ago">${ago(item.added)}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openLink(id){ const i=items.find(x=>x.id===id); if(i&&i.url)window.open(i.url,'_blank'); }
+function toggleDone(id){ const i=items.find(x=>x.id===id); if(i){i.done=!i.done;persist();render();renderSidebar();} }
+function del(id){ if(!confirm('Remove?'))return; items=items.filter(x=>x.id!==id); persist();render();renderSidebar(); }
+
+function renderSidebar(){
+  const undone=items.filter(x=>!x.done);
+  document.getElementById('sidebar-cats').innerHTML=cats.map(c=>{
+    const cnt=undone.filter(x=>x.catId===c.id).length;
+    return `<button class="nav-btn${currentFilter===c.id?' active':''}" onclick="setFilter('${c.id}',this)">
+      <span class="nav-name"><span class="nav-dot" style="background:${c.color}"></span>${c.name}</span>
+      <span class="nav-cnt">${cnt}</span>
+    </button>`;
+  }).join('');
+}
+
+function renderCatMgr(){
+  const el=document.getElementById('cat-list');
+  if(!cats.length){el.innerHTML=`<div style="color:var(--muted);font-size:13px;padding:4px 0">No categories yet.</div>`;return;}
+  el.innerHTML=cats.map(c=>{
+    const cnt=items.filter(x=>x.catId===c.id).length;
+    return `<div class="cat-row">
+      <span class="c-dot" style="background:${c.color}"></span>
+      <span class="c-name">${c.name}</span>
+      <span class="c-cnt">${cnt} items</span>
+      <button class="c-del" onclick="delCat('${c.id}')">✕</button>
+    </div>`;
+  }).join('');
+}
+function addCatFromMgr(){
+  const name=document.getElementById('mgr-nc-name').value.trim(); if(!name)return;
+  const color=document.getElementById('mgr-nc-color').value;
+  cats.push({id:'c'+Date.now(),name,color});
+  document.getElementById('mgr-nc-name').value='';
+  persist(); renderCatMgr(); renderSidebar();
+}
+function delCat(id){
+  if(items.some(x=>x.catId===id)&&!confirm('Items will be uncategorized. Continue?'))return;
+  items.forEach(x=>{if(x.catId===id)x.catId='';});
+  cats=cats.filter(c=>c.id!==id);
+  if(currentFilter===id) currentFilter='all';
+  persist(); renderCatMgr(); renderSidebar();
+}
+
+document.getElementById('url-bar').addEventListener('keydown',e=>{ if(e.key==='Enter')handleAdd(); });
+document.getElementById('nc-name').addEventListener('keydown',e=>{ if(e.key==='Enter')createCatInline(); });
+document.getElementById('mgr-nc-name').addEventListener('keydown',e=>{ if(e.key==='Enter')addCatFromMgr(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){closeAdd();closeMgr();} });
+
+load();
+</script>
+
+
+</body></html>
