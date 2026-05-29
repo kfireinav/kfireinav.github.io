@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Malabi — Final Copy & Open Questions</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;1,8..60,400&display=swap');
+:root{--ink:#16140f;--paper:#f4efe4;--rust:#c0451f;--rust-dk:#9b3514;--olive:#4a5233;--gold:#d9a441;--line:#1d1a13;--pick:#1f6f4a;--pick2:#235e9b}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:'Source Serif 4',Georgia,serif;line-height:1.45;padding:0 0 140px;background-image:radial-gradient(circle at 1px 1px,rgba(0,0,0,.04) 1px,transparent 0);background-size:22px 22px}
+header{background:var(--ink);color:var(--paper);padding:34px 28px 30px;border-bottom:5px solid var(--rust)}
+.kicker{font-family:'Archivo',sans-serif;font-weight:800;letter-spacing:.22em;text-transform:uppercase;font-size:11px;color:var(--gold);margin-bottom:10px}
+h1{font-family:'Archivo',sans-serif;font-weight:900;font-size:clamp(26px,5vw,42px);line-height:1;letter-spacing:-.02em;text-transform:uppercase}
+h1 em{color:var(--rust);font-style:normal}
+.sub{margin-top:14px;max-width:720px;font-size:15px;color:#d8d2c4}
+.wrap{max-width:880px;margin:0 auto;padding:0 22px}
+.section-tag{font-family:'Archivo',sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:.04em;font-size:13px;color:var(--paper);background:var(--olive);display:inline-block;padding:6px 14px;margin:40px 0 4px;transform:rotate(-1deg)}
+.card{background:#fffaf0;border:2px solid var(--line);border-radius:4px;margin-top:20px;box-shadow:5px 5px 0 var(--ink);overflow:hidden}
+.card.q{border-color:var(--rust)}
+.card-head{display:flex;align-items:baseline;gap:12px;padding:15px 20px 11px;border-bottom:2px dashed #cdc4ad}
+.num{font-family:'Archivo',sans-serif;font-weight:900;font-size:28px;color:var(--rust);line-height:1}
+.feat{font-family:'Archivo',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.02em;font-size:17px}
+.locked{margin-left:auto;font-family:'Archivo',sans-serif;font-weight:800;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--pick);border:1.5px solid var(--pick);border-radius:3px;padding:3px 8px;align-self:center}
+.needs{margin-left:auto;font-family:'Archivo',sans-serif;font-weight:800;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:var(--rust);border-radius:3px;padding:4px 9px;align-self:center}
+.copy-final{padding:14px 20px 6px}
+.line{margin-bottom:10px}
+.line .lbl{font-family:'Archivo',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.12em;font-size:10px;color:#9b9276;display:block;margin-bottom:2px}
+.headline{font-family:'Archivo',sans-serif;font-weight:900;text-transform:uppercase;font-size:19px;letter-spacing:-.01em;line-height:1.08;color:var(--ink)}
+.subline{font-size:15.5px;font-weight:500;color:#2a271f}
+.flag{margin:0 20px 12px;font-size:13px;color:#7a5230;background:#fbf3e6;border-left:3px solid var(--gold);padding:8px 11px;border-radius:3px}
+.qbox{margin:4px 20px 16px;padding:13px 15px;background:#fff;border:1.5px solid var(--gold);border-radius:4px}
+.qbox .qlabel{font-family:'Archivo',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:10px;color:var(--rust-dk);display:block;margin-bottom:5px}
+.qbox p.q{font-size:14px;margin-bottom:7px;font-weight:500}
+.qbox .note{font-size:13px;color:#7a5230;background:#fbf3e6;border-left:3px solid var(--rust);padding:7px 10px;border-radius:3px;margin-bottom:8px}
+.qbox textarea{width:100%;min-height:56px;border:1.5px dashed #c9b98e;border-radius:3px;padding:9px 11px;font-family:'Source Serif 4',serif;font-size:14px;background:#fffdf6;resize:vertical}
+.qbox textarea:focus{outline:none;border-color:var(--rust);background:#fff}
+.note-line{padding:0 20px 16px}
+.note-line label{font-family:'Archivo',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.12em;font-size:10px;color:#9b9276;display:block;margin:6px 0 5px 2px}
+.note-line textarea{width:100%;min-height:40px;border:1.5px dashed #c9b98e;border-radius:3px;padding:8px 11px;font-family:'Source Serif 4',serif;font-size:14px;background:#fffdf6;resize:vertical}
+.bar{position:fixed;bottom:0;left:0;right:0;background:var(--ink);color:var(--paper);border-top:4px solid var(--gold);padding:14px 22px;display:flex;align-items:center;gap:18px;justify-content:space-between;flex-wrap:wrap;z-index:50}
+.count{font-family:'Archivo',sans-serif;font-weight:600;font-size:14px}
+.count b{color:var(--gold);font-weight:900;font-size:18px}
+.btn{font-family:'Archivo',sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:.04em;font-size:14px;border:none;cursor:pointer;background:var(--rust);color:#fff;padding:13px 24px;border-radius:4px;box-shadow:3px 3px 0 var(--rust-dk);transition:all .1s}
+.btn:hover{transform:translate(1px,1px);box-shadow:2px 2px 0 var(--rust-dk)}
+.btn:active{transform:translate(3px,3px);box-shadow:none}
+.btn.copy{background:var(--olive);box-shadow:3px 3px 0 #2f3520}
+.out{margin-top:36px;background:var(--ink);color:var(--paper);border-radius:4px;padding:22px;display:none}
+.out.show{display:block}
+.out h3{font-family:'Archivo',sans-serif;font-weight:900;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+.out textarea{width:100%;min-height:300px;background:#0e0d09;color:#e8e2d4;border:1px solid #3a352a;border-radius:4px;padding:14px;font-family:'Source Serif 4',serif;font-size:13.5px;line-height:1.5;resize:vertical}
+.out .hint{font-size:13px;color:#b3ac9a;margin-top:10px}
+.copied{color:var(--gold);font-family:'Archivo',sans-serif;font-weight:700;font-size:13px;margin-left:10px;opacity:0;transition:opacity .2s}
+.copied.show{opacity:1}
+.intro{background:#fffaf0;border:2px solid var(--line);border-radius:4px;box-shadow:5px 5px 0 var(--ink);padding:18px 22px;margin-top:28px;font-size:14px}
+.intro b{color:var(--rust)}
+.grp{padding:4px 20px 2px}
+.grp-label{font-family:'Archivo',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.14em;font-size:10px;color:#9b9276;margin:12px 0 2px 2px}
+.opt{display:flex;gap:11px;align-items:flex-start;padding:11px 14px;border:1.5px solid #d8cfb8;border-radius:3px;margin-top:9px;cursor:pointer;transition:all .13s;background:#fff}
+.opt:hover{border-color:var(--rust);transform:translateX(3px)}
+.opt.on{border-color:var(--pick);background:#eef7f0;box-shadow:3px 3px 0 var(--pick)}
+.opt.sub.on{border-color:var(--pick2);background:#eef2f8;box-shadow:3px 3px 0 var(--pick2)}
+.opt .box{flex:0 0 19px;height:19px;margin-top:2px;border:2px solid var(--ink);border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Archivo',sans-serif;font-weight:900;font-size:12px;color:#fff;background:#fff;transition:all .13s}
+.opt.on .box{background:var(--pick);border-color:var(--pick)}
+.opt.sub.on .box{background:var(--pick2);border-color:var(--pick2)}
+.opt .head-line{font-family:'Archivo',sans-serif;font-weight:900;text-transform:uppercase;font-size:16px;letter-spacing:-.01em;line-height:1.07}
+.opt .sub-line{font-size:14.5px;font-weight:500}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="kicker">Malabi · Dog Wheelchair · Copy Sign-off</div>
+  <h1>Your copy is set — <em>just a few questions.</em></h1>
+  <p class="sub">All 8 headlines and subheads below are the ones you chose — locked in. We only need answers on the points marked <b>Needs answer</b> before we can finalize the images. Answer those, then Copy and send back.</p>
+</div></header>
+
+<div class="wrap"><div class="intro">
+  Nothing here asks you to re-pick copy. The wording is done. The red boxes are the only open items — mostly facts we need from you (size-guide details, the support offer) and two quick confirmations.
+</div></div>
+
+<div class="wrap" id="app"></div>
+
+<div class="out" id="out"><div class="wrap">
+  <h3>Answers to send back</h3>
+  <textarea id="report" readonly></textarea>
+  <p class="hint">Click Copy, then paste this back to us.</p>
+</div></div>
+
+<div class="bar">
+  <div class="count"><b id="done">0</b>/<span id="total">0</span> questions answered<span class="copied" id="cp">✓ Copied</span></div>
+  <div>
+    <button class="btn" onclick="finish()">Done ↓</button>
+    <button class="btn copy" onclick="copyOut()">Copy Result</button>
+  </div>
+</div>
+
+<script>
+// Final, client-approved copy. Locked. Questions only where they exist.
+const ITEMS=[
+ {n:1,feat:'Size Guide',
+  head:"Find your dog's perfect fit.",
+  sub:"A few measurements is all it takes to get it right.",
+  q:[{label:"We need from you",text:"What information should the size guide show, BY PRODUCT SIZE? For each size, list what goes in the row — e.g. weight range, back length, height, chest girth, breed examples.",ph:"Size S: weight __–__ kg, back length __–__ cm…  Size M: …  Size L: …"},
+     {label:"Reference images",text:"Have competitor size charts you'd like us to follow? You can't attach images in this form — send the image files separately (email/chat), or paste links here, and tell us which layout to copy.",ph:"e.g. 'Sending the Walkin' Wheels chart screenshot — copy that layout'"}]},
+ {n:2,feat:'Easy to Assemble',
+  head:"Easy from the very first step.",
+  sub:"Step-by-step video guide included. No tools needed.",
+  q:[{label:"Please confirm",text:"The subhead says \u201Cno tools needed.\u201D We're not sure that's accurate. Please confirm: does assembly truly require zero tools?",
+      note:"If any tool is involved \u2014 even an included Allen key \u2014 we should NOT claim \u201Cno tools needed.\u201D Tell us and we'll reword (e.g. \u201Cassembles with the included tool in minutes\u201D).",
+      ph:"Yes, zero tools.  /  No \u2014 needs an included key, please reword."}]},
+ {n:3,feat:'Sturdy / Well-Built',
+  head:"Built strong, built light.",
+  sub:"A reinforced frame and premium harnesses, built to endure."},
+ {n:4,feat:'Good Customer Service',
+  head:"You're never doing this alone.",
+  sub:"Dedicated support plus vet guidance, from setup through daily use.",
+  q:[{label:"We need from you",text:"What is the EXACT support offer you want to commit to? This wording is a promise, so it has to match reality. e.g. support channel + hours, free vet consult, lifetime fit help, guaranteed response time.",ph:"e.g. 'WhatsApp support 7 days/week + one free vet video call on setup'"}]},
+ {n:5,feat:'Social Proof',pick:true,
+  flag:"No invented numbers \u2014 pick one headline and one subhead below. If you have a REAL, verifiable customer count you want in the headline, tell us the number and source instead.",
+  h:["Real dogs. Real owners. Walking again.","See the dogs who got their freedom back.","Watch them roll.","Join the owners who chose to keep their dog moving.","Trusted by dog owners who refused to give up."],
+  s:["Real dogs, real owners — see them roll.","Real stories from owners of large senior dogs.","Owners of big senior dogs rely on Malabi to keep them moving.","See the transformation for yourself."],
+  q:[{label:"Reference images",text:"This image needs real customer photos/videos. Send the media files separately and note which dogs to feature \u2014 German Shepherds resonate most with this audience.",ph:"e.g. 'Sending 4 clips — lead with the German Shepherd'"}]},
+ {n:6,feat:'Toilet Normally',pick:true,
+  flag:"Both options are fully direct, per your instruction. Pick the register you prefer.",
+  h:["They can pee and poop without leaving the chair.","Your dog goes to the bathroom on their own — without being taken out of the chair."],
+  s:["The open harness means no lifting, no unbuckling — your dog stays independent and clean."]},
+ {n:7,feat:'Works on Terrain',
+  head:"Handles hills, curbs, and snow.",
+  sub:"Foam shock-absorbing wheels handle grass, gravel, hills and snow."},
+ {n:8,feat:'Health / Extra Time / Happiness',
+  head:"Keep them moving, keep them happy.",
+  sub:"Staying mobile protects the muscle that keeps them going — and gives you more of the dog you love.",
+  q:[{label:"Please confirm",text:"The subhead says the chair \u201Cprotects the muscle.\u201D That's a benefit claim (not a medical cure claim). Are you comfortable standing behind it in advertising for your market?",ph:"Yes, fine.  /  No \u2014 soften to 'helps keep them active'."}]},
+];
+
+const ans={},picks={};
+let totalQ=0;
+function esc(t){return t.replace(/"/g,'&quot;');}
+function card(d){
+  const hasQ=(d.q||[]).length>0;
+  const flag=d.flag?`<div class="flag">${d.flag}</div>`:'';
+  const qs=(d.q||[]).map((q,i)=>{totalQ++;return `<div class="qbox"><span class="qlabel">❓ ${q.label}</span><p class="q">${q.text}</p>${q.note?`<div class="note">${q.note}</div>`:''}<textarea data-q="${d.n}-${i}" data-qtext="${esc(q.text)}" oninput="setA(this)" placeholder="${esc(q.ph||'Your answer…')}"></textarea></div>`;}).join('');
+
+  if(d.pick){
+    const hs=d.h.map((t,i)=>`<div class="opt" data-n="${d.n}" data-kind="h" data-txt="${esc(t)}" onclick="tog(this)"><div class="box">✓</div><div class="head-line">${t}</div></div>`).join('');
+    const ss=d.s.map((t,i)=>`<div class="opt sub" data-n="${d.n}" data-kind="s" data-txt="${esc(t)}" onclick="tog(this)"><div class="box">✓</div><div class="sub-line">${t}</div></div>`).join('');
+    const subGrp=d.s.length>1?`<div class="grp"><div class="grp-label">Subhead — pick one</div>${ss}</div>`:`<div class="grp"><div class="grp-label">Subhead</div>${ss}</div>`;
+    return `<div class="card q"><div class="card-head"><div class="num">${String(d.n).padStart(2,'0')}</div><div class="feat">${d.feat}</div><span class="needs">Pick one</span></div>
+    ${flag}
+    <div class="grp"><div class="grp-label">Headline — pick one</div>${hs}</div>
+    ${subGrp}
+    ${qs}
+    </div>`;
+  }
+
+  const badge=hasQ?'<span class="needs">Needs answer</span>':'<span class="locked">✓ Locked</span>';
+  return `<div class="card${hasQ?' q':''}"><div class="card-head"><div class="num">${String(d.n).padStart(2,'0')}</div><div class="feat">${d.feat}</div>${badge}</div>
+  <div class="copy-final">
+    <div class="line"><span class="lbl">Headline</span><div class="headline">${d.head}</div></div>
+    <div class="line"><span class="lbl">Subhead</span><div class="subline">${d.sub}</div></div>
+  </div>
+  ${flag}
+  ${qs}
+  ${hasQ?'':`<div class="note-line"><label>💬 Any note (optional)</label><textarea data-q="${d.n}-note" data-qtext="General note on this image" oninput="setA(this)" placeholder="Leave blank if all good…"></textarea></div>`}
+  </div>`;
+}
+let html=`<div class="section-tag">Final Copy — 8 Images</div>`;
+ITEMS.forEach(d=>html+=card(d));
+document.getElementById('app').innerHTML=html;
+document.getElementById('total').textContent=totalQ;
+
+// auto-select the only subhead where a picker has just one
+ITEMS.forEach(d=>{ if(d.pick && d.s.length===1){
+  const el=document.querySelector(`.opt[data-n="${d.n}"][data-kind="s"]`);
+  if(el){el.classList.add('on');picks[d.n+'s']=el.dataset.txt;}
+}});
+
+function tog(el){
+  const n=el.dataset.n,kind=el.dataset.kind,key=n+kind,wasOn=el.classList.contains('on');
+  document.querySelectorAll(`.opt[data-n="${n}"][data-kind="${kind}"]`).forEach(o=>o.classList.remove('on'));
+  if(wasOn)delete picks[key];else{el.classList.add('on');picks[key]=el.dataset.txt;}
+  refresh();
+}
+function setA(el){const k=el.dataset.q;if(el.value.trim())ans[k]={t:el.dataset.qtext,a:el.value.trim()};else delete ans[k];refresh();}
+function refresh(){
+  let done=0;
+  ITEMS.forEach(d=>(d.q||[]).forEach((q,i)=>{if(ans[d.n+'-'+i])done++;}));
+  document.getElementById('done').textContent=done;
+}
+function buildReport(){
+  let txt="=== MALABI — SIGN-OFF & ANSWERS ===\n(Most copy is approved as-is. Picks + requested info below.)\n\n";
+  ITEMS.forEach(d=>{
+    const qList=(d.q||[]);
+    const noteKey=d.n+'-note';
+    const hasPick=d.pick;
+    const hasAns=qList.some((q,i)=>ans[d.n+'-'+i])||ans[noteKey];
+    if(!hasPick && !hasAns)return;
+    txt+=`${String(d.n).padStart(2,'0')} · ${d.feat}\n`;
+    if(hasPick){
+      txt+=`  HEADLINE: ${picks[d.n+'h']||'(none chosen)'}\n`;
+      txt+=`  SUBHEAD:  ${picks[d.n+'s']||'(none chosen)'}\n`;
+    }
+    qList.forEach((q,i)=>{const a=ans[d.n+'-'+i];if(a)txt+=`  Q: ${a.t}\n  A: ${a.a}\n`;});
+    if(ans[noteKey])txt+=`  NOTE: ${ans[noteKey].a}\n`;
+    txt+="\n";
+  });
+  return txt;
+}
+function finish(){document.getElementById('report').value=buildReport();document.getElementById('out').classList.add('show');document.getElementById('out').scrollIntoView({behavior:'smooth'});}
+function copyOut(){const t=buildReport();document.getElementById('report').value=t;document.getElementById('out').classList.add('show');navigator.clipboard.writeText(t).then(()=>{const c=document.getElementById('cp');c.classList.add('show');setTimeout(()=>c.classList.remove('show'),1800);}).catch(()=>{document.getElementById('out').scrollIntoView({behavior:'smooth'});});}
+refresh();
+</script>
+</body>
+</html>
